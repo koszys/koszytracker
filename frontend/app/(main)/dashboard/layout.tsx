@@ -18,7 +18,7 @@ function DashboardLayoutContent({
     const { activeGame: currentGame, setActiveGameId } = useGame();
 
     const navLinks = [
-        { name: "Wish Tracker", path: "/dashboard/tracker", icon: currentGame.trackerIcon, dynamicName: currentGame.wishName },
+        { name: "Wish Tracker", path: "/dashboard/tracker", icon: currentGame.trackerIcon, dynamicName: currentGame.trackerName },
         { name: "Import Wishes", path: "/dashboard/import", icon: currentGame.importIcon, dynamicName: currentGame.importName },
         { name: "Settings", path: "/dashboard/settings", icon: currentGame.settingsIcon },
     ];

@@ -13,6 +13,7 @@ export interface GameConfig {
     iconUrl: string;
     status: 'active' | 'comingsoon';
     wishName: string;
+    trackerName: string;
     importName: string;
     bgColor?: string;
     currencyName: string;
@@ -27,6 +28,7 @@ export interface GameConfig {
     trackerIcon: string;
     importIcon: string;
     settingsIcon: string;
+    importScript: string;
 }
 
 export const GAME_CONFIG: GameConfig[] = [
@@ -38,7 +40,8 @@ export const GAME_CONFIG: GameConfig[] = [
         logoUrl: '/assets/genshin/genshin-logo.webp',
         iconUrl: '/assets/genshin/genshin-logo.webp',
         status: 'active',
-        wishName: 'Wish Tracker',
+        wishName: 'Wishes',
+        trackerName: 'Wish Tracker',
         importName: 'Import Wishes',
         currencyName: 'Primogems',
         pullName: 'Wishes',
@@ -54,7 +57,8 @@ export const GAME_CONFIG: GameConfig[] = [
         themeGlow: 'rgba(59, 130, 246, 0.5)', // blue-500/50
         trackerIcon: '/assets/genshin/genshin-wish.png',
         importIcon: '/assets/genshin/genshin-cursor.png',
-        settingsIcon: '/assets/genshin/settings-icon.webp'
+        settingsIcon: '/assets/genshin/settings-icon.webp',
+        importScript: "iex (irm 'https://placeholder.com/genshin-import.ps1')"
     },
     {
         id: 'wuwa',
@@ -64,7 +68,8 @@ export const GAME_CONFIG: GameConfig[] = [
         logoUrl: '/assets/genshin/genshin-logo.webp',
         iconUrl: '/assets/genshin/genshin-logo.webp',
         status: 'active',
-        wishName: 'Convene Tracker',
+        wishName: 'Convenes',
+        trackerName: 'Convene Tracker',
         importName: 'Import Convenes',
         currencyName: 'Astrites',
         pullName: 'Convenes',
@@ -79,6 +84,7 @@ export const GAME_CONFIG: GameConfig[] = [
         themeGlow: 'rgba(234, 179, 8, 0.5)', // yellow-500/50
         trackerIcon: '/assets/genshin/genshin-wish.png',
         importIcon: '/assets/genshin/genshin-cursor.png',
-        settingsIcon: '/assets/genshin/settings-icon.webp'
+        settingsIcon: '/assets/genshin/settings-icon.webp',
+        importScript: "iex (irm 'https://placeholder.com/wuwa-import.ps1')"
     }
 ];
