@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getCurrentGame, BannerConfig } from "@/config/games";
+import { BannerConfig } from "@/config/games";
+import { useGame } from "@/contexts/GameContext";
 
 interface BannerStats {
     total: number;
@@ -15,7 +16,7 @@ interface BannerStats {
 }
 
 export default function WishTrackerPage() {
-    const game = getCurrentGame();
+    const { activeGame: game } = useGame();
     const [activeBanner, setActiveBanner] = useState<BannerConfig>(game.banners[0]);
     
     // Mock state for now.
@@ -59,7 +60,7 @@ export default function WishTrackerPage() {
                 </div>
                 
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-[#1c1d21] hover:bg-[#2a2b30] border border-[#33343a] text-gray-300 rounded-md transition-colors text-sm font-medium">
+                    <button className="flex items-center gap-2 px-4 py-2 bg-[#1c1d21] hover:bg-[#2a2b30] border border-[#52525b] text-gray-300 rounded-md transition-colors text-sm font-medium">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
                         </svg>
@@ -67,7 +68,7 @@ export default function WishTrackerPage() {
                     </button>
                     <Link
                         href="/dashboard/import"
-                        className="flex items-center gap-2 px-4 py-2 bg-[#1c1d21] hover:bg-[#2a2b30] border border-[#33343a] text-gray-300 rounded-md transition-colors text-sm font-medium"
+                        className="flex items-center gap-2 px-4 py-2 bg-[#1c1d21] hover:bg-[#2a2b30] border border-[#52525b] text-gray-300 rounded-md transition-colors text-sm font-medium"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -96,7 +97,7 @@ export default function WishTrackerPage() {
                                     className={`w-full text-left rounded-lg p-4 transition-all duration-200 border relative overflow-hidden flex flex-col min-h-[140px] shrink-0 ${
                                         isActive 
                                             ? "bg-[#2a2b30] border-[#4a4b52]" 
-                                            : "bg-[#1c1d21] border-[#33343a] hover:border-gray-500"
+                                            : "bg-[#1c1d21] border-[#52525b] hover:border-gray-500"
                                     }`}
                                 >
                                     {/* The white gradient overlay has been completely removed here */}
@@ -132,7 +133,7 @@ export default function WishTrackerPage() {
                     {/* Top Stats Grid */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Banner Summary Card */}
-                        <div className="bg-[#1c1d21] border border-[#33343a] rounded-lg p-6 flex flex-col justify-between relative overflow-hidden">
+                        <div className="bg-[#1c1d21] border border-[#52525b] rounded-lg p-6 flex flex-col justify-between relative overflow-hidden">
                             <h2 className="text-lg font-bold text-white mb-6 z-10">{activeBanner.name}</h2>
                             <div className="grid grid-cols-2 gap-4 z-10">
                                 <div>
@@ -155,7 +156,7 @@ export default function WishTrackerPage() {
                         </div>
 
                         {/* Luck Rating Card */}
-                        <div className="bg-[#1c1d21] border border-[#33343a] rounded-lg p-6">
+                        <div className="bg-[#1c1d21] border border-[#52525b] rounded-lg p-6">
                             <h2 className="text-lg font-bold text-white mb-6">5✦ Luck Rating</h2>
                             
                             <div className="space-y-5">
@@ -183,7 +184,7 @@ export default function WishTrackerPage() {
                     </div>
 
                     {/* Recent Pulls Section */}
-                    <div className="bg-[#1c1d21] border border-[#33343a] rounded-lg p-6">
+                    <div className="bg-[#1c1d21] border border-[#52525b] rounded-lg p-6">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-lg font-bold text-white">Recent {game.pullName}</h2>
                             <div className="flex gap-2">
@@ -197,7 +198,7 @@ export default function WishTrackerPage() {
                                 {[1, 2, 3, 4, 5].map((i) => (
                                     <div key={i} className="relative w-16 h-16 rounded-full bg-[#2a2b30] border-2 border-purple-500/50 flex items-center justify-center">
                                         <span className="text-gray-600 text-xs">Empty</span>
-                                        <div className="absolute -bottom-2 -right-2 bg-[#121212] border border-[#33343a] rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold text-white">
+                                        <div className="absolute -bottom-2 -right-2 bg-[#27272a] border border-[#52525b] rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold text-white">
                                             {Math.floor(Math.random() * 10) + 1}
                                         </div>
                                     </div>
@@ -209,20 +210,20 @@ export default function WishTrackerPage() {
                     </div>
 
                     {/* Pull History Table */}
-                    <div className="bg-[#1c1d21] border border-[#33343a] rounded-lg p-6">
+                    <div className="bg-[#1c1d21] border border-[#52525b] rounded-lg p-6">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-lg font-bold text-white">Pull History</h2>
                             <input 
                                 type="text" 
                                 placeholder="Search for something..." 
-                                className="bg-[#121212] border border-[#33343a] rounded px-3 py-1.5 text-sm text-white focus:outline-none focus:border-gray-500"
+                                className="bg-[#27272a] border border-[#52525b] rounded px-3 py-1.5 text-sm text-white focus:outline-none focus:border-gray-500"
                             />
                         </div>
 
                         <div className="w-full overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="text-gray-400 text-xs uppercase border-b border-[#33343a]">
+                                    <tr className="text-gray-400 text-xs uppercase border-b border-[#52525b]">
                                         <th className="pb-3 font-medium">Pull No.</th>
                                         <th className="pb-3 font-medium">Item Name</th>
                                         <th className="pb-3 font-medium">Pity</th>
@@ -230,13 +231,13 @@ export default function WishTrackerPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="text-sm text-gray-300">
-                                    <tr className="border-b border-[#33343a]/50 hover:bg-[#2a2b30]/30 transition-colors">
+                                    <tr className="border-b border-[#52525b]/50 hover:bg-[#2a2b30]/30 transition-colors">
                                         <td className="py-3">142</td>
                                         <td className="py-3 font-medium text-purple-400">Favonius Lance</td>
                                         <td className="py-3">8</td>
                                         <td className="py-3 text-gray-500">2026-05-16 03:22:17</td>
                                     </tr>
-                                    <tr className="border-b border-[#33343a]/50 hover:bg-[#2a2b30]/30 transition-colors">
+                                    <tr className="border-b border-[#52525b]/50 hover:bg-[#2a2b30]/30 transition-colors">
                                         <td className="py-3">141</td>
                                         <td className="py-3 font-medium text-gray-400">Debate Club</td>
                                         <td className="py-3">7</td>

@@ -20,14 +20,14 @@ export default function LogoutModal({ isOpen, onCancel, onConfirm }: LogoutModal
     if (!isOpen || !mounted) return null;
 
     const modalContent = (
-        <div className="fixed inset-0 bg-black/80 z-[150] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-[#09090b]/80 z-[150] flex items-center justify-center p-4">
             <div className="absolute inset-0" onClick={onCancel}></div>
-            <div className="relative bg-[#1c1d21] border border-[#33343a] p-6 rounded-xl max-w-sm w-full shadow-2xl">
+            <div className="relative bg-[#1c1d21] border border-[#52525b] p-6 rounded-xl max-w-sm w-full shadow-2xl">
                 <h3 className="text-white font-bold text-lg mb-6 text-center">Are you sure you want to sign out?</h3>
                 <div className="flex gap-3 justify-center">
                     <button 
                         onClick={onCancel} 
-                        className="px-5 py-2 text-gray-400 hover:text-white hover:border-blue-500 transition-colors font-medium cursor-pointer"
+                        className="px-5 py-2 text-gray-400 hover:text-white hover:border-theme transition-colors font-medium cursor-pointer"
                     >
                         Cancel
                     </button>

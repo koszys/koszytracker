@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { getCurrentGame } from "@/config/games";
+import { useGame } from "@/contexts/GameContext";
 
 interface WishData {
     id: string;
@@ -12,7 +12,7 @@ interface WishData {
 }
 
 export default function ImportPage() {
-    const game = getCurrentGame();
+    const { activeGame: game } = useGame();
     const [url, setUrl] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<{ message: string; wishes?: WishData[] } | null>(null);
@@ -67,7 +67,7 @@ export default function ImportPage() {
             </div>
 
             {/* Instructions */}
-            <div className="bg-[#1c1d21] border border-[#33343a] rounded-lg p-6 mb-8">
+            <div className="bg-[#1c1d21] border border-[#52525b] rounded-lg p-6 mb-8">
                 <h2 className="text-lg font-bold text-white mb-4">How to Import</h2>
                 <ol className="list-decimal list-inside text-gray-400 space-y-3">
                     <li>Open Genshin Impact and go to Wish History</li>
@@ -75,7 +75,7 @@ export default function ImportPage() {
                     <li>Paste the generated URL below</li>
                     <li>Click &quot;Import Wishes&quot; to fetch your history</li>
                 </ol>
-                <div className="mt-4 p-4 bg-[#121212] rounded-md">
+                <div className="mt-4 p-4 bg-[#27272a] rounded-md">
                     <p className="text-gray-500 text-xs">
                         <strong>Note:</strong> The URL expires after a short time. If import fails, run the script again.
                     </p>
@@ -83,14 +83,14 @@ export default function ImportPage() {
             </div>
 
             {/* Import Form */}
-            <div className="bg-[#1c1d21] border border-[#33343a] rounded-lg p-6 mb-8">
+            <div className="bg-[#1c1d21] border border-[#52525b] rounded-lg p-6 mb-8">
                 <h2 className="text-lg font-bold text-white mb-4">Wish History URL</h2>
                 <div className="space-y-4">
                     <textarea
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}
                         placeholder="Paste your wish history URL here (starts with https://hk4e-api-os.hoyoverse.com...)"
-                        className="w-full h-32 px-4 py-3 bg-[#121212] border border-[#33343a] rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none font-mono text-sm"
+                        className="w-full h-32 px-4 py-3 bg-[#27272a] border border-[#52525b] rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none font-mono text-sm"
                     />
                     {error && (
                         <p className="text-red-400 text-sm">{error}</p>
@@ -107,7 +107,7 @@ export default function ImportPage() {
 
             {/* Result */}
             {result && (
-                <div className="bg-[#1c1d21] border border-[#33343a] rounded-lg p-6">
+                <div className="bg-[#1c1d21] border border-[#52525b] rounded-lg p-6">
                     <h2 className="text-lg font-bold text-white mb-4">Import Result</h2>
                     <p className="text-gray-400 mb-4">{result.message}</p>
                     {result.wishes && result.wishes.length > 0 && (
