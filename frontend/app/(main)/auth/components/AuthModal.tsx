@@ -12,6 +12,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
     }, []);
 

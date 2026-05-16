@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { createPortal } from "react-dom";
 import SectionHeader from "@/components/common/SectionHeader";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -45,6 +46,7 @@ export default function SettingsPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
     }, []);
 
@@ -280,7 +282,7 @@ export default function SettingsPage() {
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 bg-[#1c1d21] border border-[#33343a] rounded-lg">
                             <div className="flex items-center gap-3">
                                 {user.avatar ? (
-                                    <img src={user.avatar} alt="Profile" referrerPolicy="no-referrer" className="w-10 h-10 rounded-full object-cover border border-[#33343a]" />
+                                    <Image src={user.avatar} alt="Profile" width={40} height={40} referrerPolicy="no-referrer" className="w-10 h-10 rounded-full object-cover border border-[#33343a]" />
                                 ) : (
                                     <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg bg-blue-600">
                                         {user.name?.charAt(0).toUpperCase() || '?'}
