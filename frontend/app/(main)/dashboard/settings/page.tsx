@@ -440,7 +440,7 @@ export default function SettingsPage() {
                                     updateActiveAccount('ar', val);
                                 }}
                                 onBlur={() => {
-                                    if (activeAccount?.ar === '' || (typeof activeAccount?.ar === 'number' && activeAccount.ar < 1)) {
+                                    if (!activeAccount?.ar || (typeof activeAccount?.ar === 'number' && activeAccount.ar < 1)) {
                                         updateActiveAccount('ar', 1);
                                     }
                                 }}
