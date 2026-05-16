@@ -58,11 +58,11 @@ export default function AppLayout({
                 <div className="h-16 flex items-center justify-center px-4 border-b border-[#33343a] flex-shrink-0">
                     {(!isSidebarCollapsed || isMobileNavOpen) ? (
                         <Link href="/dashboard" className="text-xl font-black text-white tracking-widest overflow-hidden whitespace-nowrap w-full text-left hover:text-blue-500 transition-colors">
-                            KOSZY<span className="text-blue-500">.MOE</span>
+                            SENTI<span className="text-blue-500">.MOE</span>
                         </Link>
                     ) : (
                         <Link href="/dashboard" className="text-xl font-black text-white tracking-widest hover:text-blue-500 transition-colors">
-                            K<span className="text-blue-500">.</span>
+                            S<span className="text-blue-500">.</span>
                         </Link>
                     )}
 
@@ -101,7 +101,7 @@ export default function AppLayout({
                     <button
                         onClick={() => setIsGameSwitcherOpen(true)}
                         className={`
-                            group relative w-full rounded-md overflow-hidden border border-[#33343a] hover:border-blue-500 transition-all shadow-md
+                            cursor-pointer group relative w-full rounded-md overflow-hidden border border-[#33343a] hover:border-blue-500 transition-all shadow-md
                             ${isSidebarCollapsed && !isMobileNavOpen ? 'h-12 flex items-center justify-center' : 'h-14 flex items-center'}
                         `}
                         title="Switch Game"
@@ -176,7 +176,7 @@ export default function AppLayout({
                             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                             title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="cursor-pointer w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
@@ -186,7 +186,7 @@ export default function AppLayout({
                             onClick={() => setIsGameSwitcherOpen(true)}
                             title={`Switching from ${currentGame.name}`}
                         >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="cursor-pointer w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                             </svg>
                         </button>
@@ -223,11 +223,11 @@ export default function AppLayout({
             `}>
                 <div className="p-5 border-b border-[#33343a] flex items-center justify-between">
                     <Link href="/" className="text-xl font-black text-white tracking-widest overflow-hidden whitespace-nowrap w-full text-left hover:text-blue-500 transition-colors">
-                        KOSZY<span className="text-blue-500">.MOE</span>
+                        SENTI<span className="text-blue-500">.MOE</span>
                     </Link>
 
                     <button onClick={() => setIsGameSwitcherOpen(false)} className={iconButtonClass}>
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="cursor-pointer w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>

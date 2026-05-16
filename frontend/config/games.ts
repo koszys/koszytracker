@@ -16,7 +16,7 @@ export const GAME_CONFIG: GameConfig[] = [
         id: 'genshin',
         name: 'Genshin Impact',
         path: '/tracker',
-        bgUrl: '/assets/gamebackground/genshin_background.webp',
+        bgUrl: '/assets/gamebackground/genshinv1-1.jpg',
         logoUrl: '/assets/genshin/genshin-logo.webp',
         iconUrl: '/assets/genshin/genshin-logo.webp',
         status: 'active',
@@ -31,8 +31,8 @@ export const GAME_CONFIG: GameConfig[] = [
         logoUrl: '/assets/genshin/genshin-logo.webp',
         iconUrl: '/assets/genshin/genshin-logo.webp',
         status: 'comingsoon',
-        wishName: 'StarRail Wishes',
-        importName: 'Import Wishes',
+        wishName: 'Warp Tracker',
+        importName: 'Import Warps',
     },
     {
         id: 'zzz',
@@ -42,8 +42,8 @@ export const GAME_CONFIG: GameConfig[] = [
         logoUrl: '/assets/genshin/genshin-logo.webp',
         iconUrl: '/assets/genshin/genshin-logo.webp',
         status: 'comingsoon',
-        wishName: 'ZZZ Wishes',
-        importName: 'Import Wishes',
+        wishName: 'Signal Tracker',
+        importName: 'Import Signals',
     },
     {
         id: 'wuwa',
@@ -53,8 +53,8 @@ export const GAME_CONFIG: GameConfig[] = [
         logoUrl: '/assets/genshin/genshin-logo.webp',
         iconUrl: '/assets/genshin/genshin-logo.webp',
         status: 'comingsoon',
-        wishName: 'Wuthering Wishes',
-        importName: 'Import Wishes',
+        wishName: 'Convene Tracker',
+        importName: 'Import Convenes',
     },
 ];
 

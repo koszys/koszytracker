@@ -61,7 +61,6 @@ export default function WishTrackerPage() {
                     href="/dashboard/import"
                     className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors font-bold"
                 >
-                    <span>📥</span>
                     <span>{game.importName}</span>
                 </Link>
             </div>
@@ -128,7 +127,6 @@ export default function WishTrackerPage() {
                         href="/dashboard/import"
                         className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors font-bold"
                     >
-                        <span>📥</span>
                         <span>{game.importName}</span>
                     </Link>
                 </div>
