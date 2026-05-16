@@ -1,3 +1,9 @@
+export interface BannerConfig {
+    id: string;
+    name: string;
+    type: 'character' | 'weapon' | 'standard' | 'chronicled' | 'beginner';
+}
+
 export interface GameConfig {
     id: string;
     name: string;
@@ -9,6 +15,9 @@ export interface GameConfig {
     wishName: string;
     importName: string;
     bgColor?: string;
+    currencyName: string;
+    pullName: string;
+    banners: BannerConfig[];
 }
 
 export const GAME_CONFIG: GameConfig[] = [
@@ -22,40 +31,17 @@ export const GAME_CONFIG: GameConfig[] = [
         status: 'active',
         wishName: 'Wish Tracker',
         importName: 'Import Wishes',
+        currencyName: 'Primogems',
+        pullName: 'Wishes',
+        banners: [
+            { id: 'character', name: 'Character Event Wish', type: 'character' },
+            { id: 'weapon', name: 'Weapon Event Wish', type: 'weapon' },
+            { id: 'standard', name: 'Standard Wish', type: 'standard' },
+            { id: 'chronicled', name: 'Chronicled Wish', type: 'chronicled' }
+        ]
     },
-    {
-        id: 'hsr',
-        name: 'Honkai: Star Rail',
-        path: '/hsr',
-        bgUrl: '/assets/gamebackground/hsr_background.png',
-        logoUrl: '/assets/genshin/genshin-logo.webp',
-        iconUrl: '/assets/genshin/genshin-logo.webp',
-        status: 'comingsoon',
-        wishName: 'Warp Tracker',
-        importName: 'Import Warps',
-    },
-    {
-        id: 'zzz',
-        name: 'Zenless Zone Zero',
-        path: '/zzz',
-        bgUrl: '/assets/gamebackground/zzz_background.jpg',
-        logoUrl: '/assets/genshin/genshin-logo.webp',
-        iconUrl: '/assets/genshin/genshin-logo.webp',
-        status: 'comingsoon',
-        wishName: 'Signal Tracker',
-        importName: 'Import Signals',
-    },
-    {
-        id: 'wuwa',
-        name: 'Wuthering Waves',
-        path: '/wuwa',
-        bgUrl: '/assets/gamebackground/wuwa_background.jpg',
-        logoUrl: '/assets/genshin/genshin-logo.webp',
-        iconUrl: '/assets/genshin/genshin-logo.webp',
-        status: 'comingsoon',
-        wishName: 'Convene Tracker',
-        importName: 'Import Convenes',
-    },
+    // Add these fields to HSR, ZZZ, WuWa as needed. Example for WuWa:
+    // currencyName: 'Astrites', pullName: 'Convenes', banners: [...]
 ];
 
 export function getCurrentGame(): GameConfig {
