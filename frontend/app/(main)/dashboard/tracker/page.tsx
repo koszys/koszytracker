@@ -84,7 +84,7 @@ export default function WishTrackerPage() {
             <div className="w-full flex flex-col md:flex-row gap-6 relative items-start">
                 
                 {/* LEFT SIDEBAR: Banners (Scrollable but invisible scrollbar) */}
-                <div className="w-full md:w-[320px] md:shrink-0 flex flex-col gap-4 md:sticky md:top-4 md:h-[calc(100vh-10rem)] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div className="w-full md:w-[320px] md:shrink-0 flex flex-col gap-4 h-[210px] md:h-[calc(100vh-10rem)] md:sticky md:top-4 overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     <div className="flex flex-col gap-4 pb-4">
                         {game.banners.map((banner) => {
                             const bannerStat = stats[banner.id] || { currentPity5: 0, currentPity4: 0 };
