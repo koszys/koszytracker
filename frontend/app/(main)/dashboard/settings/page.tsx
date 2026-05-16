@@ -238,7 +238,7 @@ export default function SettingsPage() {
             <div className="space-y-4">
 
                 {/* Auth Account Block */}
-                <div className="bg-[#27272a] border border-[#3f3f46] rounded-xl p-4 md:p-6 shadow-lg mb-8">
+                <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg mb-8">
                     <div className="flex items-center justify-between mb-5">
                         <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider">Site Account</h3>
                         
@@ -313,7 +313,7 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Data Management Section */}
-                <div className="bg-[#27272a] border border-[#3f3f46] rounded-xl p-4 md:p-6 shadow-lg mb-8">
+                <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg mb-8">
                     <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Data Management</h3>
                     <div className="flex flex-col gap-3">
                         
@@ -328,7 +328,7 @@ export default function SettingsPage() {
                                 type="button"
                                 onClick={handleSyncClick}
                                 disabled={!user || isSyncing || cooldown > 0} 
-                                className="px-4 py-2 bg-[#52525b] hover:bg-[#4b4c53] disabled:opacity-50 disabled:hover:bg-[#52525b] text-white border border-[#4b4c53] hover:border-theme rounded-lg text-sm font-bold transition-colors shadow-sm whitespace-nowrap min-w-[120px]"
+                                className="px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:opacity-50 disabled:hover:border-[#52525b] disabled:hover:text-gray-300 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-w-[120px]"
                             >
                                 {isSyncing 
                                     ? 'Syncing...' 
@@ -343,7 +343,7 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Account Manager */}
-                <div className="bg-[#27272a] border border-[#3f3f46] rounded-xl p-4 md:p-6 shadow-lg mb-8">
+                <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg mb-8">
                     <p className="text-sm text-gray-300 mb-1">More than one account? Add it here.</p>
                     <p className="text-sm font-bold text-white mb-4">Importing will add the account to your list.</p>
 
@@ -351,7 +351,7 @@ export default function SettingsPage() {
                         <div className="flex flex-wrap items-center gap-2">
                             <button
                                 onClick={addAccount}
-                                className="flex items-center gap-1.5 bg-[#52525b] hover:bg-[#4b4c53] text-white px-3 py-1.5 rounded-md text-sm font-bold border border-transparent hover:border-theme transition-colors"
+                                className="flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                                 Add
@@ -415,7 +415,7 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Account Settings */}
-                <div className="bg-[#27272a] border border-[#3f3f46] rounded-xl p-4 md:p-6 shadow-lg">
+                <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg">
                     <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Account Settings</h3>
                     <div className="flex flex-wrap items-end gap-4 md:gap-6">
 

@@ -63,7 +63,7 @@ export default function ImportPage() {
         <div className="w-full">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-white">{game.importName}</h1>
-                <p className="text-gray-400 text-sm mt-1">Import your {game.name} wish history</p>
+                <p className="text-gray-300 text-sm mt-1">Import your {game.name} wish history</p>
             </div>
 
             {/* Instructions */}

@@ -54,7 +54,7 @@ export default function WishTrackerPage() {
             <div className="w-full flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-white">{game.wishName}</h1>
-                    <p className="text-gray-400 text-sm mt-2">
+                    <p className="text-gray-300 text-sm mt-2">
                         View your recent {game.pullName.toLowerCase()} & statistics compared to other {game.name} users.
                     </p>
                 </div>
