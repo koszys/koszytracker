@@ -328,7 +328,7 @@ export default function SettingsPage() {
                                 type="button"
                                 onClick={handleSyncClick}
                                 disabled={!user || isSyncing || cooldown > 0} 
-                                className="px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:opacity-50 disabled:hover:border-[#52525b] disabled:hover:text-gray-300 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-w-[120px]"
+                                className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:opacity-50 disabled:hover:border-[#52525b] disabled:hover:text-gray-300 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-w-[120px]"
                             >
                                 {isSyncing 
                                     ? 'Syncing...' 
@@ -351,7 +351,7 @@ export default function SettingsPage() {
                         <div className="flex flex-wrap items-center gap-2">
                             <button
                                 onClick={addAccount}
-                                className="flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+                                className="cursor-pointer flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                                 Add
@@ -369,7 +369,7 @@ export default function SettingsPage() {
 
                             <button
                                 onClick={() => setIsRenaming(!isRenaming)}
-                                className="flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+                                className="cursor-pointer flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                 Rename
@@ -386,8 +386,8 @@ export default function SettingsPage() {
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2">
-                            <button onClick={handleExportAccount} className="bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Export Account</button>
-                            <button onClick={handleImportClick} className="bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Import Account</button>
+                            <button onClick={handleExportAccount} className="cursor-pointer bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Export Account</button>
+                            <button onClick={handleImportClick} className="cursor-pointer bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Import Account</button>
                             <input
                                 ref={fileInputRef}
                                 type="file"

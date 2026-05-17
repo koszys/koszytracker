@@ -18,13 +18,13 @@ export default function HomePage() {
             <div className="flex flex-wrap items-center justify-center gap-4">
                 <Link
                     href="/dashboard/tracker"
-                    className="px-8 py-3 bg-theme hover:brightness-110 text-white font-bold rounded-lg transition-all shadow-lg border border-theme/50"
+                    className="px-8 py-3 bg-theme hover:brightness-110 hover:border-white text-white font-bold rounded-lg transition-all shadow-lg border border-theme/50"
                 >
                     View Tracker
                 </Link>
                 <Link
                     href="/dashboard/import"
-                    className="px-8 py-3 bg-[#27272a] border border-[#52525b] hover:bg-[#3f3f46] hover:border-[#71717a] text-white font-bold rounded-lg transition-all"
+                    className="px-8 py-3 bg-[#27272a] border border-[#52525b] hover:bg-[#3f3f46] hover:border-white text-white font-bold rounded-lg transition-all"
                 >
                     Import Wishes
                 </Link>

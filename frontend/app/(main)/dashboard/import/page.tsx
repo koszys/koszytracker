@@ -111,7 +111,7 @@ export default function ImportPage() {
                                 </pre>
                                 <button
                                     onClick={handleCopy}
-                                    className="absolute top-2 right-2 p-2 bg-[#27272a] hover:bg-[#3f3f46] border border-[#52525b] rounded-md text-gray-300 transition-colors"
+                                    className="cursor-pointer absolute top-2 right-2 p-2 bg-[#27272a] hover:bg-[#3f3f46] border border-[#52525b] rounded-md text-gray-300 transition-colors"
                                     title="Copy to clipboard"
                                 >
                                     {copied ? (
