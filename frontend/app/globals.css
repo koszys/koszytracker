@@ -3,6 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --theme-color: #3b82f6;
+  --theme-gradient-from: #60a5fa;
+  --theme-gradient-to: #2563eb;
+  --theme-glow: rgba(59, 130, 246, 0.5);
 }
 
 @theme inline {
