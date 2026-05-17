@@ -154,7 +154,7 @@ export default function ImportPage() {
                                     <button
                                         onClick={handleImport}
                                         disabled={loading || !url.trim()}
-                                        className="px-6 py-2.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:opacity-50 disabled:hover:border-[#52525b] disabled:hover:text-gray-300 rounded-lg text-sm font-bold transition-colors whitespace-nowrap"
+                                        className="cursor-pointer px-6 py-2.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:opacity-50 disabled:hover:border-[#52525b] disabled:hover:text-gray-300 rounded-lg text-sm font-bold transition-colors whitespace-nowrap"
                                     >
                                         {loading ? "Importing..." : `Import ${game.wishName}`}
                                     </button>
