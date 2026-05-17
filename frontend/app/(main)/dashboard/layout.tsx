@@ -94,7 +94,7 @@ function DashboardLayoutContent({
                         `}
                     >
                         <Image
-                            src="/assets/genshin/genshin-statue.png"
+                            src={currentGame.homeIcon}
                             alt="Home"
                             width={24}
                             height={24}

@@ -303,7 +303,7 @@ export default function SettingsPage() {
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 bg-[#18181b] border border-[#3f3f46] rounded-lg">
                             <div>
                                 <p className="text-sm font-bold text-white mb-1">You are not signed in.</p>
-                                <p className="text-xs text-gray-400">Sign in to automatically save and sync your data.</p>
+                                <p className="text-xs text-gray-300">Sign in to automatically save and sync your data.</p>
                             </div>
                             <button onClick={() => setShowAuthModal(true)} className="px-6 py-2 bg-theme hover:brightness-110 border border-transparent hover:border-white text-white rounded-lg text-sm font-bold transition-all w-full sm:w-auto cursor-pointer">
                                 Sign In
@@ -321,7 +321,7 @@ export default function SettingsPage() {
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#18181b] border border-[#3f3f46] rounded-lg">
                             <div>
                                 <p className="text-sm font-bold text-white mb-0.5">Sync Local Data to Cloud</p>
-                                <p className="text-xs text-gray-400">Merge any un-synced data from this browser into your cloud account.</p>
+                                <p className="text-xs text-gray-300">Merge any un-synced data from this browser into your cloud account.</p>
                             </div>
 
                             <button 
@@ -493,14 +493,14 @@ export default function SettingsPage() {
                             <div className="flex items-center bg-[#18181b] border border-[#52525b] rounded-lg h-[38px]">
                                 <button
                                     onClick={() => updateActiveAccount('gender', 'M')}
-                                    className={`flex-1 h-full px-3 flex items-center justify-center text-xs font-bold transition-colors border border-transparent hover:border-theme cursor-pointer rounded-l-lg relative hover:z-10 ${activeAccount?.gender === 'M' ? 'bg-theme/30 text-white' : 'text-gray-500 hover:text-gray-300 hover:bg-[#24252a]'}`}
+                                    className={`flex-1 h-full px-3 flex items-center justify-center text-xs font-bold transition-colors border border-transparent hover:border-theme cursor-pointer rounded-l-lg relative hover:z-10 ${activeAccount?.gender === 'M' ? 'bg-theme/30 text-white' : 'text-white hover:bg-[#24252a]'}`}
                                 >
                                     {terms.mcMale}
                                 </button>
                                 <div className="w-[1px] h-full bg-[#52525b]"></div>
                                 <button
                                     onClick={() => updateActiveAccount('gender', 'F')}
-                                    className={`flex-1 h-full px-3 flex items-center justify-center text-xs font-bold transition-colors border border-transparent hover:border-theme cursor-pointer rounded-r-lg relative hover:z-10 ${activeAccount?.gender === 'F' ? 'bg-theme/30 text-white' : 'text-gray-500 hover:text-gray-300 hover:bg-[#24252a]'}`}
+                                    className={`flex-1 h-full px-3 flex items-center justify-center text-xs font-bold transition-colors border border-transparent hover:border-theme cursor-pointer rounded-r-lg relative hover:z-10 ${activeAccount?.gender === 'F' ? 'bg-theme/30 text-white' : 'text-white hover:bg-[#24252a]'}`}
                                 >
                                     {terms.mcFemale}
                                 </button>

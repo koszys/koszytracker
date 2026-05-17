@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useGame } from "@/contexts/GameContext";
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -9,6 +10,7 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
+    const { activeGame: currentGame } = useGame();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -29,7 +31,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const iconButtonClass = "absolute top-4 right-4 p-2 text-gray-400 hover:text-white hover:bg-[#52525b] border border-transparent hover:border-theme rounded-xl transition-colors cursor-pointer";
 
     const modalContent = (
-        <div className="fixed inset-0 bg-[#09090b]/80 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-[#09090b]/50 z-[100] flex items-center justify-center p-4">
             {/* Click outside to close */}
             <div className="absolute inset-0" onClick={onClose}></div>
             
@@ -42,8 +44,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     </svg>
                 </button>
 
-                <h2 className="text-2xl font-bold text-white mb-2">Sign in to SENTI<span className="text-theme">.MOE</span></h2>
-                <p className="text-sm text-gray-400 mb-8 text-center">Connect with your preferred account</p>
+                <h2 className="text-2xl font-bold text-white mb-2">Sign in to SENTI<span style={{ color: currentGame.themeColor }}>.MOE</span></h2>
+                <p className="text-sm text-gray-300 mb-8 text-center">Connect with your preferred account</p>
 
                 <div className="flex flex-col gap-3 w-full">
                     {/* Google Button */}

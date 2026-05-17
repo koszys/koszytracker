@@ -20,7 +20,7 @@ export default function LogoutModal({ isOpen, onCancel, onConfirm }: LogoutModal
     if (!isOpen || !mounted) return null;
 
     const modalContent = (
-        <div className="fixed inset-0 bg-[#09090b]/80 z-[150] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-[#09090b]/50 z-[150] flex items-center justify-center p-4">
             <div className="absolute inset-0" onClick={onCancel}></div>
             <div className="relative bg-[#1c1d21] border border-[#52525b] p-6 rounded-xl max-w-sm w-full shadow-2xl">
                 <h3 className="text-white font-bold text-lg mb-6 text-center">Are you sure you want to sign out?</h3>
