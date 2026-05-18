@@ -4,19 +4,13 @@ import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface AuthSectionProps {
-    showAuthModal: boolean;
     setShowAuthModal: (show: boolean) => void;
-    showLogoutModal: boolean;
     setShowLogoutModal: (show: boolean) => void;
-    confirmLogout: () => void;
 }
 
 export default function AuthSection({
-    showAuthModal,
     setShowAuthModal,
-    showLogoutModal,
     setShowLogoutModal,
-    confirmLogout,
 }: AuthSectionProps) {
     const { user } = useAuth();
 

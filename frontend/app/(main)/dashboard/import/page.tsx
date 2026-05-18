@@ -101,7 +101,7 @@ export default function ImportPage() {
                     <div className="flex gap-4 md:gap-6">
                         <div className="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#27272a] border border-[#52525b] flex items-center justify-center text-white font-bold text-lg">2</div>
                         <div className="flex-1 min-w-0 pt-1 md:pt-2">
-                            <p className="text-gray-300 text-sm md:text-base">Open Windows PowerShell. You can do this by searching for <strong>'PowerShell'</strong> in the Windows search bar.</p>
+                            <p className="text-gray-300 text-sm md:text-base">Open Windows PowerShell. You can do this by searching for <strong>&apos;PowerShell&apos;</strong> in the Windows search bar.</p>
                         </div>
                     </div>
 

@@ -39,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (token) {
       try {
         const decoded = jwtDecode<JwtPayload>(token);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser({ 
             id: decoded.sub, 
             email: decoded.email, 

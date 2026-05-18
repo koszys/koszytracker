@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import SectionHeader from "@/components/common/SectionHeader";
-import ConflictModal, { downloadConflictData, downloadBothConflictFiles } from "@/components/common/ConflictModal";
+import ConflictModal, { downloadBothConflictFiles } from "@/components/common/ConflictModal";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import AuthModal from "@/app/(main)/auth/components/AuthModal";
@@ -33,7 +33,7 @@ interface ImportData {
 export default function SettingsPage() {
     const { activeGame: game } = useGame();
     const terms = getGameTerms(game.id);
-    const { user, logout } = useAuth();
+    const { logout } = useAuth();
     const [mounted, setMounted] = useState(false);
 
     const {
@@ -47,6 +47,7 @@ export default function SettingsPage() {
     const [importModalData, setImportModalData] = useState<{ data: ImportData; isFullBackup: boolean } | null>(null);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
     }, []);
 
@@ -126,11 +127,8 @@ export default function SettingsPage() {
             <div className="space-y-4">
 
                 <AuthSection
-                    showAuthModal={showAuthModal}
                     setShowAuthModal={setShowAuthModal}
-                    showLogoutModal={showLogoutModal}
                     setShowLogoutModal={setShowLogoutModal}
-                    confirmLogout={confirmLogout}
                 />
 
                 <DataManagementSection

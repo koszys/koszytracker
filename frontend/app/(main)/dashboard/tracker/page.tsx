@@ -29,6 +29,7 @@ export default function WishTrackerPage() {
             standard: { total: 210, fiveStar: 3, fourStar: 25, currentPity5: 12, currentPity4: 2, avgPity5: 78, winRate5050: 0 },
             chronicled: { total: 0, fiveStar: 0, fourStar: 0, currentPity5: 0, currentPity4: 0, avgPity5: 0, winRate5050: 0 },
         };
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setStats(mockStats);
     }, [game.id]);
 
@@ -198,9 +199,6 @@ export default function WishTrackerPage() {
                                 {[1, 2, 3, 4, 5].map((i) => (
                                     <div key={i} className="relative w-16 h-16 rounded-full bg-[#2a2b30] border-2 border-purple-500/50 flex items-center justify-center">
                                         <span className="text-gray-600 text-xs">Empty</span>
-                                        <div className="absolute -bottom-2 -right-2 bg-[#27272a] border border-[#52525b] rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold text-white">
-                                            {Math.floor(Math.random() * 10) + 1}
-                                        </div>
                                     </div>
                                 ))}
                             </div>

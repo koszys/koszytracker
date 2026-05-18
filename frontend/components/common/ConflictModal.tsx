@@ -8,8 +8,8 @@ interface ConflictData {
   cloudCount: number;
   localModifiedAt: Date | null;
   cloudModifiedAt: Date | null;
-  localData: any[];
-  cloudData: any[];
+  localData: unknown[];
+  cloudData: unknown[];
 }
 
 interface ConflictModalProps {
@@ -140,7 +140,7 @@ export default function ConflictModal({
   );
 }
 
-export function downloadConflictData(data: any[], source: string, type: string) {
+export function downloadConflictData(data: unknown[], source: string, type: string) {
   const exportData = {
     version: "1.0.0",
     exportedAt: new Date().toISOString(),
@@ -163,7 +163,7 @@ export function downloadConflictData(data: any[], source: string, type: string) 
   URL.revokeObjectURL(url);
 }
 
-export function downloadBothConflictFiles(localData: any[], cloudData: any[], type: string) {
+export function downloadBothConflictFiles(localData: unknown[], cloudData: unknown[], type: string) {
   downloadConflictData(localData, "local", type);
   setTimeout(() => {
     downloadConflictData(cloudData, "cloud", type);
