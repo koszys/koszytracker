@@ -25,6 +25,7 @@ interface AuthContextType {
   loading: boolean;
   login: (token: string) => void;
   logout: () => void;
+  getToken: () => string | null;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -71,8 +72,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const getToken = useCallback((): string | null => {
+    return localStorage.getItem("token");
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, getToken }}>
       {children}
     </AuthContext.Provider>
   );

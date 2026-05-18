@@ -32,9 +32,10 @@ export default function SettingsPage() {
     const {
         accounts, activeAccountId, setActiveAccountId, activeAccount,
         addAccount, updateActiveAccount, deleteActiveAccount,
-        exportAccount, importAccount
+        exportAccount, importAccount, isSynced, syncAccounts
     } = useSettings();
 
+    const [isImporting, setIsImporting] = useState(false);
     const [isRenaming, setIsRenaming] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -171,6 +172,25 @@ export default function SettingsPage() {
             setToast({ type: 'error', message: err instanceof Error ? err.message : 'Sync failed' });
         } finally {
             setIsSyncing(false);
+            setTimeout(() => setToast(null), 3000);
+        }
+    };
+
+    const handleImportDataClick = async () => {
+        if (!user) return;
+        setIsImporting(true);
+        try {
+            const success = await syncAccounts();
+            if (success) {
+                setToast({ type: 'success', message: 'Data saved to cloud!' });
+            } else {
+                setToast({ type: 'error', message: 'Failed to save data' });
+            }
+        } catch (err) {
+            console.error(err);
+            setToast({ type: 'error', message: err instanceof Error ? err.message : 'Failed to save' });
+        } finally {
+            setIsImporting(false);
             setTimeout(() => setToast(null), 3000);
         }
     };
@@ -324,7 +344,7 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                             {/* Sign Out Button */}
-                            <button onClick={() => setShowLogoutModal(true)} className="px-4 py-2 bg-red-900/30 hover:bg-red-900/60 text-red-400 border border-red-900/50 hover:border-red-500 rounded-lg text-sm font-bold transition-colors w-max shadow-md">
+                            <button onClick={() => setShowLogoutModal(true)} className="cursor-pointer px-4 py-2 bg-red-900/30 hover:bg-red-900/60 text-red-400 border border-red-900/50 hover:border-red-500 rounded-lg text-sm font-bold transition-colors w-max shadow-md">
                                 Sign Out
                             </button>
                         </div>
@@ -346,28 +366,46 @@ export default function SettingsPage() {
                 <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg mb-8">
                     <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Data Management</h3>
                     <div className="flex flex-col gap-3">
-                        
-                        {/* Manual Sync Block */}
+
+                        {/* Import Data Block - Sync Accounts */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#18181b] border border-[#3f3f46] rounded-lg">
                             <div>
-                                <p className="text-sm font-bold text-white mb-0.5">Sync Local Data to Cloud</p>
-                                <p className="text-xs text-gray-300">Merge any un-synced data from this browser into your cloud account.</p>
+                                <p className="text-sm font-bold text-white mb-0.5">Import Data</p>
+                                <p className="text-xs text-gray-300">Save your account data to our database and automatically back up every time you import. If your player ID is already linked to another email, we'll migrate it to your new account.</p>
                             </div>
 
-                            <button 
+                            <button
+                                type="button"
+                                onClick={handleImportDataClick}
+                                disabled={!user || isImporting}
+                                className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:text-gray-500 disabled:border-[#52525b]/50 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-w-[140px]"
+                            >
+                                {!user ? 'Sign in to Import' : (isImporting ? 'Saving...' : 'Import Data')}
+                            </button>
+
+                        </div>
+
+                        {/* Manual Sync Wishes Block */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#18181b] border border-[#3f3f46] rounded-lg">
+                            <div>
+                                <p className="text-sm font-bold text-white mb-0.5">Sync Wishes</p>
+                                <p className="text-xs text-gray-300">Upload your wish history to the cloud.</p>
+                            </div>
+
+                            <button
                                 type="button"
                                 onClick={handleSyncClick}
-                                disabled={!user || isSyncing || cooldown > 0} 
+                                disabled={!user || isSyncing || cooldown > 0}
                                 className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:opacity-50 disabled:hover:border-[#52525b] disabled:hover:text-gray-300 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-w-[120px]"
                             >
-                                {isSyncing 
-                                    ? 'Syncing...' 
-                                    : cooldown > 0 
-                                        ? `Synced (${cooldown}s)` 
+                                {isSyncing
+                                    ? 'Syncing...'
+                                    : cooldown > 0
+                                        ? `Synced (${cooldown}s})`
                                         : 'Sync to Cloud'
                                 }
                             </button>
-                            
+
                         </div>
                     </div>
                 </div>

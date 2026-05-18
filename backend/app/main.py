@@ -2,16 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from app.database import Base, engine
 from app.limiter import limiter
 from app.auth.router import router as auth_router
 from app.wishes.router import router as wishes_router
-# Import models here so they are registered with Base for create_all
-from app.auth import models as auth_models
-from app.accounts import models as account_models
-from app.wishes import models as wish_models
-
-Base.metadata.create_all(bind=engine)
+from app.accounts.router import router as accounts_router
 
 app = FastAPI()
 
@@ -28,6 +22,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(wishes_router)
+app.include_router(accounts_router)
 
 @app.get("/")
 def root():
