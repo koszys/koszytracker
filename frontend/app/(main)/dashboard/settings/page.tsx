@@ -134,15 +134,45 @@ export default function SettingsPage() {
         setImportModalData(null);
     };
 
-    const handleSyncClick = () => {
+    const handleSyncClick = async () => {
         setIsSyncing(true);
-        // Simulate sync
-        setTimeout(() => {
-            setIsSyncing(false);
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) throw new Error("Not authenticated");
+
+            const existingWishes = localStorage.getItem(`wishes-${game.id}`);
+            const wishes = existingWishes ? JSON.parse(existingWishes) : [];
+
+            if (wishes.length === 0) {
+                setToast({ type: 'error', message: 'No local wishes to sync.' });
+                setTimeout(() => setToast(null), 3000);
+                setIsSyncing(false);
+                return;
+            }
+
+            const response = await fetch("http://localhost:8000/api/wishes/sync", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ game_id: game.id, wishes }),
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.detail || "Failed to sync");
+            }
+
             setCooldown(30);
-            setToast({ type: 'success', message: 'Data synced to cloud successfully!' });
+            setToast({ type: 'success', message: data.message || 'Data synced to cloud successfully!' });
+        } catch (err) {
+            console.error(err);
+            setToast({ type: 'error', message: err instanceof Error ? err.message : 'Sync failed' });
+        } finally {
+            setIsSyncing(false);
             setTimeout(() => setToast(null), 3000);
-        }, 2000);
+        }
     };
 
     const handleRenameSubmit = (e: React.KeyboardEvent) => {

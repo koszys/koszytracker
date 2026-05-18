@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
 
 interface User {
@@ -17,6 +17,7 @@ interface JwtPayload {
   email: string;
   name?: string;
   picture?: string;
+  identities?: { provider: string }[];
 }
 
 interface AuthContextType {
@@ -37,13 +38,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (token) {
       try {
         const decoded = jwtDecode<JwtPayload>(token);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser({ 
             id: decoded.sub, 
             email: decoded.email, 
             name: decoded.name, 
             picture: decoded.picture,
-            avatar: decoded.picture
+            avatar: decoded.picture,
+            identities: decoded.identities
         });
       } catch {
         localStorage.removeItem("token");
@@ -52,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
-  const login = (token: string) => {
+  const login = useCallback((token: string) => {
     localStorage.setItem("token", token);
     const decoded = jwtDecode<JwtPayload>(token);
     setUser({ 
@@ -60,14 +61,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: decoded.email, 
         name: decoded.name, 
         picture: decoded.picture,
-        avatar: decoded.picture
+        avatar: decoded.picture,
+        identities: decoded.identities
     });
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     setUser(null);
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, loading, login, logout }}>

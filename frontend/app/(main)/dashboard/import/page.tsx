@@ -29,12 +29,18 @@ export default function ImportPage() {
         setResult(null);
 
         try {
+            const token = localStorage.getItem("token");
+            const headers: Record<string, string> = {
+                "Content-Type": "application/json",
+            };
+            if (token) {
+                headers["Authorization"] = `Bearer ${token}`;
+            }
+
             const response = await fetch("http://localhost:8000/api/wishes/import", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ url }),
+                headers,
+                body: JSON.stringify({ url, game_id: game.id }),
             });
 
             const data = await response.json();

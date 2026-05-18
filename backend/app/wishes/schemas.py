@@ -3,6 +3,7 @@ from typing import Optional, List
 from datetime import datetime
 
 class WishBase(BaseModel):
+    wish_uid: str
     gacha_type: int
     item_id: str
     item_name: str
@@ -22,6 +23,7 @@ class Wish(WishBase):
 
 class ImportWishesRequest(BaseModel):
     url: str
+    game_id: str
     account_id: Optional[int] = None
 
 class WishData(BaseModel):

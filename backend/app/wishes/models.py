@@ -6,7 +6,8 @@ class Wish(Base):
     __tablename__ = "wishes"
     
     id = Column(Integer, primary_key=True, index=True)
-    account_id = Column(Integer, ForeignKey("genshin_accounts.id"))
+    wish_uid = Column(String, unique=True, index=True)
+    account_id = Column(Integer, ForeignKey("game_accounts.id"))
     gacha_type = Column(Integer)
     item_id = Column(String)
     item_name = Column(String)
@@ -14,4 +15,4 @@ class Wish(Base):
     timestamp = Column(DateTime)
     banner_id = Column(String, nullable=True)
     
-    account = relationship("GenshinAccount", back_populates="wishes")
+    account = relationship("GameAccount", back_populates="wishes")
