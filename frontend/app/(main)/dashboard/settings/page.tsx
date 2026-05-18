@@ -9,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import AuthModal from "@/app/(main)/auth/components/AuthModal";
 import LogoutModal from "@/app/(main)/auth/components/LogoutModal";
 import { getGameTerms } from "@/config/gameTerms";
-import { getCurrentGame } from "@/config/games";
+import { useGame } from "@/contexts/GameContext";
 
 interface ImportData {
     version: string;
@@ -24,7 +24,7 @@ interface ImportData {
 }
 
 export default function SettingsPage() {
-    const game = getCurrentGame();
+    const { activeGame: game } = useGame();
     const terms = getGameTerms(game.id);
     const { user, logout } = useAuth();
     const [mounted, setMounted] = useState(false);
@@ -171,13 +171,13 @@ export default function SettingsPage() {
 
             {/* Delete Modal */}
             {showDeleteModal && mounted && createPortal(
-                <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
-                    <div className="bg-[#1c1d21] border border-[#33343a] p-6 rounded-xl max-w-sm w-full shadow-2xl">
+                <div className="fixed inset-0 bg-[#09090b]/90 z-[100] flex items-center justify-center p-4">
+                    <div className="bg-[#18181b] border border-white/10 p-6 rounded-xl max-w-sm w-full shadow-2xl">
                         <h3 className="text-white font-bold text-lg mb-6">Are you sure you want to delete this account?</h3>
                         <div className="flex gap-3 justify-end">
                             <button
                                 onClick={() => setShowDeleteModal(false)}
-                                className="px-4 py-2 text-gray-400 hover:text-white hover:border-blue-500 transition-colors font-medium"
+                                className="px-4 py-2 text-gray-400 hover:text-white hover:border-theme transition-colors font-medium"
                             >
                                 Cancel
                             </button>
@@ -196,13 +196,13 @@ export default function SettingsPage() {
 
             {/* Import Confirmation Modal */}
             {importModalData && mounted && createPortal(
-                <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
-                    <div className="bg-[#1c1d21] border border-[#33343a] p-6 rounded-xl max-w-sm w-full shadow-2xl">
+                <div className="fixed inset-0 bg-[#09090b]/90 z-[100] flex items-center justify-center p-4">
+                    <div className="bg-[#18181b] border border-white/10 p-6 rounded-xl max-w-sm w-full shadow-2xl">
                         <h3 className="text-white font-bold text-lg mb-2">Import Account Data</h3>
                         <p className="text-sm text-gray-400 mb-4">
                             This will add <span className="text-white font-bold">{importModalData.data.account.name}</span> as a new account.
                         </p>
-                        <div className="bg-[#24252a] rounded-lg p-3 mb-6">
+                        <div className="bg-white/5 rounded-lg p-3 mb-6 border border-white/10">
                             <p className="text-xs text-gray-400 mb-1">Account Name</p>
                             <p className="text-sm text-white font-bold">{importModalData.data.account.name}</p>
                             <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
@@ -219,13 +219,13 @@ export default function SettingsPage() {
                         <div className="flex gap-3 justify-end">
                             <button
                                 onClick={() => setImportModalData(null)}
-                                className="px-4 py-2 text-gray-400 hover:text-white hover:border-blue-500 transition-colors font-medium"
+                                className="px-4 py-2 text-gray-400 hover:text-white hover:border-theme transition-colors font-medium"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleConfirmImport}
-                                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white border border-blue-500 px-5 py-2 rounded-lg font-bold transition-colors shadow-md"
+                                className="flex items-center gap-1.5 bg-gradient-to-r from-theme-from to-theme-to hover:brightness-110 text-white border border-theme px-5 py-2 rounded-lg font-bold transition-all shadow-[0_0_10px_var(--theme-glow)]"
                             >
                                 Import
                             </button>
@@ -238,12 +238,12 @@ export default function SettingsPage() {
             <div className="space-y-4">
 
                 {/* Auth Account Block */}
-                <div className="bg-[#24252a] border border-[#33343a] rounded-xl p-4 md:p-6 shadow-sm mb-8">
+                <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg mb-8">
                     <div className="flex items-center justify-between mb-5">
                         <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider">Site Account</h3>
                         
                         {user && user.identities && (
-                            <div className="flex items-center gap-1.5 p-1 px-2.5 rounded-full border border-[#33343a] bg-[#1c1d21]/50 text-xs text-gray-400 font-medium">
+                            <div className="flex items-center gap-1.5 p-1 px-2.5 rounded-full border border-[#52525b] bg-[#1c1d21]/50 text-xs text-gray-400 font-medium">
                                 <span className="text-[10px] text-gray-500 mr-0.5">Connected:</span>
                                 
                                 {user.identities.map((identity) => {
@@ -279,12 +279,12 @@ export default function SettingsPage() {
 
                     {user ? (
                         // Logged in state
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 bg-[#1c1d21] border border-[#33343a] rounded-lg">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 bg-[#18181b] border border-[#3f3f46] rounded-lg">
                             <div className="flex items-center gap-3">
                                 {user.avatar ? (
-                                    <Image src={user.avatar} alt="Profile" width={40} height={40} referrerPolicy="no-referrer" className="w-10 h-10 rounded-full object-cover border border-[#33343a]" />
+                                    <Image src={user.avatar} alt="Profile" width={40} height={40} referrerPolicy="no-referrer" className="w-10 h-10 rounded-full object-cover border border-[#52525b]" />
                                 ) : (
-                                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg bg-blue-600">
+                                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg bg-gradient-to-br from-theme-from to-theme-to">
                                         {user.name?.charAt(0).toUpperCase() || '?'}
                                     </div>
                                 )}
@@ -300,12 +300,12 @@ export default function SettingsPage() {
                         </div>
                     ) : (
                         // Logged out state
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 bg-[#1c1d21] border border-[#33343a] rounded-lg">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 bg-[#18181b] border border-[#3f3f46] rounded-lg">
                             <div>
                                 <p className="text-sm font-bold text-white mb-1">You are not signed in.</p>
-                                <p className="text-xs text-gray-400">Sign in to automatically save and sync your data.</p>
+                                <p className="text-xs text-gray-300">Sign in to automatically save and sync your data.</p>
                             </div>
-                            <button onClick={() => setShowAuthModal(true)} className="px-6 py-2 bg-blue-600 hover:bg-blue-500 border border-transparent hover:border-white text-white rounded-lg text-sm font-bold transition-colors shadow-md w-full sm:w-auto cursor-pointer">
+                            <button onClick={() => setShowAuthModal(true)} className="px-6 py-2 bg-theme hover:brightness-110 border border-transparent hover:border-white text-white rounded-lg text-sm font-bold transition-all w-full sm:w-auto cursor-pointer">
                                 Sign In
                             </button>
                         </div>
@@ -313,22 +313,22 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Data Management Section */}
-                <div className="bg-[#24252a] border border-[#33343a] rounded-xl p-4 md:p-6 shadow-sm mb-8">
+                <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg mb-8">
                     <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Data Management</h3>
                     <div className="flex flex-col gap-3">
                         
                         {/* Manual Sync Block */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#1c1d21] border border-[#33343a] rounded-lg">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#18181b] border border-[#3f3f46] rounded-lg">
                             <div>
                                 <p className="text-sm font-bold text-white mb-0.5">Sync Local Data to Cloud</p>
-                                <p className="text-xs text-gray-400">Merge any un-synced data from this browser into your cloud account.</p>
+                                <p className="text-xs text-gray-300">Merge any un-synced data from this browser into your cloud account.</p>
                             </div>
 
                             <button 
                                 type="button"
                                 onClick={handleSyncClick}
                                 disabled={!user || isSyncing || cooldown > 0} 
-                                className="px-4 py-2 bg-[#33343a] hover:bg-[#4b4c53] disabled:opacity-50 disabled:hover:bg-[#33343a] text-white border border-[#4b4c53] hover:border-blue-500 rounded-lg text-sm font-bold transition-colors shadow-sm whitespace-nowrap min-w-[120px]"
+                                className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:opacity-50 disabled:hover:border-[#52525b] disabled:hover:text-gray-300 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-w-[120px]"
                             >
                                 {isSyncing 
                                     ? 'Syncing...' 
@@ -343,7 +343,7 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Account Manager */}
-                <div className="bg-[#24252a] border border-[#33343a] rounded-xl p-4 md:p-6 shadow-sm">
+                <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg mb-8">
                     <p className="text-sm text-gray-300 mb-1">More than one account? Add it here.</p>
                     <p className="text-sm font-bold text-white mb-4">Importing will add the account to your list.</p>
 
@@ -351,7 +351,7 @@ export default function SettingsPage() {
                         <div className="flex flex-wrap items-center gap-2">
                             <button
                                 onClick={addAccount}
-                                className="flex items-center gap-1.5 bg-[#33343a] hover:bg-[#4b4c53] text-white px-3 py-1.5 rounded-md text-sm font-bold border border-transparent hover:border-blue-500 transition-colors"
+                                className="cursor-pointer flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                                 Add
@@ -360,7 +360,7 @@ export default function SettingsPage() {
                             <select
                                 value={activeAccountId}
                                 onChange={(e) => setActiveAccountId(e.target.value)}
-                                className="bg-[#1c1d21] border border-[#33343a] text-white text-sm rounded-md px-3 py-1.5 min-w-[120px] focus:outline-none focus:border-blue-500 appearance-none"
+                                className="bg-[#18181b] border border-[#52525b] text-white text-sm rounded-md px-3 py-1.5 min-w-[120px] focus:outline-none focus:border-theme/50 focus:ring-1 focus:ring-theme/50 appearance-none transition-all"
                             >
                                 {accounts.map((acc) => (
                                     <option key={acc.id} value={acc.id}>{acc.name}</option>
@@ -369,7 +369,7 @@ export default function SettingsPage() {
 
                             <button
                                 onClick={() => setIsRenaming(!isRenaming)}
-                                className="flex items-center gap-1.5 bg-transparent border border-[#33343a] hover:border-blue-500 text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+                                className="cursor-pointer flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                 Rename
@@ -386,8 +386,8 @@ export default function SettingsPage() {
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2">
-                            <button onClick={handleExportAccount} className="bg-transparent border border-[#33343a] hover:border-blue-500 hover:bg-[#33343a] text-gray-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Export Account</button>
-                            <button onClick={handleImportClick} className="bg-transparent border border-[#33343a] hover:border-blue-500 hover:bg-[#33343a] text-gray-300 px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Import Account</button>
+                            <button onClick={handleExportAccount} className="cursor-pointer bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Export Account</button>
+                            <button onClick={handleImportClick} className="cursor-pointer bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Import Account</button>
                             <input
                                 ref={fileInputRef}
                                 type="file"
@@ -407,15 +407,15 @@ export default function SettingsPage() {
                                 value={activeAccount?.name || ''}
                                 onChange={(e) => updateActiveAccount('name', e.target.value)}
                                 onKeyDown={handleRenameSubmit}
-                                className="bg-[#1c1d21] border border-blue-500 text-white text-sm rounded-md px-3 py-1.5 w-full max-w-[256px] focus:outline-none"
+                                className="bg-[#18181b] border border-theme/50 text-white text-sm rounded-md px-3 py-1.5 w-full max-w-[256px] focus:outline-none focus:ring-1 focus:ring-theme/50 transition-all"
                             />
-                            <button onClick={() => setIsRenaming(false)} className="text-sm px-2 py-1.5 text-blue-500 hover:text-blue-300 hover:border-blue-500 font-bold">Save</button>
+                            <button onClick={() => setIsRenaming(false)} className="text-sm px-2 py-1.5 text-theme hover:brightness-110 hover:border-theme font-bold">Save</button>
                         </div>
                     )}
                 </div>
 
                 {/* Account Settings */}
-                <div className="bg-[#24252a] border border-[#33343a] rounded-xl p-4 md:p-6 shadow-sm">
+                <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg">
                     <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Account Settings</h3>
                     <div className="flex flex-wrap items-end gap-4 md:gap-6">
 
@@ -425,7 +425,7 @@ export default function SettingsPage() {
                                 <label className="text-xs text-gray-400 font-bold uppercase border-b border-dashed border-gray-500 cursor-help">
                                     {terms.ar}
                                 </label>
-                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1 bg-[#121212] border border-[#33343a] text-white text-[10px] md:text-xs font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl">
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1 bg-[#27272a] border border-[#52525b] text-white text-[10px] md:text-xs font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl">
                                     {terms.arFull}
                                 </div>
                             </div>
@@ -446,7 +446,7 @@ export default function SettingsPage() {
                                         updateActiveAccount('ar', 1);
                                     }
                                 }}
-                                className="bg-[#1c1d21] border border-[#33343a] text-white text-sm rounded-lg px-3 py-2 w-20 focus:outline-none focus:border-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                                className="bg-[#18181b] border border-[#52525b] text-white text-sm rounded-lg px-3 py-2 w-20 focus:outline-none focus:border-theme/50 focus:ring-1 focus:ring-theme/50 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
                             />
                         </div>
 
@@ -456,14 +456,14 @@ export default function SettingsPage() {
                                 <label className="text-xs text-gray-400 font-bold uppercase border-b border-dashed border-gray-500 cursor-help">
                                     {terms.wl}
                                 </label>
-                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1 bg-[#121212] border border-[#33343a] text-white text-[10px] md:text-xs font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl">
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1 bg-[#27272a] border border-[#52525b] text-white text-[10px] md:text-xs font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl">
                                     {terms.wlFull}
                                 </div>
                             </div>
                             <select
                                 value={activeAccount?.wl || '0'}
                                 onChange={(e) => updateActiveAccount('wl', e.target.value)}
-                                className="bg-[#1c1d21] border border-[#33343a] text-white text-sm rounded-lg px-3 py-2 min-w-[5rem] focus:outline-none focus:border-blue-500 appearance-none"
+                                className="bg-[#18181b] border border-[#52525b] text-white text-sm rounded-lg px-3 py-2 min-w-[5rem] focus:outline-none focus:border-theme/50 focus:ring-1 focus:ring-theme/50 transition-all appearance-none"
                             >
                                 {terms.wlOptions.map((opt) => (
                                     <option key={opt} value={opt}>
@@ -479,7 +479,7 @@ export default function SettingsPage() {
                             <select
                                 value={activeAccount?.server || 'America'}
                                 onChange={(e) => updateActiveAccount('server', e.target.value)}
-                                className="bg-[#1c1d21] border border-[#33343a] text-white text-sm rounded-lg px-3 py-2 w-32 focus:outline-none focus:border-blue-500"
+                                className="bg-[#18181b] border border-[#52525b] text-white text-sm rounded-lg px-3 py-2 w-32 focus:outline-none focus:border-theme/50 focus:ring-1 focus:ring-theme/50 transition-all"
                             >
                                 <option value="America">America</option>
                                 <option value="Europe">Europe</option>
@@ -490,17 +490,17 @@ export default function SettingsPage() {
                         {/* Dynamic Main Character Toggle */}
                         <div className="flex flex-col gap-1.5 min-w-[140px]">
                             <label className="text-xs text-gray-400 font-bold">{terms.mcTitle}</label>
-                            <div className="flex items-center bg-[#1c1d21] border border-[#33343a] rounded-lg h-[38px]">
+                            <div className="flex items-center bg-[#18181b] border border-[#52525b] rounded-lg h-[38px]">
                                 <button
                                     onClick={() => updateActiveAccount('gender', 'M')}
-                                    className={`flex-1 h-full px-3 flex items-center justify-center text-xs font-bold transition-colors border border-transparent hover:border-blue-500 cursor-pointer rounded-l-lg relative hover:z-10 ${activeAccount?.gender === 'M' ? 'bg-teal-600/30 text-teal-400' : 'text-gray-500 hover:text-gray-300 hover:bg-[#24252a]'}`}
+                                    className={`flex-1 h-full px-3 flex items-center justify-center text-xs font-bold transition-colors border border-transparent hover:border-theme cursor-pointer rounded-l-lg relative hover:z-10 ${activeAccount?.gender === 'M' ? 'bg-theme/30 text-white' : 'text-white hover:bg-[#24252a]'}`}
                                 >
                                     {terms.mcMale}
                                 </button>
-                                <div className="w-[1px] h-full bg-[#33343a]"></div>
+                                <div className="w-[1px] h-full bg-[#52525b]"></div>
                                 <button
                                     onClick={() => updateActiveAccount('gender', 'F')}
-                                    className={`flex-1 h-full px-3 flex items-center justify-center text-xs font-bold transition-colors border border-transparent hover:border-blue-500 cursor-pointer rounded-r-lg relative hover:z-10 ${activeAccount?.gender === 'F' ? 'bg-pink-600/30 text-pink-400' : 'text-gray-500 hover:text-gray-300 hover:bg-[#24252a]'}`}
+                                    className={`flex-1 h-full px-3 flex items-center justify-center text-xs font-bold transition-colors border border-transparent hover:border-theme cursor-pointer rounded-r-lg relative hover:z-10 ${activeAccount?.gender === 'F' ? 'bg-theme/30 text-white' : 'text-white hover:bg-[#24252a]'}`}
                                 >
                                     {terms.mcFemale}
                                 </button>
