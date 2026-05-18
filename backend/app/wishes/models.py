@@ -4,7 +4,7 @@ from app.database import Base
 
 class Wish(Base):
     __tablename__ = "wishes"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     wish_uid = Column(String, unique=True, index=True)
     account_id = Column(Integer, ForeignKey("game_accounts.id"))
@@ -14,5 +14,6 @@ class Wish(Base):
     rarity = Column(Integer)
     timestamp = Column(DateTime)
     banner_id = Column(String, nullable=True)
-    
+    last_synced_at = Column(DateTime, nullable=True)
+
     account = relationship("GameAccount", back_populates="wishes")

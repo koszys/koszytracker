@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import SectionHeader from "@/components/common/SectionHeader";
+import ConflictModal, { downloadConflictData, downloadBothConflictFiles } from "@/components/common/ConflictModal";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import AuthModal from "@/app/(main)/auth/components/AuthModal";
@@ -32,7 +33,8 @@ export default function SettingsPage() {
     const {
         accounts, activeAccountId, setActiveAccountId, activeAccount,
         addAccount, updateActiveAccount, deleteActiveAccount,
-        exportAccount, importAccount, isSynced, syncAccounts
+        exportData, importData, importLocalAccounts, lastSyncedAt, syncAccounts,
+        conflictData, setConflictData, resolveConflict
     } = useSettings();
 
     const [isImporting, setIsImporting] = useState(false);
@@ -58,11 +60,11 @@ export default function SettingsPage() {
         }
     }, [cooldown]);
 
-    const handleExportAccount = () => {
+    const handleExportData = () => {
         try {
-            const data = exportAccount();
+            const data = exportData();
             if (!data) {
-                setToast({ type: 'error', message: 'Failed to export account.' });
+                setToast({ type: 'error', message: 'Failed to export data.' });
                 setTimeout(() => setToast(null), 3000);
                 return;
             }
@@ -73,18 +75,17 @@ export default function SettingsPage() {
             const a = document.createElement('a');
             const date = new Date().toISOString().split('T')[0];
             a.href = url;
-            const fileName = activeAccount?.name.replace(/\s+/g, '-').toLowerCase() || 'account';
-            a.download = `koszy-${fileName}-${date}.json`;
+            a.download = `senti-moe-data-${date}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            setToast({ type: 'success', message: 'Account exported successfully!' });
+            setToast({ type: 'success', message: 'Data exported successfully!' });
             setTimeout(() => setToast(null), 3000);
         } catch (err) {
             console.error('Export error:', err);
-            setToast({ type: 'error', message: 'Failed to export account.' });
+            setToast({ type: 'error', message: 'Failed to export data.' });
             setTimeout(() => setToast(null), 3000);
         }
     };
@@ -115,20 +116,20 @@ export default function SettingsPage() {
         e.target.value = '';
     };
 
-    const handleConfirmImport = () => {
+    const handleConfirmImport = async () => {
         if (!importModalData) return;
 
         try {
-            const success = importAccount(JSON.stringify(importModalData.data));
+            const success = await importData(JSON.stringify(importModalData.data));
             if (success) {
-                setToast({ type: 'success', message: 'Account imported successfully!' });
+                setToast({ type: 'success', message: 'Data imported successfully!' });
                 setTimeout(() => setToast(null), 3000);
             } else {
                 throw new Error('Import failed');
             }
         } catch (err) {
             console.error('Import error:', err);
-            setToast({ type: 'error', message: 'Failed to import account.' });
+            setToast({ type: 'error', message: 'Failed to import data.' });
             setTimeout(() => setToast(null), 3000);
         }
 
@@ -180,8 +181,8 @@ export default function SettingsPage() {
         if (!user) return;
         setIsImporting(true);
         try {
-            const success = await syncAccounts();
-            if (success) {
+            const result = await syncAccounts();
+            if (result === true) {
                 setToast({ type: 'success', message: 'Data saved to cloud!' });
             } else {
                 setToast({ type: 'error', message: 'Failed to save data' });
@@ -219,6 +220,22 @@ export default function SettingsPage() {
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
             <LogoutModal isOpen={showLogoutModal} onCancel={() => setShowLogoutModal(false)} onConfirm={confirmLogout} />
 
+            <ConflictModal
+                isOpen={!!conflictData}
+                conflictData={conflictData}
+                onResolve={async (resolution) => {
+                    await resolveConflict(resolution);
+                    setToast({ type: 'success', message: `Data resolved using ${resolution} data` });
+                    setTimeout(() => setToast(null), 3000);
+                }}
+                onDownloadBoth={() => {
+                    if (conflictData) {
+                        downloadBothConflictFiles(conflictData.localData, conflictData.cloudData, conflictData.type);
+                    }
+                }}
+                onClose={() => setConflictData(null)}
+            />
+
             {/* Delete Modal */}
             {showDeleteModal && mounted && createPortal(
                 <div className="fixed inset-0 bg-[#09090b]/90 z-[100] flex items-center justify-center p-4">
@@ -227,13 +244,13 @@ export default function SettingsPage() {
                         <div className="flex gap-3 justify-end">
                             <button
                                 onClick={() => setShowDeleteModal(false)}
-                                className="px-4 py-2 text-gray-400 hover:text-white hover:border-theme transition-colors font-medium"
+                                className="cursor-pointer px-4 py-2 text-gray-400 hover:text-white hover:border-theme transition-colors font-medium"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={confirmDelete}
-                                className="flex items-center gap-1.5 bg-red-900/30 hover:bg-red-900/60 text-red-400 border border-red-900/50 hover:border-red-500 px-5 py-2 rounded-lg font-bold transition-colors shadow-md"
+                                className="cursor-pointer flex items-center gap-1.5 bg-red-900/30 hover:bg-red-900/60 text-red-400 border border-red-900/50 hover:border-red-500 px-5 py-2 rounded-lg font-bold transition-colors shadow-md"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                 Delete
@@ -248,7 +265,7 @@ export default function SettingsPage() {
             {importModalData && mounted && createPortal(
                 <div className="fixed inset-0 bg-[#09090b]/90 z-[100] flex items-center justify-center p-4">
                     <div className="bg-[#18181b] border border-white/10 p-6 rounded-xl max-w-sm w-full shadow-2xl">
-                        <h3 className="text-white font-bold text-lg mb-2">Import Account Data</h3>
+                        <h3 className="text-white font-bold text-lg mb-2">Import Data</h3>
                         <p className="text-sm text-gray-400 mb-4">
                             This will add <span className="text-white font-bold">{importModalData.data.account.name}</span> as a new account.
                         </p>
@@ -370,7 +387,7 @@ export default function SettingsPage() {
                         {/* Import Data Block - Sync Accounts */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#18181b] border border-[#3f3f46] rounded-lg">
                             <div>
-                                <p className="text-sm font-bold text-white mb-0.5">Import Data</p>
+                                <p className="text-sm font-bold text-white mb-0.5">Save to Cloud</p>
                                 <p className="text-xs text-gray-300">Save your account data to our database and automatically back up every time you import. If your player ID is already linked to another email, we'll migrate it to your new account.</p>
                             </div>
 
@@ -380,7 +397,7 @@ export default function SettingsPage() {
                                 disabled={!user || isImporting}
                                 className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:text-gray-500 disabled:border-[#52525b]/50 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-w-[140px]"
                             >
-                                {!user ? 'Sign in to Import' : (isImporting ? 'Saving...' : 'Import Data')}
+                                {!user ? 'Sign in to Save' : (isImporting ? 'Saving...' : 'Save to Cloud')}
                             </button>
 
                         </div>
@@ -388,24 +405,44 @@ export default function SettingsPage() {
                         {/* Manual Sync Wishes Block */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#18181b] border border-[#3f3f46] rounded-lg">
                             <div>
-                                <p className="text-sm font-bold text-white mb-0.5">Sync Wishes</p>
-                                <p className="text-xs text-gray-300">Upload your wish history to the cloud.</p>
+                                <p className="text-sm font-bold text-white mb-0.5">Import Local Data</p>
+                                <p className="text-xs text-gray-300">Import your local accounts. You'll still need to manually sync to cloud to save.</p>
                             </div>
 
                             <button
                                 type="button"
-                                onClick={handleSyncClick}
-                                disabled={!user || isSyncing || cooldown > 0}
-                                className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:opacity-50 disabled:hover:border-[#52525b] disabled:hover:text-gray-300 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-w-[120px]"
+                                onClick={importLocalAccounts}
+                                disabled={!user}
+                                className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:opacity-50 disabled:hover:border-[#52525b] disabled:hover:text-gray-300 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-w-[140px]"
                             >
-                                {isSyncing
-                                    ? 'Syncing...'
-                                    : cooldown > 0
-                                        ? `Synced (${cooldown}s})`
-                                        : 'Sync to Cloud'
-                                }
+                                Import Local Data
                             </button>
 
+                        </div>
+
+                        {/* Sync Status */}
+                        <div className="p-4 bg-[#18181b] border border-[#3f3f46] rounded-lg">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div className="text-sm">
+                                    <span className="text-gray-300">Sync Status: </span>
+                                    <span className={lastSyncedAt ? 'text-green-400' : 'text-yellow-400'}>
+                                        {lastSyncedAt ? 'Synced' : 'Not Synced'}
+                                    </span>
+                                </div>
+                                {lastSyncedAt && (
+                                    <div className="text-xs text-gray-400">
+                                        Last Sync: {lastSyncedAt.toLocaleString('en-US', {
+                                            weekday: 'long',
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            second: '2-digit'
+                                        })}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -446,7 +483,7 @@ export default function SettingsPage() {
                             <button
                                 onClick={() => setShowDeleteModal(true)}
                                 disabled={accounts.length === 1}
-                                className="flex items-center gap-1.5 bg-red-900/30 hover:bg-red-900/60 text-red-400 border border-red-900/50 hover:border-red-500 px-3 py-1.5 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="cursor-pointer flex items-center gap-1.5 bg-red-900/30 hover:bg-red-900/60 text-red-400 border border-red-900/50 hover:border-red-500 px-3 py-1.5 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                 Delete
@@ -454,8 +491,8 @@ export default function SettingsPage() {
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2">
-                            <button onClick={handleExportAccount} className="cursor-pointer bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Export Account</button>
-                            <button onClick={handleImportClick} className="cursor-pointer bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Import Account</button>
+                            <button onClick={handleExportData} className="cursor-pointer bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Export Data</button>
+                            <button onClick={handleImportClick} className="cursor-pointer bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Import Data</button>
                             <input
                                 ref={fileInputRef}
                                 type="file"

@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from datetime import datetime
 from app.database import Base
 
 class GameAccount(Base):
@@ -14,6 +15,7 @@ class GameAccount(Base):
     ar = Column(Integer, default=1)
     wl = Column(String, default="0")
     mc_option = Column(String, default="")
+    last_synced_at = Column(DateTime, nullable=True)
 
     user = relationship("User", back_populates="game_accounts")
     wishes = relationship("Wish", back_populates="account")

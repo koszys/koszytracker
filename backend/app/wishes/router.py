@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Header, Request
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.limiter import limiter
-from .schemas import ImportWishesRequest, WishCreate
-from .crud import get_wishes_by_account, get_or_create_game_account, batch_create_wishes
+from .schemas import ImportWishesRequest, WishCreate, WishesCheckConflictRequest, WishesCheckConflictResponse, WishesResolveConflictRequest, WishesResolveConflictResponse
+from .crud import get_wishes_by_account, get_or_create_game_account, batch_create_wishes, check_wishes_conflict, resolve_wishes_conflict
 from .fetchers import get_fetcher
 from app.auth.crud import decode_token
 from datetime import datetime
@@ -166,3 +166,47 @@ async def get_wishes(
         
     wishes = get_wishes_by_account(db, account_id)
     return {"wishes": wishes}
+
+@router.post("/check-conflict", response_model=WishesCheckConflictResponse)
+def wishes_check_conflict(
+    request: WishesCheckConflictRequest,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_optional_user_id)
+):
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Must be logged in")
+    result = check_wishes_conflict(
+        db,
+        user_id,
+        request.game_id,
+        request.wishes
+    )
+    return WishesCheckConflictResponse(
+        has_conflict=result["has_conflict"],
+        local_count=result["local_count"],
+        cloud_count=result["cloud_count"],
+        local_modified_at=result["local_modified_at"],
+        cloud_modified_at=result["cloud_modified_at"],
+        message=result["message"]
+    )
+
+@router.post("/resolve-conflict", response_model=WishesResolveConflictResponse)
+def wishes_resolve_conflict(
+    request: WishesResolveConflictRequest,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_optional_user_id)
+):
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Must be logged in")
+    count = resolve_wishes_conflict(
+        db,
+        user_id,
+        request.game_id,
+        request.resolution,
+        request.local_wishes,
+        request.cloud_wishes
+    )
+    return WishesResolveConflictResponse(
+        count=count,
+        message=f"Resolved conflict using {request.resolution} data"
+    )

@@ -17,6 +17,7 @@ class WishCreate(WishBase):
 class Wish(WishBase):
     id: int
     account_id: int
+    last_synced_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -32,3 +33,25 @@ class WishData(BaseModel):
     rarity: int
     gacha_type: int
     time: str
+
+class WishesCheckConflictRequest(BaseModel):
+    game_id: str
+    wishes: List[dict]
+
+class WishesCheckConflictResponse(BaseModel):
+    has_conflict: bool
+    local_count: int
+    cloud_count: int
+    local_modified_at: Optional[datetime] = None
+    cloud_modified_at: Optional[datetime] = None
+    message: str
+
+class WishesResolveConflictRequest(BaseModel):
+    game_id: str
+    resolution: str
+    local_wishes: List[dict]
+    cloud_wishes: List[dict]
+
+class WishesResolveConflictResponse(BaseModel):
+    count: int
+    message: str

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from typing import Optional
+from datetime import datetime
 from app.database import get_db
 from app.auth.crud import decode_token
 from . import crud
@@ -9,7 +10,11 @@ from .schemas import (
     GameAccountUpdate,
     GameAccountResponse,
     SyncAccountsRequest,
-    SyncAccountsResponse
+    SyncAccountsResponse,
+    ConflictCheckRequest,
+    ConflictCheckResponse,
+    ConflictResolveRequest,
+    ConflictResolveResponse
 )
 
 router = APIRouter(prefix="/api/accounts", tags=["accounts"])
@@ -71,7 +76,58 @@ def sync_accounts(
         request.game_id,
         [acc.model_dump() for acc in request.accounts]
     )
+    now = datetime.utcnow()
+    for acc in accounts:
+        acc.last_synced_at = now
+    db.commit()
+    for acc in accounts:
+        db.refresh(acc)
     return SyncAccountsResponse(
         accounts=accounts,
         message=f"Synced {len(accounts)} accounts"
+    )
+
+@router.post("/check-conflict", response_model=ConflictCheckResponse)
+def check_conflict(
+    request: ConflictCheckRequest,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_user_id_from_token)
+):
+    result = crud.check_accounts_conflict(
+        db,
+        user_id,
+        request.game_id,
+        [acc.model_dump() for acc in request.accounts]
+    )
+    return ConflictCheckResponse(
+        has_conflict=result["has_conflict"],
+        local_modified_at=result["local_modified_at"],
+        cloud_modified_at=result["cloud_modified_at"],
+        cloud_accounts=result["cloud_accounts"],
+        message=result["message"]
+    )
+
+@router.post("/resolve-conflict", response_model=ConflictResolveResponse)
+def resolve_conflict(
+    request: ConflictResolveRequest,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_user_id_from_token)
+):
+    accounts = crud.resolve_accounts_conflict(
+        db,
+        user_id,
+        request.game_id,
+        request.resolution,
+        [acc.model_dump() for acc in request.local_accounts],
+        request.cloud_accounts
+    )
+    now = datetime.utcnow()
+    for acc in accounts:
+        acc.last_synced_at = now
+    db.commit()
+    for acc in accounts:
+        db.refresh(acc)
+    return ConflictResolveResponse(
+        accounts=accounts,
+        message=f"Resolved conflict using {request.resolution} data"
     )
