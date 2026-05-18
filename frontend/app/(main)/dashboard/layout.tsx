@@ -4,41 +4,33 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { GAME_CONFIG } from "@/config/games";
+import { GAME_CONFIG, getCurrentGame } from "@/config/games";
 import { SettingsProvider } from "@/contexts/SettingsContext";
-import { GameProvider, useGame } from "@/contexts/GameContext";
 import SocialButton from "@/components/common/SocialButton";
 import Footer from "@/components/common/Footer";
 
-function DashboardLayoutContent({
+const currentGame = getCurrentGame();
+
+const navLinks = [
+    { name: "Wish Tracker", path: "/dashboard/tracker", icon: "/assets/genshin/genshin-wish.png", dynamicName: currentGame.wishName },
+    { name: "Import Wishes", path: "/dashboard/import", icon: "/assets/genshin/genshin-cursor.png", dynamicName: currentGame.importName },
+    { name: "Settings", path: "/dashboard/settings", icon: "/assets/genshin/settings-icon.webp" },
+];
+
+export default function AppLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const { activeGame: currentGame, setActiveGameId } = useGame();
-
-    const navLinks = [
-        { name: "Wish Tracker", path: "/dashboard/tracker", icon: currentGame.trackerIcon, dynamicName: currentGame.trackerName },
-        { name: "Import Wishes", path: "/dashboard/import", icon: currentGame.importIcon, dynamicName: currentGame.importName },
-        { name: "Settings", path: "/dashboard/settings", icon: currentGame.settingsIcon },
-    ];
     const pathname = usePathname();
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
     const [isGameSwitcherOpen, setIsGameSwitcherOpen] = useState(false);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-    const iconButtonClass = "p-1.5 text-white bg-white/5 hover:bg-white/10 border border-transparent hover:border-theme/50 rounded-md transition-all flex items-center justify-center";
+    const iconButtonClass = "p-1.5 text-white bg-white/5 hover:bg-white/10 border border-transparent hover:border-blue-500 rounded-md transition-all flex items-center justify-center";
 
     return (
-        <div 
-            className="relative flex h-screen w-full bg-black text-gray-300 font-sans selection:bg-theme/50 selection:text-white overflow-hidden"
-            style={{
-                '--theme-color': currentGame.themeColor,
-                '--theme-gradient-from': currentGame.themeGradientFrom,
-                '--theme-gradient-to': currentGame.themeGradientTo,
-                '--theme-glow': currentGame.themeGlow,
-            } as React.CSSProperties}
-        >
+        <div className="relative flex h-screen w-full bg-[#121212] text-gray-300 font-sans selection:bg-blue-500 selection:text-white overflow-hidden">
 
             {/* Background */}
             <div
@@ -56,21 +48,21 @@ function DashboardLayoutContent({
 
             {/* Sidebar */}
             <aside className={`
-                fixed md:static inset-y-0 left-0 z-50 bg-[#18181b] border-r border-white/5 flex flex-col flex-shrink-0
+                fixed md:static inset-y-0 left-0 z-50 bg-[#1c1d21] border-r border-[#33343a] flex flex-col flex-shrink-0
                 transition-all duration-300 ease-in-out
                 ${isMobileNavOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0'}
                 ${isSidebarCollapsed ? 'md:w-20' : 'md:w-64'}
             `}>
 
                 {/* Logo */}
-                <div className="h-16 flex items-center justify-center px-4 border-b border-white/5 flex-shrink-0">
+                <div className="h-16 flex items-center justify-center px-4 border-b border-[#33343a] flex-shrink-0">
                     {(!isSidebarCollapsed || isMobileNavOpen) ? (
-                        <Link href="/dashboard" className="text-xl font-black text-white tracking-widest overflow-hidden whitespace-nowrap w-full text-left hover:text-theme transition-colors">
-                            SENTI<span className="text-theme">.MOE</span>
+                        <Link href="/dashboard" className="text-xl font-black text-white tracking-widest overflow-hidden whitespace-nowrap w-full text-left hover:text-blue-500 transition-colors">
+                            KOSZY<span className="text-blue-500">.MOE</span>
                         </Link>
                     ) : (
-                        <Link href="/dashboard" className="text-xl font-black text-white tracking-widest hover:text-theme transition-colors">
-                            S<span className="text-theme">.</span>
+                        <Link href="/dashboard" className="text-xl font-black text-white tracking-widest hover:text-blue-500 transition-colors">
+                            K<span className="text-blue-500">.</span>
                         </Link>
                     )}
 
@@ -89,12 +81,12 @@ function DashboardLayoutContent({
                             flex items-center rounded-md font-bold text-sm transition-all whitespace-nowrap overflow-hidden
                             ${isSidebarCollapsed && !isMobileNavOpen ? 'justify-center p-3' : 'px-4 py-3 gap-3'}
                             ${pathname === '/dashboard'
-                                ? 'bg-white/10 text-white border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.05)]'
-                                : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent'}
+                                ? 'bg-gray-400/20 text-white hover:text-white border border-blue-500'
+                                : 'text-gray-400 hover:bg-[#2a2b30] hover:text-white border border-transparent'}
                         `}
                     >
                         <Image
-                            src={currentGame.homeIcon}
+                            src="/assets/genshin/genshin-statue.png"
                             alt="Home"
                             width={24}
                             height={24}
@@ -109,7 +101,7 @@ function DashboardLayoutContent({
                     <button
                         onClick={() => setIsGameSwitcherOpen(true)}
                         className={`
-                            cursor-pointer group relative w-full rounded-md overflow-hidden border border-white/10 hover:border-theme/50 transition-all shadow-md
+                            group relative w-full rounded-md overflow-hidden border border-[#33343a] hover:border-blue-500 transition-all shadow-md
                             ${isSidebarCollapsed && !isMobileNavOpen ? 'h-12 flex items-center justify-center' : 'h-14 flex items-center'}
                         `}
                         title="Switch Game"
@@ -119,7 +111,7 @@ function DashboardLayoutContent({
                             style={{ backgroundImage: currentGame.bgUrl ? `url('${currentGame.bgUrl}')` : 'none' }}
                         ></div>
                         {(!isSidebarCollapsed || isMobileNavOpen) && (
-                            <div className="absolute inset-0 bg-gradient-to-r from-[#27272a]/90 via-[#27272a]/50 to-[#27272a]/20 z-10"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#121212]/90 via-[#121212]/50 to-[#121212]/20 z-10"></div>
                         )}
                         <div className={`relative z-20 w-full flex items-center justify-between px-3 ${isSidebarCollapsed && !isMobileNavOpen ? 'hidden' : ''}`}>
                             <span className="font-bold text-sm text-white truncate drop-shadow-md">{currentGame.name}</span>
@@ -145,8 +137,8 @@ function DashboardLayoutContent({
                                     flex items-center rounded-md font-bold text-sm transition-all whitespace-nowrap overflow-hidden
                                     ${isSidebarCollapsed && !isMobileNavOpen ? 'justify-center p-3' : 'px-4 py-3 gap-3'}
                                     ${isActive
-                                        ? 'bg-white/10 text-white border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.05)]'
-                                        : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent'}
+                                        ? 'bg-gray-400/20 text-white hover:text-white border border-blue-500'
+                                        : 'text-gray-400 hover:bg-[#2a2b30] hover:text-white border border-transparent'}
                                 `}
                             >
                                 <Image
@@ -167,7 +159,7 @@ function DashboardLayoutContent({
             <div className="flex-1 flex flex-col min-w-0 relative">
 
                 {/* Header */}
-                <header className="h-16 flex-shrink-0 bg-[#18181b] border-b border-white/5 flex items-center justify-between px-4 z-30">
+                <header className="h-16 flex-shrink-0 bg-[#1c1d21] border-b border-[#33343a] flex items-center justify-between px-4 z-30 shadow-sm">
 
                     <div className="flex items-center gap-2 md:gap-4">
                         <button
@@ -184,17 +176,17 @@ function DashboardLayoutContent({
                             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                             title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
                         >
-                            <svg className="cursor-pointer w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
 
                         <button
-                            className={`flex md:hidden ${iconButtonClass}`}
+                            className={`hidden md:flex ${iconButtonClass}`}
                             onClick={() => setIsGameSwitcherOpen(true)}
                             title={`Switching from ${currentGame.name}`}
                         >
-                            <svg className="cursor-pointer w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                             </svg>
                         </button>
@@ -225,43 +217,36 @@ function DashboardLayoutContent({
 
             {/* Game Switcher Drawer */}
             <div className={`
-                fixed inset-y-0 left-0 z-[70] w-[85%] sm:w-80 bg-[#18181b] border-r border-white/10 shadow-2xl
+                fixed inset-y-0 left-0 z-[70] w-[85%] sm:w-80 bg-[#1c1d21] border-r border-[#33343a] shadow-2xl
                 transform transition-transform duration-300 ease-in-out flex flex-col
                 ${isGameSwitcherOpen ? 'translate-x-0' : '-translate-x-full'}
             `}>
-                <div className="p-5 border-b border-white/10 flex items-center justify-between">
-                    <Link href="/" className="text-xl font-black text-white tracking-widest overflow-hidden whitespace-nowrap w-full text-left hover:text-theme transition-colors">
-                        SENTI<span className="text-theme">.MOE</span>
+                <div className="p-5 border-b border-[#33343a] flex items-center justify-between">
+                    <Link href="/" className="text-xl font-black text-white tracking-widest overflow-hidden whitespace-nowrap w-full text-left hover:text-blue-500 transition-colors">
+                        KOSZY<span className="text-blue-500">.MOE</span>
                     </Link>
 
                     <button onClick={() => setIsGameSwitcherOpen(false)} className={iconButtonClass}>
-                        <svg className="cursor-pointer w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
-                    {GAME_CONFIG.map((game) => {
-                        // Check if current page is valid for switching
-                        const isCurrentPageValid = navLinks.some(link => link.path === pathname) || pathname === '/dashboard';
-                        const targetHref = isCurrentPageValid ? pathname : '/dashboard';
-
-                        return game.status === 'active' ? (
+                    {GAME_CONFIG.map((game) => (
+                        game.status === 'active' ? (
                             <Link
                                 key={game.id}
-                                href={targetHref}
-                                onClick={() => {
-                                    setActiveGameId(game.id);
-                                    setIsGameSwitcherOpen(false);
-                                }}
-                                className="relative group block h-28 rounded-md overflow-hidden border border-white/10 hover:border-theme/50 transition-all shadow-md"
+                                href={game.path}
+                                onClick={() => setIsGameSwitcherOpen(false)}
+                                className="relative group block h-28 rounded-md overflow-hidden border border-[#33343a] hover:border-blue-500 transition-all shadow-md"
                             >
                                 <div
                                     className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
                                     style={{ backgroundImage: game.bgUrl ? `url('${game.bgUrl}')` : 'none' }}
                                 ></div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#27272a] via-[#27272a]/50 to-transparent z-10"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/50 to-transparent z-10"></div>
                                 <div className="absolute bottom-0 left-0 w-full p-3 z-20">
                                     <h3 className="font-bold text-white transition-colors drop-shadow-lg">
                                         {game.name}
@@ -271,13 +256,13 @@ function DashboardLayoutContent({
                         ) : (
                             <div
                                 key={game.id}
-                                className="relative block h-28 rounded-md overflow-hidden border border-white/10 opacity-50"
+                                className="relative block h-28 rounded-md overflow-hidden border border-[#33343a] opacity-50"
                             >
                                 <div
                                     className="absolute inset-0 bg-cover bg-center"
                                     style={{ backgroundImage: game.bgUrl ? `url('${game.bgUrl}')` : 'none' }}
                                 ></div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#27272a] via-[#27272a]/50 to-transparent z-10"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/50 to-transparent z-10"></div>
                                 <div className="absolute bottom-0 left-0 w-full p-3 z-20">
                                     <h3 className="font-bold text-white transition-colors drop-shadow-lg">
                                         {game.name}
@@ -286,17 +271,9 @@ function DashboardLayoutContent({
                                 </div>
                             </div>
                         )
-                    })}
+                    ))}
                 </div>
             </div>
         </div>
-    );
-}
-
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-    return (
-        <GameProvider>
-            <DashboardLayoutContent>{children}</DashboardLayoutContent>
-        </GameProvider>
     );
 }
