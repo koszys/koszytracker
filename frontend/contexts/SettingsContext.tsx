@@ -34,6 +34,7 @@ interface SettingsContextValue {
     deleteActiveAccount: () => void;
     exportData: () => string | null;
     importData: (jsonData: string) => Promise<boolean>;
+    importFullBackup: (jsonData: string) => Promise<boolean>;
     importLocalAccounts: () => void;
     lastSyncedAt: Date | null;
     syncAccounts: () => Promise<boolean>;
@@ -456,6 +457,40 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         }
     }, [accounts, activeGame.id, saveToLocalStorage, changeActiveAccount, getToken, syncToApi]);
 
+    const importFullBackup = useCallback(async (jsonData: string): Promise<boolean> => {
+        try {
+            const data = JSON.parse(jsonData);
+            if (!data.version || (!data.accounts && !data.wishes)) {
+                return false;
+            }
+
+            if (data.accounts && Array.isArray(data.accounts)) {
+                const newAccounts = data.accounts.map((acc: any, idx: number) => ({
+                    id: `local_${Date.now()}_${idx}`,
+                    name: acc.name || 'Imported',
+                    server: acc.server || 'America',
+                    ar: parseInt(acc.ar, 10) || 1,
+                    wl: acc.wl || '0',
+                    gender: acc.gender || 'M',
+                }));
+                setAccounts(newAccounts);
+                saveToLocalStorage(activeGame.id, newAccounts);
+                if (newAccounts.length > 0) {
+                    changeActiveAccount(newAccounts[0].id);
+                }
+            }
+
+            if (data.wishes && Array.isArray(data.wishes)) {
+                localStorage.setItem(`wishes-${activeGame.id}`, JSON.stringify(data.wishes));
+            }
+
+            setLastSyncedAt(null);
+            return true;
+        } catch {
+            return false;
+        }
+    }, [activeGame.id, saveToLocalStorage, changeActiveAccount]);
+
     const importLocalAccounts = useCallback(() => {
         const backupKey = `${STORAGE_KEYS.localBackup}_${activeGame.id}`;
         const backupData = localStorage.getItem(backupKey);
@@ -514,6 +549,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
             deleteActiveAccount,
             exportData,
             importData,
+            importFullBackup,
             importLocalAccounts,
             lastSyncedAt,
             syncAccounts,
