@@ -425,15 +425,16 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
                     wl: acc.wl || '0',
                     gender: acc.gender || 'M',
                 }));
-                setAccounts(newAccounts);
-                saveToLocalStorage(activeGame.id, newAccounts);
+                const combinedAccounts = [...accounts, ...newAccounts];
+                setAccounts(combinedAccounts);
+                saveToLocalStorage(activeGame.id, combinedAccounts);
                 if (newAccounts.length > 0) {
                     changeActiveAccount(newAccounts[0].id);
                 }
 
                 const token = getToken();
                 if (token) {
-                    const success = await syncToApi(activeGame.id, newAccounts);
+                    const success = await syncToApi(activeGame.id, combinedAccounts);
                     if (success) {
                         setLastSyncedAt(new Date());
                     }
@@ -441,7 +442,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
             }
 
             if (data.wishes && Array.isArray(data.wishes)) {
-                localStorage.setItem(`wishes-${activeGame.id}`, JSON.stringify(data.wishes));
+                const existingWishesKey = `wishes-${activeGame.id}`;
+                const existingWishes = localStorage.getItem(existingWishesKey);
+                const existingWishesArray = existingWishes ? JSON.parse(existingWishes) : [];
+                const combinedWishes = [...existingWishesArray, ...data.wishes];
+                localStorage.setItem(existingWishesKey, JSON.stringify(combinedWishes));
             }
 
             setLastSyncedAt(null);
@@ -449,7 +454,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         } catch {
             return false;
         }
-    }, [activeGame.id, saveToLocalStorage, changeActiveAccount, getToken, syncToApi]);
+    }, [accounts, activeGame.id, saveToLocalStorage, changeActiveAccount, getToken, syncToApi]);
 
     const importLocalAccounts = useCallback(() => {
         const backupKey = `${STORAGE_KEYS.localBackup}_${activeGame.id}`;

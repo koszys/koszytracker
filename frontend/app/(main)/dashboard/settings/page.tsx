@@ -75,7 +75,7 @@ export default function SettingsPage() {
             const a = document.createElement('a');
             const date = new Date().toISOString().split('T')[0];
             a.href = url;
-            a.download = `senti-moe-data-${date}.json`;
+            a.download = `sentimoe-${game.id}-fullbackup-${date}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -384,13 +384,12 @@ export default function SettingsPage() {
                     <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Data Management</h3>
                     <div className="flex flex-col gap-3">
 
-                        {/* Import Data Block - Sync Accounts */}
+                        {/* Cloud Sync */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#18181b] border border-[#3f3f46] rounded-lg">
                             <div>
-                                <p className="text-sm font-bold text-white mb-0.5">Save to Cloud</p>
-                                <p className="text-xs text-gray-300">Save your account data to our database and automatically back up every time you import. If your player ID is already linked to another email, we'll migrate it to your new account.</p>
+                                <p className="text-sm font-bold text-white mb-0.5">Cloud Sync</p>
+                                <p className="text-xs text-gray-300">Save your account data to our database.</p>
                             </div>
-
                             <button
                                 type="button"
                                 onClick={handleImportDataClick}
@@ -399,25 +398,22 @@ export default function SettingsPage() {
                             >
                                 {!user ? 'Sign in to Save' : (isImporting ? 'Saving...' : 'Save to Cloud')}
                             </button>
-
                         </div>
 
-                        {/* Manual Sync Wishes Block */}
+                        {/* Import Local Data */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#18181b] border border-[#3f3f46] rounded-lg">
                             <div>
                                 <p className="text-sm font-bold text-white mb-0.5">Import Local Data</p>
-                                <p className="text-xs text-gray-300">Import your local accounts. You'll still need to manually sync to cloud to save.</p>
+                                <p className="text-xs text-gray-300">Import your local accounts from before login.</p>
                             </div>
-
                             <button
                                 type="button"
                                 onClick={importLocalAccounts}
                                 disabled={!user}
                                 className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:opacity-50 disabled:hover:border-[#52525b] disabled:hover:text-gray-300 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-w-[140px]"
                             >
-                                Import Local Data
+                                Import
                             </button>
-
                         </div>
 
                         {/* Sync Status */}
@@ -449,8 +445,10 @@ export default function SettingsPage() {
 
                 {/* Account Manager */}
                 <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg mb-8">
-                    <p className="text-sm text-gray-300 mb-1">More than one account? Add it here.</p>
-                    <p className="text-sm font-bold text-white mb-4">Importing will add the account to your list.</p>
+
+                    <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Accounts</h3>
+
+                    <p className="text-sm text-gray-300 mb-3">More than one account? Add it here.</p>
 
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                         <div className="flex flex-wrap items-center gap-2">
@@ -490,17 +488,7 @@ export default function SettingsPage() {
                             </button>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-2">
-                            <button onClick={handleExportData} className="cursor-pointer bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Export Data</button>
-                            <button onClick={handleImportClick} className="cursor-pointer bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors">Import Data</button>
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                accept=".json"
-                                onChange={handleFileChange}
-                                className="hidden"
-                            />
-                        </div>
+                        
                     </div>
 
                     {/* Rename Input */}
@@ -613,22 +601,110 @@ export default function SettingsPage() {
                         </div>
 
                     </div>
+
+                {/* Backup Section */}
+                <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg mt-8 mb-8">
+                    <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Backup</h3>
+                    <p className="text-xs text-gray-400 mb-4">For the current game only</p>
+                    <div className="flex flex-col gap-3">
+
+                        {/* Account Export/Import - Single Account */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#18181b] border border-[#3f3f46] rounded-lg">
+                            <div>
+                                <p className="text-sm font-bold text-white mb-0.5">Account Export / Import</p>
+                                <p className="text-xs text-gray-300">Export or import a single game account.</p>
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const acc = activeAccount;
+                                        if (!acc) return;
+                                        const exportPayload = {
+                                            version: '1.0.0',
+                                            exportedAt: new Date().toISOString(),
+                                            source: 'local',
+                                            gameId: game.id,
+                                            accounts: [{
+                                                name: acc.name,
+                                                server: acc.server,
+                                                ar: acc.ar,
+                                                wl: acc.wl,
+                                                gender: acc.gender,
+                                            }],
+                                            wishes: [],
+                                        };
+                                        const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+                                        const url = URL.createObjectURL(blob);
+                                        const a = document.createElement('a');
+                                        a.href = url;
+                                        a.download = `sentimoe-${game.id}-${acc.name}-backup-${new Date().toISOString().split('T')[0]}.json`;
+                                        a.click();
+                                        URL.revokeObjectURL(url);
+                                    }}
+                                    disabled={!activeAccount}
+                                    className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:opacity-50 disabled:hover:border-[#52525b] disabled:hover:text-gray-300 rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
+                                >
+                                    Export
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
+                                >
+                                    Import
+                                </button>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept=".json"
+                                    onChange={handleFileChange}
+                                    className="hidden"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Full Game Backup */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#18181b] border border-[#3f3f46] rounded-lg">
+                            <div>
+                                <p className="text-sm font-bold text-white mb-0.5">Full Game Backup</p>
+                                <p className="text-xs text-gray-300">Export or import all accounts + wishes (adds to existing, doesn't replace).</p>
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    type="button"
+                                    onClick={handleExportData}
+                                    className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
+                                >
+                                    Export All
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleImportClick}
+                                    className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
+                                >
+                                    Import All
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
+                </div>
+
+                {/* Toast Notification */}
+                {toast && (
+                    <div className={`fixed bottom-6 right-6 px-4 py-3 rounded-lg shadow-xl text-sm font-bold z-[200] flex items-center gap-2 transition-all duration-300 ${toast.type === 'success' ? 'bg-green-600/90 border border-green-500 text-white' : 'bg-red-600/90 border border-red-500 text-white'}`}>
+                        {toast.type === 'success' ? (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                        ) : (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                        )}
+                        {toast.message}
+                    </div>
+                )}
 
             </div>
-
-            {/* Toast Notification */}
-            {toast && (
-                <div className={`fixed bottom-6 right-6 px-4 py-3 rounded-lg shadow-xl text-sm font-bold z-[200] flex items-center gap-2 transition-all duration-300 ${toast.type === 'success' ? 'bg-green-600/90 border border-green-500 text-white' : 'bg-red-600/90 border border-red-500 text-white'}`}>
-                    {toast.type === 'success' ? (
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                    ) : (
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
-                    )}
-                    {toast.message}
-                </div>
-            )}
-
         </div>
     );
 }
