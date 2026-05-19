@@ -1,6 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
+import { AlertTriangleIcon, UploadIcon } from "@/components/common/Icons";
 
 interface ImportModalProps {
     isOpen: boolean;
@@ -37,7 +38,7 @@ export default function ImportModal({ isOpen, importData, gameId, terms, onConfi
     const isWrongGame = data.gameId && data.gameId !== gameId;
 
     const content = (
-        <div className="fixed inset-0 bg-[#09090b]/95 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-[#09090b]/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
             <div className="bg-[#18181b] border border-white/10 p-6 rounded-xl max-w-sm w-full shadow-2xl">
                 {isWrongGame ? (
                     <>
@@ -68,13 +69,11 @@ export default function ImportModal({ isOpen, importData, gameId, terms, onConfi
                     <>
                         <div className="flex items-center gap-3 mb-4">
                             <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
-                                <svg className="w-6 h-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                </svg>
+                                <AlertTriangleIcon className="w-6 h-6 text-yellow-500" />
                             </div>
                             <div>
                                 <h3 className="text-white font-bold text-lg">Full Backup Restore</h3>
-                                <p className="text-gray-400 text-sm">This will replace all your data</p>
+                                <p className="text-gray-400 text-sm">This will replace all your data for the current game</p>
                             </div>
                         </div>
                         <p className="text-sm text-yellow-400 mb-4">
@@ -98,7 +97,7 @@ export default function ImportModal({ isOpen, importData, gameId, terms, onConfi
                             </button>
                             <button
                                 onClick={onConfirm}
-                                className="cursor-pointer flex items-center gap-1.5 bg-gradient-to-r from-theme-from to-theme-to hover:brightness-110 text-white border border-theme px-5 py-2 rounded-lg font-bold transition-all shadow-[0_0_10px_var(--theme-glow)]"
+                                className="cursor-pointer flex items-center gap-1.5 bg-theme hover:brightness-110 hover:border-white text-white border border-theme px-5 py-2 rounded-lg font-bold transition-all"
                             >
                                 Replace & Import
                             </button>
@@ -108,9 +107,7 @@ export default function ImportModal({ isOpen, importData, gameId, terms, onConfi
                     <>
                         <div className="flex items-center gap-3 mb-4">
                             <div className="w-10 h-10 rounded-full bg-theme/20 flex items-center justify-center">
-                                <svg className="w-6 h-6 text-theme" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                </svg>
+                                <UploadIcon className="w-6 h-6 text-theme" />
                             </div>
                             <div>
                                 <h3 className="text-white font-bold text-lg">Import Account</h3>
@@ -143,7 +140,7 @@ export default function ImportModal({ isOpen, importData, gameId, terms, onConfi
                             </button>
                             <button
                                 onClick={onConfirm}
-                                className="cursor-pointer flex items-center gap-1.5 bg-gradient-to-r from-theme-from to-theme-to hover:brightness-110 text-white border border-theme px-5 py-2 rounded-lg font-bold transition-all shadow-[0_0_10px_var(--theme-glow)]"
+                                className="cursor-pointer flex items-center gap-1.5 bg-theme hover:brightness-110 text-white border border-theme px-5 py-2 rounded-lg font-bold transition-all"
                             >
                                 Import
                             </button>

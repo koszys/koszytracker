@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { CloudIcon, UploadIcon } from "@/components/common/Icons";
 
 interface DataManagementSectionProps {
     setToast: (toast: { type: 'success' | 'error'; message: string } | null) => void;
@@ -49,7 +50,10 @@ export default function DataManagementSection({ setToast }: DataManagementSectio
                         disabled={!user || isSaving}
                         className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:text-gray-500 disabled:border-[#52525b]/50 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-w-[140px]"
                     >
-                        {!user ? 'Sign in to Save' : (isSaving ? 'Saving...' : 'Save to Cloud')}
+                        <span className="flex items-center gap-1.5">
+                            <CloudIcon className="w-4 h-4" />
+                            {!user ? 'Sign in to Save' : (isSaving ? 'Saving...' : 'Save to Cloud')}
+                        </span>
                     </button>
                 </div>
 
@@ -65,7 +69,10 @@ export default function DataManagementSection({ setToast }: DataManagementSectio
                         disabled={!user}
                         className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white disabled:opacity-50 disabled:hover:border-[#52525b] disabled:hover:text-gray-300 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-w-[140px]"
                     >
-                        Import
+                        <span className="flex items-center gap-1.5">
+                            <UploadIcon className="w-4 h-4" />
+                            Import Local
+                        </span>
                     </button>
                 </div>
 

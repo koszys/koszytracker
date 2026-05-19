@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useGame } from "@/contexts/GameContext";
 import DeleteModal from "./DeleteModal";
+import { PlusIcon, PencilIcon, TrashIcon, DownloadIcon, UploadIcon } from "@/components/common/Icons";
 
 interface AccountManagerSectionProps {
     setToast: (toast: { type: 'success' | 'error'; message: string } | null) => void;
@@ -152,7 +153,7 @@ export default function AccountManagerSection({ setToast }: AccountManagerSectio
                         onClick={addAccount}
                         className="cursor-pointer flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                        <PlusIcon />
                         Add
                     </button>
 
@@ -170,7 +171,7 @@ export default function AccountManagerSection({ setToast }: AccountManagerSectio
                         onClick={() => setIsRenaming(!isRenaming)}
                         className="cursor-pointer flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                        <PencilIcon />
                         Rename
                     </button>
 
@@ -179,7 +180,7 @@ export default function AccountManagerSection({ setToast }: AccountManagerSectio
                         disabled={accounts.length === 1}
                         className="cursor-pointer flex items-center gap-1.5 bg-red-900/30 hover:bg-red-900/60 text-red-400 border border-red-900/50 hover:border-red-500 px-3 py-1.5 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        <TrashIcon />
                         Delete
                     </button>
                 </div>
@@ -190,7 +191,7 @@ export default function AccountManagerSection({ setToast }: AccountManagerSectio
                         disabled={!activeAccount}
                         className="cursor-pointer flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        <DownloadIcon />
                         Export
                     </button>
 
@@ -198,7 +199,7 @@ export default function AccountManagerSection({ setToast }: AccountManagerSectio
                         onClick={() => fileInputRef.current?.click()}
                         className="cursor-pointer flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                        <UploadIcon />
                         Import
                     </button>
                     <input

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useGame } from "@/contexts/GameContext";
+import { DownloadIcon, UploadIcon } from "@/components/common/Icons";
 
 interface BackupSectionProps {
     setImportModalData: (data: { data: { version: string; exportedAt: string; accounts?: Array<{ name: string; server: string; ar: number; wl: string; gender: string }>; wishes?: Array<unknown> }; isFullBackup: boolean } | null) => void;
@@ -119,14 +120,20 @@ export default function BackupSection({ setImportModalData, setToast }: BackupSe
                         onClick={handleExportAll}
                         className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
                     >
-                        Export All
+                        <span className="flex items-center gap-1.5">
+                            <DownloadIcon className="w-4 h-4" />
+                            Export All
+                        </span>
                     </button>
                     <button
                         type="button"
                         onClick={handleImportClick}
                         className="cursor-pointer px-4 py-2 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
                     >
-                        Import All
+                        <span className="flex items-center gap-1.5">
+                            <UploadIcon className="w-4 h-4" />
+                            Import All
+                        </span>
                     </button>
                 </div>
             </div>
