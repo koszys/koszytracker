@@ -5,6 +5,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { useGame } from "@/contexts/GameContext";
 import DeleteModal from "./DeleteModal";
 import { PlusIcon, PencilIcon, TrashIcon, DownloadIcon, UploadIcon } from "@/components/common/Icons";
+import { useImport } from "@/hooks/useImport";
 
 interface AccountManagerSectionProps {
     setToast: (toast: { type: 'success' | 'error'; message: string } | null) => void;
@@ -12,7 +13,8 @@ interface AccountManagerSectionProps {
 
 export default function AccountManagerSection({ setToast }: AccountManagerSectionProps) {
     const { activeGame: game } = useGame();
-    const { accounts, activeAccountId, setActiveAccountId, activeAccount, addAccount, updateActiveAccount, deleteActiveAccount, importData } = useSettings();
+    const { accounts, activeAccountId, setActiveAccountId, activeAccount, addAccount, updateActiveAccount, deleteActiveAccount } = useSettings();
+    const { importSingleAccountFromFile } = useImport();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isRenaming, setIsRenaming] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -66,73 +68,10 @@ export default function AccountManagerSection({ setToast }: AccountManagerSectio
         const file = e.target.files?.[0];
         if (!file) return;
 
-        try {
-            const text = await file.text();
-            const data = JSON.parse(text);
-
-            if (!data.version) {
-                setToast({ type: 'error', message: 'Invalid file: missing version.' });
-                setTimeout(() => setToast(null), 3000);
-                setAccountImportKey(prev => prev + 1);
-                return;
-            }
-
-            if (!data.accounts || !Array.isArray(data.accounts) || data.accounts.length === 0) {
-                setToast({ type: 'error', message: 'Invalid file: missing accounts.' });
-                setTimeout(() => setToast(null), 3000);
-                setAccountImportKey(prev => prev + 1);
-                return;
-            }
-
-            if (!data.gameId) {
-                setToast({ type: 'error', message: 'Invalid file: missing gameId. This may be from a different game.' });
-                setTimeout(() => setToast(null), 3000);
-                setAccountImportKey(prev => prev + 1);
-                return;
-            }
-
-            if (data.gameId !== game.id) {
-                setToast({ type: 'error', message: `This account is for ${data.gameId}, not ${game.id}.` });
-                setTimeout(() => setToast(null), 3000);
-                setAccountImportKey(prev => prev + 1);
-                return;
-            }
-
-            const requiredFields = ['name', 'server', 'ar', 'wl', 'gender'];
-            for (const account of data.accounts) {
-                for (const field of requiredFields) {
-                    if (account[field] === undefined) {
-                        setToast({ type: 'error', message: `Invalid account: missing ${field}.` });
-                        setTimeout(() => setToast(null), 3000);
-                        setAccountImportKey(prev => prev + 1);
-                        return;
-                    }
-                }
-            }
-
-            const fileName = file.name.toLowerCase();
-            if (fileName.includes('backup')) {
-                setToast({ type: 'error', message: 'Please use an account export file, not a full backup.' });
-                setTimeout(() => setToast(null), 3000);
-                setAccountImportKey(prev => prev + 1);
-                return;
-            }
-
-            const success = await importData(JSON.stringify(data));
-            if (success) {
-                setToast({ type: 'success', message: 'Account imported successfully!' });
-                setTimeout(() => setToast(null), 3000);
-            } else {
-                setToast({ type: 'error', message: 'Import failed.' });
-                setTimeout(() => setToast(null), 3000);
-            }
+        await importSingleAccountFromFile(file, setToast, () => {
             setAccountImportKey(prev => prev + 1);
-        } catch (err) {
-            console.error('Import error:', err);
-            setToast({ type: 'error', message: 'Failed to import account.' });
-            setTimeout(() => setToast(null), 3000);
-            setAccountImportKey(prev => prev + 1);
-        }
+        });
+        setAccountImportKey(prev => prev + 1);
     };
 
     return (

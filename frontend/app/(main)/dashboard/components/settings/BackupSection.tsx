@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useGame } from "@/contexts/GameContext";
 import { DownloadIcon, UploadIcon } from "@/components/common/Icons";
+import { useImport } from "@/hooks/useImport";
 
 interface BackupSectionProps {
     setImportModalData: (data: { data: { version: string; exportedAt: string; accounts?: Array<{ name: string; server: string; ar: number; wl: string; gender: string }>; wishes?: Array<unknown> }; isFullBackup: boolean } | null) => void;
@@ -13,6 +14,7 @@ interface BackupSectionProps {
 export default function BackupSection({ setImportModalData, setToast }: BackupSectionProps) {
     const { activeGame: game } = useGame();
     const { exportData } = useSettings();
+    const { validateImportFile } = useImport();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [fileChangeKey, setFileChangeKey] = useState(0);
 
@@ -55,48 +57,11 @@ export default function BackupSection({ setImportModalData, setToast }: BackupSe
         if (!file) return;
 
         try {
-            const text = await file.text();
-            const data = JSON.parse(text);
-
-            if (!data.version) {
-                setToast({ type: 'error', message: 'Invalid backup: missing version.' });
-                setTimeout(() => setToast(null), 3000);
-                e.target.value = '';
-                return;
-            }
-
-            if (!data.gameId) {
-                setToast({ type: 'error', message: 'Invalid backup: missing gameId. This may be from a different game.' });
-                setTimeout(() => setToast(null), 3000);
-                e.target.value = '';
-                return;
-            }
-
-            if (data.gameId !== game.id) {
-                setToast({ type: 'error', message: `This backup is for ${data.gameId}, not ${game.id}.` });
-                setTimeout(() => setToast(null), 3000);
-                e.target.value = '';
-                return;
-            }
-
-            if (!data.accounts || !Array.isArray(data.accounts)) {
-                setToast({ type: 'error', message: 'Invalid backup: missing accounts.' });
-                setTimeout(() => setToast(null), 3000);
-                e.target.value = '';
-                return;
-            }
-
-            const fileName = file.name.toLowerCase();
-            if (!fileName.includes('backup')) {
-                setToast({ type: 'error', message: 'Please use a full backup file.' });
-                setTimeout(() => setToast(null), 3000);
-                e.target.value = '';
-                return;
-            }
+            const data = await validateImportFile(file, 'fullBackup');
             setImportModalData({ data, isFullBackup: true });
         } catch (err) {
-            console.error('Import parse error:', err);
-            setToast({ type: 'error', message: 'Invalid file format.' });
+            const error = err as { message: string };
+            setToast({ type: 'error', message: error.message || 'Invalid file format.' });
             setTimeout(() => setToast(null), 3000);
         }
 
