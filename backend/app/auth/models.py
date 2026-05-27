@@ -14,7 +14,7 @@ class User(Base):
     
     oauth_accounts = relationship("UserOAuth", back_populates="user")
     # Reference by string to avoid circular imports
-    genshin_accounts = relationship("GenshinAccount", back_populates="user")
+    game_accounts = relationship("GameAccount", back_populates="user")
 
 class UserOAuth(Base):
     __tablename__ = "user_oauth"

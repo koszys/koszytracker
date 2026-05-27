@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
 
 interface User {
@@ -17,6 +17,7 @@ interface JwtPayload {
   email: string;
   name?: string;
   picture?: string;
+  identities?: { provider: string }[];
 }
 
 interface AuthContextType {
@@ -24,6 +25,7 @@ interface AuthContextType {
   loading: boolean;
   login: (token: string) => void;
   logout: () => void;
+  getToken: () => string | null;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -43,7 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             email: decoded.email, 
             name: decoded.name, 
             picture: decoded.picture,
-            avatar: decoded.picture
+            avatar: decoded.picture,
+            identities: decoded.identities
         });
       } catch {
         localStorage.removeItem("token");
@@ -52,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
-  const login = (token: string) => {
+  const login = useCallback((token: string) => {
     localStorage.setItem("token", token);
     const decoded = jwtDecode<JwtPayload>(token);
     setUser({ 
@@ -60,17 +63,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: decoded.email, 
         name: decoded.name, 
         picture: decoded.picture,
-        avatar: decoded.picture
+        avatar: decoded.picture,
+        identities: decoded.identities
     });
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     setUser(null);
-  };
+  }, []);
+
+  const getToken = useCallback((): string | null => {
+    return localStorage.getItem("token");
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, getToken }}>
       {children}
     </AuthContext.Provider>
   );

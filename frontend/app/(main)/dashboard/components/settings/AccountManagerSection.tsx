@@ -1,0 +1,171 @@
+"use client";
+
+import { useRef, useState } from "react";
+import { useSettings } from "@/contexts/SettingsContext";
+import { useGame } from "@/contexts/GameContext";
+import DeleteModal from "./DeleteModal";
+import { PlusIcon, PencilIcon, TrashIcon, DownloadIcon, UploadIcon } from "@/components/common/Icons";
+import { useImport } from "@/hooks/useImport";
+
+interface AccountManagerSectionProps {
+    setToast: (toast: { type: 'success' | 'error'; message: string } | null) => void;
+}
+
+export default function AccountManagerSection({ setToast }: AccountManagerSectionProps) {
+    const { activeGame: game } = useGame();
+    const { accounts, activeAccountId, setActiveAccountId, activeAccount, addAccount, updateActiveAccount, deleteActiveAccount } = useSettings();
+    const { importSingleAccountFromFile } = useImport();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isRenaming, setIsRenaming] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [accountImportKey, setAccountImportKey] = useState(0);
+
+    const handleRenameSubmit = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') setIsRenaming(false);
+    };
+
+    const confirmDelete = () => {
+        deleteActiveAccount();
+        setShowDeleteModal(false);
+    };
+
+    const handleSingleAccountExport = () => {
+        const acc = activeAccount;
+        if (!acc) {
+            setToast({ type: 'error', message: 'No active account to export.' });
+            setTimeout(() => setToast(null), 3000);
+            return;
+        }
+        const exportPayload = {
+            version: '1.0.0',
+            exportedAt: new Date().toISOString(),
+            source: 'local',
+            gameId: game.id,
+            accounts: [{
+                name: acc.name,
+                server: acc.server,
+                ar: acc.ar,
+                wl: acc.wl,
+                gender: acc.gender,
+            }],
+            wishes: [],
+        };
+        const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `sentimoe-${game.id}-${acc.name}-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        setToast({ type: 'success', message: 'Account exported successfully!' });
+        setTimeout(() => setToast(null), 3000);
+    };
+
+    const handleSingleAccountImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        await importSingleAccountFromFile(file, setToast, () => {
+            setAccountImportKey(prev => prev + 1);
+        });
+        setAccountImportKey(prev => prev + 1);
+    };
+
+    return (
+        <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg mb-8">
+            <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Accounts</h3>
+
+            <p className="text-sm text-gray-300 mb-3">More than one account? Add it here.</p>
+
+            <DeleteModal
+                isOpen={showDeleteModal}
+                onConfirm={confirmDelete}
+                onCancel={() => setShowDeleteModal(false)}
+            />
+
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-2">
+                    <button
+                        onClick={addAccount}
+                        className="cursor-pointer flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+                    >
+                        <PlusIcon />
+                        Add
+                    </button>
+
+                    <select
+                        value={activeAccountId}
+                        onChange={(e) => setActiveAccountId(e.target.value)}
+                        className="bg-[#18181b] border border-[#52525b] text-white text-sm rounded-md px-3 py-1.5 min-w-[120px] focus:outline-none focus:border-theme/50 focus:ring-1 focus:ring-theme/50 appearance-none transition-all"
+                    >
+                        {accounts.map((acc) => (
+                            <option key={acc.id} value={acc.id}>{acc.name}</option>
+                        ))}
+                    </select>
+
+                    <button
+                        onClick={() => setIsRenaming(!isRenaming)}
+                        className="cursor-pointer flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+                    >
+                        <PencilIcon />
+                        Rename
+                    </button>
+
+                    <button
+                        onClick={() => setShowDeleteModal(true)}
+                        disabled={accounts.length === 1}
+                        className="cursor-pointer flex items-center gap-1.5 bg-red-900/30 hover:bg-red-900/60 text-red-400 border border-red-900/50 hover:border-red-500 px-3 py-1.5 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <TrashIcon />
+                        Delete
+                    </button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                    <button
+                        onClick={handleSingleAccountExport}
+                        disabled={!activeAccount}
+                        className="cursor-pointer flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <DownloadIcon />
+                        Export
+                    </button>
+
+                    <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="cursor-pointer flex items-center gap-1.5 bg-transparent border border-[#52525b] hover:border-theme text-gray-300 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+                    >
+                        <UploadIcon />
+                        Import
+                    </button>
+                    <input
+                        key={accountImportKey}
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".json"
+                        onChange={handleSingleAccountImport}
+                        className="hidden"
+                    />
+                </div>
+            </div>
+
+            {/* Rename Input */}
+            {isRenaming && (
+                <div className="mt-4 flex flex-wrap items-center gap-2">
+                    <input
+                        autoFocus
+                        type="text"
+                        value={activeAccount?.name || ''}
+                        onChange={(e) => updateActiveAccount('name', e.target.value)}
+                        onKeyDown={handleRenameSubmit}
+                        className="bg-[#18181b] border border-theme/50 text-white text-sm rounded-md px-3 py-1.5 w-full max-w-[256px] focus:outline-none focus:ring-1 focus:ring-theme/50 transition-all"
+                    />
+                    <button onClick={() => setIsRenaming(false)} className="text-sm px-2 py-1.5 text-theme hover:brightness-110 hover:border-theme font-bold">Save</button>
+                </div>
+            )}
+        </div>
+    );
+}

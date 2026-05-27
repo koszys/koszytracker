@@ -26,7 +26,7 @@ export default function HomePage() {
                     href="/dashboard/import"
                     className="px-8 py-3 bg-[#27272a] border border-[#52525b] hover:bg-[#3f3f46] hover:border-white text-white font-bold rounded-lg transition-all"
                 >
-                    Import Wishes
+                    {game.importName}
                 </Link>
             </div>
         </div>

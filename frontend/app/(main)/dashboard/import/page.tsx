@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useGame } from "@/contexts/GameContext";
+import { CheckIcon, CopyIcon, AlertTriangleIcon } from "@/components/common/Icons";
 
 interface WishData {
     id: string;
@@ -29,12 +30,18 @@ export default function ImportPage() {
         setResult(null);
 
         try {
+            const token = localStorage.getItem("token");
+            const headers: Record<string, string> = {
+                "Content-Type": "application/json",
+            };
+            if (token) {
+                headers["Authorization"] = `Bearer ${token}`;
+            }
+
             const response = await fetch("http://localhost:8000/api/wishes/import", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ url }),
+                headers,
+                body: JSON.stringify({ url, game_id: game.id }),
             });
 
             const data = await response.json();
@@ -95,7 +102,7 @@ export default function ImportPage() {
                     <div className="flex gap-4 md:gap-6">
                         <div className="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#27272a] border border-[#52525b] flex items-center justify-center text-white font-bold text-lg">2</div>
                         <div className="flex-1 min-w-0 pt-1 md:pt-2">
-                            <p className="text-gray-300 text-sm md:text-base">Open Windows PowerShell. You can do this by searching for <strong>'PowerShell'</strong> in the Windows search bar.</p>
+                            <p className="text-gray-300 text-sm md:text-base">Open Windows PowerShell. You can do this by searching for <strong>&apos;PowerShell&apos;</strong> in the Windows search bar.</p>
                         </div>
                     </div>
 
@@ -115,9 +122,9 @@ export default function ImportPage() {
                                     title="Copy to clipboard"
                                 >
                                     {copied ? (
-                                        <svg className="w-4 h-4 text-theme" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                        <CheckIcon className="w-4 h-4 text-theme" />
                                     ) : (
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                        <CopyIcon className="w-4 h-4" />
                                     )}
                                 </button>
                             </div>
@@ -141,7 +148,7 @@ export default function ImportPage() {
                                 
                                 {error && (
                                     <div className="p-3 bg-red-900/20 border border-red-900/50 rounded-lg flex items-start gap-2 text-red-400 text-sm">
-                                        <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <AlertTriangleIcon className="w-5 h-5 flex-shrink-0" />
                                         <p>{error}</p>
                                     </div>
                                 )}

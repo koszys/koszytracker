@@ -49,8 +49,15 @@ async def google_callback(code: str, db: Session = Depends(get_db)):
         picture=user_info.get("picture")
     )
 
-    token = create_token({"sub": str(user.id), "email": user.email, "name": user.name, "picture": user.picture})
-    return RedirectResponse(f"http://localhost:3000/auth/callback?token={token}")
+    identities = [{"provider": oa.provider} for oa in user.oauth_accounts]
+    token = create_token({
+        "sub": str(user.id), 
+        "email": user.email, 
+        "name": user.name, 
+        "picture": user.picture,
+        "identities": identities
+    })
+    return RedirectResponse(f"http://localhost:3000/auth/callback#token={token}")
 
 @router.get("/discord")
 def login_discord():
@@ -89,10 +96,17 @@ async def discord_callback(code: str, db: Session = Depends(get_db)):
         db=db,
         provider="discord",
         provider_user_id=user_info["id"],
-        email=f"{user_info['username']}@discord",
+        email=user_info.get("email", f"{user_info['username']}@discord"),
         name=user_info["username"],
         picture=f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}.png"
     )
 
-    token = create_token({"sub": str(user.id), "email": user.email, "name": user.name, "picture": user.picture})
-    return RedirectResponse(f"http://localhost:3000/auth/callback?token={token}")
+    identities = [{"provider": oa.provider} for oa in user.oauth_accounts]
+    token = create_token({
+        "sub": str(user.id), 
+        "email": user.email, 
+        "name": user.name, 
+        "picture": user.picture,
+        "identities": identities
+    })
+    return RedirectResponse(f"http://localhost:3000/auth/callback#token={token}")

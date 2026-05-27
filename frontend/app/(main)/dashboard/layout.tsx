@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -28,6 +28,21 @@ function DashboardLayoutContent({
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     const iconButtonClass = "p-1.5 text-white bg-white/5 hover:bg-white/10 border border-transparent hover:border-theme/50 rounded-md transition-all flex items-center justify-center";
+
+    // Sync theme CSS vars to document.body so portaled content (modals) inherits them
+    useEffect(() => {
+        document.body.style.setProperty('--theme-color', currentGame.themeColor);
+        document.body.style.setProperty('--theme-gradient-from', currentGame.themeGradientFrom);
+        document.body.style.setProperty('--theme-gradient-to', currentGame.themeGradientTo);
+        document.body.style.setProperty('--theme-glow', currentGame.themeGlow);
+
+        return () => {
+            document.body.style.removeProperty('--theme-color');
+            document.body.style.removeProperty('--theme-gradient-from');
+            document.body.style.removeProperty('--theme-gradient-to');
+            document.body.style.removeProperty('--theme-glow');
+        };
+    }, [currentGame]);
 
     return (
         <div 
