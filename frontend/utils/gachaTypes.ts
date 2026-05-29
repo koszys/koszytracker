@@ -1,4 +1,3 @@
-
 export const GACHA_TYPE_MAP: Record<string, Record<number, string>> = {
     genshin: {
         301: "character",

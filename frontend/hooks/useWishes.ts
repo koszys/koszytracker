@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
-interface WishData {
+export interface WishData {
     id: string;
     name: string;
     rarity: number;
