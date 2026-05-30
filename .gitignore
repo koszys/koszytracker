@@ -25,6 +25,16 @@ out/
 .env
 .env.local
 .env.*.local
+!.env.example
+
+# Java
+target/
+*.class
+*.jar
+*.war
+*.nar
+hs_err_pid*
+replay_pid*
 
 # IDE
 .idea/
