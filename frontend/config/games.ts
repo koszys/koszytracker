@@ -1,7 +1,7 @@
 export interface BannerConfig {
     id: string;
     name: string;
-    type: 'character' | 'weapon' | 'standard' | 'chronicled' | 'beginner';
+    type: string;
 }
 
 export interface GameConfig {
@@ -72,7 +72,8 @@ export const GAME_CONFIG: GameConfig[] = [
         banners: [
             { id: 'character', name: 'Featured Resonator', type: 'character' },
             { id: 'weapon', name: 'Featured Weapon', type: 'weapon' },
-            { id: 'standard', name: 'Standard Resonator', type: 'standard' }
+            { id: 'characterpermanent', name: 'Permanent Resonator', type: 'characterpermanent' },
+            { id: 'weaponpermanent', name: 'Permanent Weapon', type: 'weaponpermanent' }
         ],
         themeColor: '#eab308', // yellow-500
         themeGradientFrom: '#facc15', // yellow-400
