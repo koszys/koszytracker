@@ -1,0 +1,2 @@
+ALTER TABLE game_accounts ADD COLUMN IF NOT EXISTS last_synced_at TIMESTAMP;
+ALTER TABLE wishes ADD COLUMN IF NOT EXISTS last_synced_at TIMESTAMP;
