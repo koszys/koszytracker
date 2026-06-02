@@ -1,6 +1,5 @@
 .PHONY: help install kill-port stop run-backend run-frontend \
-        db-up db-up-all db-down lint-backend lint-frontend test \
-        test-auth test-account test-wish test-core test-controllers test-file clean
+        db-up db-up-all db-down lint-backend lint-frontend test clean
 
 -include .env
 export
@@ -30,13 +29,7 @@ help:
 	@echo "    make run-frontend   Start frontend server"
 	@echo "    make lint-backend   Compile-check Java backend"
 	@echo "    make lint-frontend  Run frontend lint"
-	@echo "    make test           Run all Java backend tests"
-	@echo "    make test-auth      Run auth service tests only"
-	@echo "    make test-account   Run account service tests only"
-	@echo "    make test-wish      Run wish service tests only"
-	@echo "    make test-core      Run core utility tests only"
-	@echo "    make test-controllers Run controller integration tests only"
-	@echo "    make test-file      Run a single test class (TEST=ClassName)"
+	@echo "    make test           Run Java backend tests"
 	@echo "    make package        Build Java backend JAR"
 	@echo "    make clean          Clean up generated files"
 	@echo ""
@@ -78,26 +71,8 @@ lint-frontend:
 	cd frontend && npm run lint
 
 test:
-	@echo "Running all backend tests..."
+	@echo "Running backend tests..."
 	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test
-
-test-auth:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=AuthServiceTest
-
-test-account:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=AccountServiceTest
-
-test-wish:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=WishServiceTest,WishConflictServiceTest
-
-test-core:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=JwtProviderTest,AccountMatcherTest,GlobalExceptionHandlerTest
-
-test-controllers:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=AccountControllerTest,WishControllerTest
-
-test-file:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=$(TEST)
 
 package:
 	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn package -DskipTests -q
