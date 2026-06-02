@@ -52,7 +52,7 @@ dev: kill-port
 
 install:
 	@echo "Installing backend dependencies..."
-	cd backend-java && ./mvnw dependency:go-offline -q -B
+	cd backend && ./mvnw dependency:go-offline -q -B
 	@echo "Installing frontend dependencies..."
 	cd frontend && npm install
 
@@ -66,42 +66,42 @@ db-down:
 	docker compose down
 
 run-backend:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) ./mvnw spring-boot:run -Dmaven.test.skip=true
+	cd backend && JAVA_HOME=$(JAVA_HOME) ./mvnw spring-boot:run -Dmaven.test.skip=true
 
 run-frontend:
 	cd frontend && npm run dev
 
 lint-backend:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn compile -q
+	cd backend && JAVA_HOME=$(JAVA_HOME) mvn compile -q
 
 lint-frontend:
 	cd frontend && npm run lint
 
 test:
 	@echo "Running all backend tests..."
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test
+	cd backend && JAVA_HOME=$(JAVA_HOME) mvn test
 
 test-auth:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=AuthServiceTest
+	cd backend && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=AuthServiceTest
 
 test-account:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=AccountServiceTest
+	cd backend && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=AccountServiceTest
 
 test-wish:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=WishServiceTest,WishConflictServiceTest
+	cd backend && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=WishServiceTest,WishConflictServiceTest
 
 test-core:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=JwtProviderTest,AccountMatcherTest,GlobalExceptionHandlerTest
+	cd backend && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=JwtProviderTest,AccountMatcherTest,GlobalExceptionHandlerTest
 
 test-controllers:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=AccountControllerTest,WishControllerTest
+	cd backend && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=AccountControllerTest,WishControllerTest
 
 test-file:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=$(TEST)
+	cd backend && JAVA_HOME=$(JAVA_HOME) mvn test -Dtest=$(TEST)
 
 package:
-	cd backend-java && JAVA_HOME=$(JAVA_HOME) mvn package -DskipTests -q
+	cd backend && JAVA_HOME=$(JAVA_HOME) mvn package -DskipTests -q
 
 clean:
 	rm -rf frontend/.next
-	rm -rf backend-java/target
+	rm -rf backend/target
