@@ -1,10 +1,10 @@
 package moe.senti.wish.service;
 
 import moe.senti.wish.model.entity.Wish;
-import moe.senti.wish.repository.WishRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -12,11 +12,9 @@ import java.util.Objects;
 @Service
 public class WishConflictService {
 
-    private final WishRepository wishRepository;
     private final WishService wishService;
 
-    public WishConflictService(WishRepository wishRepository, WishService wishService) {
-        this.wishRepository = wishRepository;
+    public WishConflictService(WishService wishService) {
         this.wishService = wishService;
     }
 
@@ -35,13 +33,13 @@ public class WishConflictService {
 
         boolean hasConflict = localCount != cloudCount;
 
-        return Map.of(
-                "hasConflict", hasConflict,
-                "localCount", localCount,
-                "cloudCount", cloudCount,
-                "localModifiedAt", localModified,
-                "cloudModifiedAt", cloudModified,
-                "message", hasConflict ? "Conflict detected" : "Data is in sync"
-        );
+        Map<String, Object> result = new HashMap<>();
+        result.put("hasConflict", hasConflict);
+        result.put("localCount", localCount);
+        result.put("cloudCount", cloudCount);
+        result.put("localModifiedAt", localModified);
+        result.put("cloudModifiedAt", cloudModified);
+        result.put("message", hasConflict ? "Conflict detected" : "Data is in sync");
+        return result;
     }
 }
