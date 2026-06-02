@@ -22,9 +22,9 @@ services:
     depends_on:
       - db
 
-  backend-java:
+  backend:
     build:
-      context: backend-java
+      context: backend
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
