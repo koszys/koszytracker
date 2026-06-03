@@ -16,6 +16,11 @@ function formatWishTime(iso: string): string {
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 
+function getItemIconPath(gameId: string, itemName: string): string {
+    const name = itemName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    return `/assets/${gameId}/${name}-icon.png`;
+}
+
 export default function WishTrackerPage() {
     const { activeGame: game } = useGame();
     const { activeAccount } = useSettings();
@@ -51,12 +56,36 @@ export default function WishTrackerPage() {
         });
     };
 
+    const recentPityData = useMemo(() => {
+        const tierValues = [...recentRarities];
+        return wishPityData.filter(w => {
+            const bannerId = getBannerId(game.id, w.gacha_type);
+            return bannerId === activeBanner.id && tierValues.includes(w.rarity);
+        });
+    }, [wishPityData, game, activeBanner.id, recentRarities]);
+
+    const recentToShow = useMemo(() => {
+        const sortedTiers = [...recentRarities].sort((a, b) => b - a);
+        const result: (typeof wishPityData)[number][] = [];
+        for (const tierValue of sortedTiers) {
+            let count = 0;
+            for (const w of recentPityData) {
+                if (w.rarity === tierValue) {
+                    result.push(w);
+                    count++;
+                    if (count >= 5) break;
+                }
+            }
+        }
+        return result;
+    }, [recentPityData, recentRarities]);
+
     // Pull History filters & pagination
     const [searchQuery, setSearchQuery] = useState("");
     const [activeRarities, setActiveRarities] = useState<Set<number>>(
         new Set(game.rarityTiers.map(t => t.value))
     );
-    const [rowsPerPage, setRowsPerPage] = useState(20);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
 
     const toggleRarity = (rarity: number) => {
@@ -168,7 +197,11 @@ export default function WishTrackerPage() {
                                             : "bg-[#1c1d21] border-[#52525b] hover:border-gray-500"
                                     }`}
                                 >
-                                    {/* The white gradient overlay has been completely removed here */}
+                                    {banner.cardImage && (
+                                        <div className="absolute right-0 top-0 w-1/2 h-full">
+                                            <img src={banner.cardImage} alt="" className="w-full h-full object-cover object-right" />
+                                        </div>
+                                    )}
                                     
                                     <div className="relative z-10 flex flex-col h-full justify-between">
                                         <div>
@@ -277,17 +310,31 @@ export default function WishTrackerPage() {
                         
                         {currentStats.total > 0 ? (
                             <div className="flex flex-wrap gap-4">
-                                {activeBannerWishes
-                                    .filter(w => recentRarities.has(w.rarity))
-                                    .slice(-5).reverse().map((wish) => {
-                                    const isHighest = wish.rarity === topRarities[0]?.value;
+                                {recentToShow.map((wish) => {
+                                    const iconPath = getItemIconPath(game.id, wish.name);
                                     return (
-                                        <div key={wish.id} className={`relative w-16 h-16 rounded-full border-2 flex items-center justify-center text-xs font-medium ${
-                                            isHighest
-                                                ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400'
-                                                : 'border-purple-500 bg-purple-500/10 text-purple-400'
-                                        }`}>
-                                            {wish.name.length > 8 ? wish.name.slice(0, 6) + '...' : wish.name}
+                                        <div key={wish.id} className="relative w-14 h-14">
+                                            <div className="w-full h-full rounded-full bg-[#2a2b30] border border-[#52525b] overflow-hidden flex items-center justify-center text-gray-300 text-xs font-medium">
+                                                <img
+                                                    src={iconPath}
+                                                    alt={wish.name}
+                                                    className="w-full h-full object-cover"
+                                                    onError={e => {
+                                                        const img = e.target as HTMLImageElement;
+                                                        img.style.display = 'none';
+                                                        const parent = img.parentElement;
+                                                        if (parent && !parent.querySelector('.fallback')) {
+                                                            const fb = document.createElement('span');
+                                                            fb.className = 'fallback';
+                                                            fb.textContent = wish.name[0]?.toUpperCase() || '?';
+                                                            parent.appendChild(fb);
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
+                                            <span className="absolute -bottom-1 -right-1 bg-[#1c1d21] border border-[#52525b] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center leading-none">
+                                                {wish.pity}
+                                            </span>
                                         </div>
                                     );
                                 })}
