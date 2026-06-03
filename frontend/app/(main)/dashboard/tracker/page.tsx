@@ -97,6 +97,7 @@ export default function WishTrackerPage() {
 
     const filtered = useMemo(() => {
         return wishPityData.filter(w => {
+            if (getBannerId(game.id, w.gacha_type) !== activeBanner.id) return false;
             if (!activeRarities.has(w.rarity)) return false;
             if (!searchQuery) return true;
             const q = searchQuery.toLowerCase();
@@ -104,7 +105,19 @@ export default function WishTrackerPage() {
                 || String(w.pity).includes(q)
                 || formatWishTime(w.time).toLowerCase().includes(q);
         });
-    }, [wishPityData, activeRarities, searchQuery]);
+    }, [wishPityData, activeRarities, searchQuery, game.id, activeBanner.id]);
+
+    const bannerPityData = useMemo(() => {
+        return wishPityData.filter(w => getBannerId(game.id, w.gacha_type) === activeBanner.id);
+    }, [wishPityData, game.id, activeBanner.id]);
+
+    const pullNumberMap = useMemo(() => {
+        const map = new Map<string, number>();
+        bannerPityData.forEach((w, i) => map.set(w.id, bannerPityData.length - i));
+        return map;
+    }, [bannerPityData]);
+
+    const lowestRarity = Math.min(...game.rarityTiers.map(t => t.value));
 
     const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
     const safePage = Math.min(currentPage, totalPages);
@@ -393,13 +406,13 @@ export default function WishTrackerPage() {
                                 </thead>
                                 <tbody className="text-sm text-gray-200">
                                     {paginated.map((wish, i) => {
-                                        const pullNo = filtered.length - ((safePage - 1) * rowsPerPage + i);
+                                        const pullNo = pullNumberMap.get(wish.id) ?? '—';
                                         const tier = game.rarityTiers.find(t => t.value === wish.rarity);
                                         return (
                                             <tr key={wish.id} className="border-b border-[#52525b]/50 hover:bg-[#2a2b30]/30 transition-colors">
                                                 <td className="py-3">{pullNo}</td>
                                                 <td className={`py-3 font-medium ${tier?.color ?? 'text-gray-200'}`}>{wish.name}</td>
-                                                <td className="py-3">{wish.pity}</td>
+                                                <td className="py-3">{wish.rarity === lowestRarity ? 'N/A' : wish.pity}</td>
                                                 <td className="py-3 text-gray-400">{formatWishTime(wish.time)}</td>
                                             </tr>
                                         );
