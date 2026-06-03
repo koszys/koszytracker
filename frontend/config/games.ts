@@ -2,6 +2,7 @@ export interface BannerConfig {
     id: string;
     name: string;
     type: string;
+    cardImage?: string;
 }
 
 export interface RarityTier {

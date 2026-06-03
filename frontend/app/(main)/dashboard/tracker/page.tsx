@@ -54,6 +54,7 @@ export default function WishTrackerPage() {
             }
             return next;
         });
+        setRecentPage(1);
     };
 
     const recentPityData = useMemo(() => {
@@ -64,21 +65,20 @@ export default function WishTrackerPage() {
         });
     }, [wishPityData, game, activeBanner.id, recentRarities]);
 
-    const recentToShow = useMemo(() => {
-        const sortedTiers = [...recentRarities].sort((a, b) => b - a);
-        const result: (typeof wishPityData)[number][] = [];
-        for (const tierValue of sortedTiers) {
-            let count = 0;
-            for (const w of recentPityData) {
-                if (w.rarity === tierValue) {
-                    result.push(w);
-                    count++;
-                    if (count >= 5) break;
-                }
-            }
-        }
-        return result;
-    }, [recentPityData, recentRarities]);
+    const [recentPage, setRecentPage] = useState(1);
+    const [recentPerPage, setRecentPerPage] = useState(20);
+
+    const recentPaginated = useMemo(() => {
+        const start = (recentPage - 1) * recentPerPage;
+        return recentPityData.slice(start, start + recentPerPage);
+    }, [recentPityData, recentPage, recentPerPage]);
+
+    const recentTotalPages = Math.max(1, Math.ceil(recentPityData.length / recentPerPage));
+    const recentSafePage = Math.min(recentPage, recentTotalPages);
+
+    function goToRecentPage(page: number) {
+        setRecentPage(Math.max(1, Math.min(page, recentTotalPages)));
+    }
 
     // Pull History filters & pagination
     const [searchQuery, setSearchQuery] = useState("");
@@ -171,7 +171,7 @@ export default function WishTrackerPage() {
             {loading && <div className="w-full text-center py-10 text-gray-300">Loading wishes...</div>}
             {error && <div className="w-full bg-red-900/50 border border-red-700 rounded-lg p-4 text-red-300">Failed to load: {error}</div>}
             {!loading && !error && wishes.length === 0 && (
-                <div className="w-full text-center py-10">
+                <div className="w-full text-center py-10 text-white">
                     No pulls recorded. <Link href="/dashboard/import" className="text-blue-400 underline">Import your {game.pullName.toLowerCase()}</Link> to get started.
                 </div>
             )}
@@ -309,8 +309,9 @@ export default function WishTrackerPage() {
                         </div>
                         
                         {currentStats.total > 0 ? (
+                            <>
                             <div className="flex flex-wrap gap-4">
-                                {recentToShow.map((wish) => {
+                                {recentPaginated.map((wish) => {
                                     const iconPath = getItemIconPath(game.id, wish.name);
                                     return (
                                         <div key={wish.id} className="relative w-14 h-14">
@@ -339,6 +340,49 @@ export default function WishTrackerPage() {
                                     );
                                 })}
                             </div>
+
+                            {/* Recent pagination footer */}
+                            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 text-sm text-gray-300">
+                                <div className="flex items-center gap-2">
+                                    <span>Items per page:</span>
+                                    <select
+                                        value={recentPerPage}
+                                        onChange={e => { setRecentPerPage(Number(e.target.value)); setRecentPage(1); }}
+                                        className="cursor-pointer bg-[#27272a] border border-[#52525b] rounded px-2 py-1 text-white text-sm focus:outline-none focus:border-gray-500"
+                                    >
+                                        {[20, 40, 60, 100].map(n => (
+                                            <option key={n} value={n}>{n}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => goToRecentPage(1)}
+                                        disabled={recentSafePage === 1}
+                                        className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
+                                    >&lt;&lt;</button>
+                                    <button
+                                        onClick={() => goToRecentPage(recentSafePage - 1)}
+                                        disabled={recentSafePage === 1}
+                                        className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
+                                    >&lt;</button>
+                                    <span className="px-3 py-1 text-white">
+                                        {recentPityData.length > 0 ? recentSafePage : 0} / {recentTotalPages}
+                                    </span>
+                                    <button
+                                        onClick={() => goToRecentPage(recentSafePage + 1)}
+                                        disabled={recentSafePage === recentTotalPages}
+                                        className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
+                                    >&gt;</button>
+                                    <button
+                                        onClick={() => goToRecentPage(recentTotalPages)}
+                                        disabled={recentSafePage === recentTotalPages}
+                                        className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
+                                    >&gt;&gt;</button>
+                                </div>
+                            </div>
+                            </>
                         ) : (
                             <div className="text-center py-10 text-gray-400">No {game.pullName.toLowerCase()} recorded for this banner.</div>
                         )}
