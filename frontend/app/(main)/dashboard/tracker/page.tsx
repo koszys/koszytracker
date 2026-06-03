@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { BannerConfig } from "@/config/games";
 import { useGame } from "@/contexts/GameContext";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -9,6 +9,12 @@ import { useWishes } from "@/hooks/useWishes";
 import { computeBannerStats, computeWishPity } from "@/utils/stats";
 import { getPityCap } from "@/config/gachaMechanics";
 import { getBannerId } from "@/utils/gachaTypes";
+
+function formatWishTime(iso: string): string {
+    const d = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
 
 export default function WishTrackerPage() {
     const { activeGame: game } = useGame();
@@ -20,6 +26,48 @@ export default function WishTrackerPage() {
     const wishPityData = computeWishPity(wishes, game);
     const currentStats = bannerStats[activeBanner.id] || { total: 0, fiveStar: 0, fourStar: 0, currentPity5: 0, currentPity4: 0, avgPity5: 0, winRate5050: 0 };
     const activeBannerWishes = wishes.filter(w => getBannerId(game.id, w.gacha_type) === activeBanner.id);
+
+    // Pull History filters & pagination
+    const [searchQuery, setSearchQuery] = useState("");
+    const [activeRarities, setActiveRarities] = useState<Set<number>>(
+        new Set(game.rarityTiers.map(t => t.value))
+    );
+    const [rowsPerPage, setRowsPerPage] = useState(20);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const toggleRarity = (rarity: number) => {
+        setActiveRarities(prev => {
+            const next = new Set(prev);
+            if (next.has(rarity)) {
+                next.delete(rarity);
+            } else {
+                next.add(rarity);
+            }
+            return next;
+        });
+        setCurrentPage(1);
+    };
+
+    const filtered = useMemo(() => {
+        return wishPityData.filter(w => {
+            if (!activeRarities.has(w.rarity)) return false;
+            if (!searchQuery) return true;
+            const q = searchQuery.toLowerCase();
+            return w.name.toLowerCase().includes(q)
+                || String(w.pity).includes(q)
+                || formatWishTime(w.time).toLowerCase().includes(q);
+        });
+    }, [wishPityData, activeRarities, searchQuery]);
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+    const safePage = Math.min(currentPage, totalPages);
+    const paginated = useMemo(() => {
+        return filtered.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
+    }, [filtered, safePage, rowsPerPage]);
+
+    function goToPage(page: number) {
+        setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    }
 
     return (
         <div className="w-full flex flex-col gap-8 relative items-start">
@@ -70,7 +118,7 @@ export default function WishTrackerPage() {
             {loading && <div className="w-full text-center py-10 text-gray-400">Loading wishes...</div>}
             {error && <div className="w-full bg-red-900/50 border border-red-700 rounded-lg p-4 text-red-300">Failed to load: {error}</div>}
             {!loading && !error && wishes.length === 0 && (
-                <div className="w-full text-center py-10">
+                <div className="w-full text-center py-10 text-gray-500">
                     No pulls recorded. <Link href="/dashboard/import" className="text-blue-400 underline">Import your {game.pullName.toLowerCase()}</Link> to get started.
                 </div>
             )}
@@ -197,7 +245,7 @@ export default function WishTrackerPage() {
                                         wish.rarity === 4 ? 'border-purple-500 bg-purple-500/10 text-purple-400' :
                                         'border-gray-600 bg-[#2a2b30] text-gray-400'
                                     }`}>
-                                        {wish.name.length > 8 ? wish.name.slice(0, 6) + '…' : wish.name}
+                                        {wish.name.length > 8 ? wish.name.slice(0, 6) + '...' : wish.name}
                                     </div>
                                 ))}
                             </div>
@@ -210,11 +258,35 @@ export default function WishTrackerPage() {
                     <div className="bg-[#1c1d21] border border-[#52525b] rounded-lg p-6">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-lg font-bold text-white">Pull History</h2>
-                            <input 
-                                type="text" 
-                                placeholder="Search for something..." 
-                                className="bg-[#27272a] border border-[#52525b] rounded px-3 py-1.5 text-sm text-white focus:outline-none focus:border-gray-500"
+                        </div>
+
+                        {/* Filter row */}
+                        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                                placeholder="Search across columns..."
+                                className="flex-1 bg-[#27272a] border border-[#52525b] rounded px-3 py-1.5 text-sm text-white focus:outline-none focus:border-gray-500"
                             />
+                            <div className="flex gap-2 items-center">
+                                {game.rarityTiers.map(tier => {
+                                    const active = activeRarities.has(tier.value);
+                                    return (
+                                        <button
+                                            key={tier.value}
+                                            onClick={() => toggleRarity(tier.value)}
+                                            className={`px-3 py-1 text-xs font-bold rounded transition-colors ${
+                                                active
+                                                    ? `${tier.color} bg-[#2a2b30] border border-[#52525b]`
+                                                    : 'text-gray-600 bg-transparent border border-[#3a3a3e]'
+                                            }`}
+                                        >
+                                            {tier.label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
 
                         <div className="w-full overflow-x-auto">
@@ -228,20 +300,62 @@ export default function WishTrackerPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="text-sm text-gray-300">
-                                    {wishPityData.slice(0, 50).map((wish, i) => (
-                                        <tr key={wish.id} className="border-b border-[#52525b]/50 hover:bg-[#2a2b30]/30 transition-colors">
-                                            <td className="py-3">{wishPityData.length - i}</td>
-                                            <td className={`py-3 font-medium ${
-                                                wish.rarity === 5 ? 'text-yellow-400' :
-                                                wish.rarity === 4 ? 'text-purple-400' :
-                                                'text-gray-300'
-                                            }`}>{wish.name}</td>
-                                            <td className="py-3">{wish.pity}</td>
-                                            <td className="py-3 text-gray-500">{wish.time}</td>
-                                        </tr>
-                                    ))}
+                                    {paginated.map((wish, i) => {
+                                        const pullNo = filtered.length - ((safePage - 1) * rowsPerPage + i);
+                                        const tier = game.rarityTiers.find(t => t.value === wish.rarity);
+                                        return (
+                                            <tr key={wish.id} className="border-b border-[#52525b]/50 hover:bg-[#2a2b30]/30 transition-colors">
+                                                <td className="py-3">{pullNo}</td>
+                                                <td className={`py-3 font-medium ${tier?.color ?? 'text-gray-300'}`}>{wish.name}</td>
+                                                <td className="py-3">{wish.pity}</td>
+                                                <td className="py-3 text-gray-500">{formatWishTime(wish.time)}</td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Pagination footer */}
+                        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 text-sm text-gray-400">
+                            <div className="flex items-center gap-2">
+                                <span>Rows per page:</span>
+                                <select
+                                    value={rowsPerPage}
+                                    onChange={e => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                                    className="bg-[#27272a] border border-[#52525b] rounded px-2 py-1 text-white text-sm focus:outline-none focus:border-gray-500"
+                                >
+                                    {[5, 10, 20, 50].map(n => (
+                                        <option key={n} value={n}>{n}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => goToPage(1)}
+                                    disabled={safePage === 1}
+                                    className="px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-600 disabled:hover:bg-transparent transition-colors"
+                                >&lt;&lt;</button>
+                                <button
+                                    onClick={() => goToPage(safePage - 1)}
+                                    disabled={safePage === 1}
+                                    className="px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-600 disabled:hover:bg-transparent transition-colors"
+                                >&lt;</button>
+                                <span className="px-3 py-1 text-white">
+                                    {filtered.length > 0 ? safePage : 0} / {totalPages}
+                                </span>
+                                <button
+                                    onClick={() => goToPage(safePage + 1)}
+                                    disabled={safePage === totalPages}
+                                    className="px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-600 disabled:hover:bg-transparent transition-colors"
+                                >&gt;</button>
+                                <button
+                                    onClick={() => goToPage(totalPages)}
+                                    disabled={safePage === totalPages}
+                                    className="px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-600 disabled:hover:bg-transparent transition-colors"
+                                >&gt;&gt;</button>
+                            </div>
                         </div>
                     </div>
                 </div>
