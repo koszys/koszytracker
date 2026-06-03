@@ -6,6 +6,7 @@ import { BannerConfig } from "@/config/games";
 import { useGame } from "@/contexts/GameContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useWishes } from "@/hooks/useWishes";
+import PaginationFooter from "@/components/common/PaginationFooter";
 import { computeBannerStats, computeWishPity } from "@/utils/stats";
 import { getPityCap } from "@/config/gachaMechanics";
 import { getBannerId } from "@/utils/gachaTypes";
@@ -73,13 +74,6 @@ export default function WishTrackerPage() {
         return recentPityData.slice(start, start + recentPerPage);
     }, [recentPityData, recentPage, recentPerPage]);
 
-    const recentTotalPages = Math.max(1, Math.ceil(recentPityData.length / recentPerPage));
-    const recentSafePage = Math.min(recentPage, recentTotalPages);
-
-    function goToRecentPage(page: number) {
-        setRecentPage(Math.max(1, Math.min(page, recentTotalPages)));
-    }
-
     // Pull History filters & pagination
     const [searchQuery, setSearchQuery] = useState("");
     const [activeRarities, setActiveRarities] = useState<Set<number>>(
@@ -117,10 +111,6 @@ export default function WishTrackerPage() {
     const paginated = useMemo(() => {
         return filtered.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
     }, [filtered, safePage, rowsPerPage]);
-
-    function goToPage(page: number) {
-        setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-    }
 
     return (
         <div className="w-full flex flex-col gap-8 relative items-start">
@@ -341,47 +331,15 @@ export default function WishTrackerPage() {
                                 })}
                             </div>
 
-                            {/* Recent pagination footer */}
-                            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 text-sm text-gray-300">
-                                <div className="flex items-center gap-2">
-                                    <span>Items per page:</span>
-                                    <select
-                                        value={recentPerPage}
-                                        onChange={e => { setRecentPerPage(Number(e.target.value)); setRecentPage(1); }}
-                                        className="cursor-pointer bg-[#27272a] border border-[#52525b] rounded px-2 py-1 text-white text-sm focus:outline-none focus:border-gray-500"
-                                    >
-                                        {[20, 40, 60, 100].map(n => (
-                                            <option key={n} value={n}>{n}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={() => goToRecentPage(1)}
-                                        disabled={recentSafePage === 1}
-                                        className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
-                                    >&lt;&lt;</button>
-                                    <button
-                                        onClick={() => goToRecentPage(recentSafePage - 1)}
-                                        disabled={recentSafePage === 1}
-                                        className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
-                                    >&lt;</button>
-                                    <span className="px-3 py-1 text-white">
-                                        {recentPityData.length > 0 ? recentSafePage : 0} / {recentTotalPages}
-                                    </span>
-                                    <button
-                                        onClick={() => goToRecentPage(recentSafePage + 1)}
-                                        disabled={recentSafePage === recentTotalPages}
-                                        className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
-                                    >&gt;</button>
-                                    <button
-                                        onClick={() => goToRecentPage(recentTotalPages)}
-                                        disabled={recentSafePage === recentTotalPages}
-                                        className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
-                                    >&gt;&gt;</button>
-                                </div>
-                            </div>
+                            <PaginationFooter
+                                page={recentPage}
+                                onPageChange={setRecentPage}
+                                totalItems={recentPityData.length}
+                                perPage={recentPerPage}
+                                onPerPageChange={setRecentPerPage}
+                                perPageOptions={[20, 40, 60, 100]}
+                                itemLabel="Items per page"
+                            />
                             </>
                         ) : (
                             <div className="text-center py-10 text-gray-400">No {game.pullName.toLowerCase()} recorded for this banner.</div>
@@ -450,47 +408,15 @@ export default function WishTrackerPage() {
                             </table>
                         </div>
 
-                        {/* Pagination footer */}
-                        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 text-sm text-gray-300">
-                            <div className="flex items-center gap-2">
-                                <span>Rows per page:</span>
-                                <select
-                                    value={rowsPerPage}
-                                    onChange={e => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                                    className="cursor-pointer bg-[#27272a] border border-[#52525b] rounded px-2 py-1 text-white text-sm focus:outline-none focus:border-gray-500"
-                                >
-                                    {[5, 10, 20, 50].map(n => (
-                                        <option key={n} value={n}>{n}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={() => goToPage(1)}
-                                    disabled={safePage === 1}
-                                    className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
-                                >&lt;&lt;</button>
-                                <button
-                                    onClick={() => goToPage(safePage - 1)}
-                                    disabled={safePage === 1}
-                                    className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
-                                >&lt;</button>
-                                <span className="px-3 py-1 text-white">
-                                    {filtered.length > 0 ? safePage : 0} / {totalPages}
-                                </span>
-                                <button
-                                    onClick={() => goToPage(safePage + 1)}
-                                    disabled={safePage === totalPages}
-                                    className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
-                                >&gt;</button>
-                                <button
-                                    onClick={() => goToPage(totalPages)}
-                                    disabled={safePage === totalPages}
-                                    className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
-                                >&gt;&gt;</button>
-                            </div>
-                        </div>
+                        <PaginationFooter
+                            page={currentPage}
+                            onPageChange={setCurrentPage}
+                            totalItems={filtered.length}
+                            perPage={rowsPerPage}
+                            onPerPageChange={setRowsPerPage}
+                            perPageOptions={[5, 10, 20, 50]}
+                            itemLabel="Rows per page"
+                        />
                     </div>
                 </div>
             </div>
