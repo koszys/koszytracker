@@ -171,7 +171,7 @@ export default function WishTrackerPage() {
             {loading && <div className="w-full text-center py-10 text-gray-300">Loading wishes...</div>}
             {error && <div className="w-full bg-red-900/50 border border-red-700 rounded-lg p-4 text-red-300">Failed to load: {error}</div>}
             {!loading && !error && wishes.length === 0 && (
-                <div className="w-full text-center py-10 text-gray-400">
+                <div className="w-full text-center py-10">
                     No pulls recorded. <Link href="/dashboard/import" className="text-blue-400 underline">Import your {game.pullName.toLowerCase()}</Link> to get started.
                 </div>
             )}
