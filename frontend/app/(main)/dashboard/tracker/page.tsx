@@ -1,39 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { BannerConfig } from "@/config/games";
 import { useGame } from "@/contexts/GameContext";
-
-interface BannerStats {
-    total: number;
-    fiveStar: number;
-    fourStar: number;
-    currentPity5: number;
-    currentPity4: number;
-    avgPity5: number;
-    winRate5050: number;
-}
+import { useSettings } from "@/contexts/SettingsContext";
+import { useWishes } from "@/hooks/useWishes";
+import { computeBannerStats, computeWishPity } from "@/utils/stats";
+import { getPityCap } from "@/config/gachaMechanics";
+import { getBannerId } from "@/utils/gachaTypes";
 
 export default function WishTrackerPage() {
     const { activeGame: game } = useGame();
+    const { activeAccount } = useSettings();
     const [activeBanner, setActiveBanner] = useState<BannerConfig>(game.banners[0]);
-    
-    // Mock state for now.
-    const [stats, setStats] = useState<Record<string, BannerStats>>({});
 
-    useEffect(() => {
-        const mockStats: Record<string, BannerStats> = {
-            character: { total: 142, fiveStar: 2, fourStar: 18, currentPity5: 44, currentPity4: 4, avgPity5: 71, winRate5050: 50 },
-            weapon: { total: 65, fiveStar: 1, fourStar: 8, currentPity5: 65, currentPity4: 5, avgPity5: 65, winRate5050: 100 },
-            standard: { total: 210, fiveStar: 3, fourStar: 25, currentPity5: 12, currentPity4: 2, avgPity5: 78, winRate5050: 0 },
-            chronicled: { total: 0, fiveStar: 0, fourStar: 0, currentPity5: 0, currentPity4: 0, avgPity5: 0, winRate5050: 0 },
-        };
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setStats(mockStats);
-    }, [game.id]);
-
-    const currentStats = stats[activeBanner.id] || { total: 0, fiveStar: 0, fourStar: 0, currentPity5: 0, currentPity4: 0, avgPity5: 0, winRate5050: 0 };
+    const { wishes, loading, error } = useWishes(game.id, activeAccount?.id);
+    const bannerStats = computeBannerStats(wishes, game);
+    const wishPityData = computeWishPity(wishes, game);
+    const currentStats = bannerStats[activeBanner.id] || { total: 0, fiveStar: 0, fourStar: 0, currentPity5: 0, currentPity4: 0, avgPity5: 0, winRate5050: 0 };
+    const activeBannerWishes = wishes.filter(w => getBannerId(game.id, w.gacha_type) === activeBanner.id);
 
     return (
         <div className="w-full flex flex-col gap-8 relative items-start">
@@ -81,14 +67,23 @@ export default function WishTrackerPage() {
                 </div>
             </div>
 
+            {loading && <div className="w-full text-center py-10 text-gray-400">Loading wishes...</div>}
+            {error && <div className="w-full bg-red-900/50 border border-red-700 rounded-lg p-4 text-red-300">Failed to load: {error}</div>}
+            {!loading && !error && wishes.length === 0 && (
+                <div className="w-full text-center py-10">
+                    No pulls recorded. <Link href="/dashboard/import" className="text-blue-400 underline">Import your {game.pullName.toLowerCase()}</Link> to get started.
+                </div>
+            )}
+
             {/* --- TWO COLUMN LAYOUT --- */}
+            {!loading && !error && wishes.length > 0 && (
             <div className="w-full flex flex-col md:flex-row gap-6 relative items-start">
                 
                 {/* LEFT SIDEBAR: Banners (Scrollable but invisible scrollbar) */}
                 <div className="w-full md:w-[320px] md:shrink-0 flex flex-col gap-4 h-[210px] md:h-[calc(100vh-10rem)] md:sticky md:top-4 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     <div className="flex flex-col gap-4 pb-4">
                         {game.banners.map((banner) => {
-                            const bannerStat = stats[banner.id] || { currentPity5: 0, currentPity4: 0 };
+                            const bannerStat = bannerStats[banner.id] || { currentPity5: 0, currentPity4: 0 };
                             const isActive = activeBanner.id === banner.id;
                             
                             return (
@@ -107,7 +102,7 @@ export default function WishTrackerPage() {
                                         <div>
                                             <div className="flex items-baseline gap-1">
                                                 <span className="text-2xl font-bold text-yellow-400">{bannerStat.currentPity5}</span>
-                                                <span className="text-gray-400 text-sm">/ {banner.type === 'weapon' ? '80' : '90'}</span>
+                                                <span className="text-gray-400 text-sm">/ {getPityCap(game.id, banner.type)}</span>
                                             </div>
                                             <p className="text-xs text-yellow-500 font-medium">5✦ Pity</p>
                                         </div>
@@ -115,7 +110,7 @@ export default function WishTrackerPage() {
                                         <div className="mt-3">
                                             <div className="flex items-baseline gap-1">
                                                 <span className="text-lg font-bold text-purple-400">{bannerStat.currentPity4}</span>
-                                                <span className="text-gray-400 text-sm">/ 10</span>
+                                                <span className="text-gray-400 text-sm">/ {getPityCap(game.id, banner.type, 'fourStar')}</span>
                                             </div>
                                             <p className="text-xs text-purple-500 font-medium">4✦ Pity</p>
                                         </div>
@@ -196,9 +191,13 @@ export default function WishTrackerPage() {
                         
                         {currentStats.total > 0 ? (
                             <div className="flex flex-wrap gap-4">
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                    <div key={i} className="relative w-16 h-16 rounded-full bg-[#2a2b30] border-2 border-purple-500/50 flex items-center justify-center">
-                                        <span className="text-gray-600 text-xs">Empty</span>
+                                {activeBannerWishes.slice(-5).reverse().map((wish) => (
+                                    <div key={wish.id} className={`relative w-16 h-16 rounded-full border-2 flex items-center justify-center text-xs font-medium ${
+                                        wish.rarity === 5 ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400' :
+                                        wish.rarity === 4 ? 'border-purple-500 bg-purple-500/10 text-purple-400' :
+                                        'border-gray-600 bg-[#2a2b30] text-gray-400'
+                                    }`}>
+                                        {wish.name.length > 8 ? wish.name.slice(0, 6) + '…' : wish.name}
                                     </div>
                                 ))}
                             </div>
@@ -229,24 +228,25 @@ export default function WishTrackerPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="text-sm text-gray-300">
-                                    <tr className="border-b border-[#52525b]/50 hover:bg-[#2a2b30]/30 transition-colors">
-                                        <td className="py-3">142</td>
-                                        <td className="py-3 font-medium text-purple-400">Favonius Lance</td>
-                                        <td className="py-3">8</td>
-                                        <td className="py-3 text-gray-500">2026-05-16 03:22:17</td>
-                                    </tr>
-                                    <tr className="border-b border-[#52525b]/50 hover:bg-[#2a2b30]/30 transition-colors">
-                                        <td className="py-3">141</td>
-                                        <td className="py-3 font-medium text-gray-400">Debate Club</td>
-                                        <td className="py-3">7</td>
-                                        <td className="py-3 text-gray-500">2026-05-16 03:22:10</td>
-                                    </tr>
+                                    {wishPityData.slice(0, 50).map((wish, i) => (
+                                        <tr key={wish.id} className="border-b border-[#52525b]/50 hover:bg-[#2a2b30]/30 transition-colors">
+                                            <td className="py-3">{wishPityData.length - i}</td>
+                                            <td className={`py-3 font-medium ${
+                                                wish.rarity === 5 ? 'text-yellow-400' :
+                                                wish.rarity === 4 ? 'text-purple-400' :
+                                                'text-gray-300'
+                                            }`}>{wish.name}</td>
+                                            <td className="py-3">{wish.pity}</td>
+                                            <td className="py-3 text-gray-500">{wish.time}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
+            )}
         </div>
     );
 }
