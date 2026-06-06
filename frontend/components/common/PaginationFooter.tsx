@@ -26,9 +26,12 @@ export default function PaginationFooter({
         onPageChange(Math.max(1, Math.min(p, totalPages)));
     }
 
+    const fromItem = totalItems > 0 ? (safePage - 1) * perPage + 1 : 0;
+    const toItem = Math.min(safePage * perPage, totalItems);
+
     return (
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 text-sm text-gray-300">
-            <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between items-center gap-4 mt-6 text-sm text-gray-300 w-full">
+            <div className="flex items-center gap-2 whitespace-nowrap order-3 sm:order-1">
                 <span>{itemLabel}:</span>
                 <select
                     value={perPage}
@@ -41,30 +44,31 @@ export default function PaginationFooter({
                 </select>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="text-white whitespace-nowrap font-medium order-1 sm:order-2">
+                {totalItems > 0 ? `${fromItem}-${toItem} of ${totalItems}` : "0 of 0"}
+            </div>
+
+            <div className="flex items-center gap-2 order-2 sm:order-3">
                 <button
                     onClick={() => goTo(1)}
                     disabled={safePage === 1}
-                    className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
-                >&lt;&lt;</button>
+                    className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors font-mono"
+                >|&lt;</button>
                 <button
                     onClick={() => goTo(safePage - 1)}
                     disabled={safePage === 1}
-                    className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
+                    className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors font-mono"
                 >&lt;</button>
-                <span className="px-3 py-1 text-white">
-                    {totalItems > 0 ? safePage : 0} / {totalPages}
-                </span>
                 <button
                     onClick={() => goTo(safePage + 1)}
                     disabled={safePage === totalPages}
-                    className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
+                    className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors font-mono"
                 >&gt;</button>
                 <button
                     onClick={() => goTo(totalPages)}
                     disabled={safePage === totalPages}
-                    className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors"
-                >&gt;&gt;</button>
+                    className="cursor-pointer px-2 py-1 rounded hover:bg-[#2a2b30] disabled:text-gray-500 disabled:hover:bg-transparent transition-colors font-mono"
+                >&gt;|</button>
             </div>
         </div>
     );
