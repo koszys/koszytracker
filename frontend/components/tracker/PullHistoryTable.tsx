@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import { RarityTier } from "@/config/games";
 import { WishData } from "@/hooks/useWishes";
 import { formatWishTime } from "@/utils/formatters";
+import { getItemIconPath } from "@/utils/assets";
 import PaginationFooter from "@/components/common/PaginationFooter";
 
 interface PullHistoryTableProps {
+    gameId: string;
     searchQuery: string;
     onSearchChange: (query: string) => void;
     activeRarities: Set<number>;
@@ -32,6 +34,7 @@ const COLUMNS = [
 ];
 
 export default function PullHistoryTable({
+    gameId,
     searchQuery, onSearchChange,
     activeRarities, onToggleRarity,
     rarityTiers, rarityCounts,
@@ -201,7 +204,15 @@ export default function PullHistoryTable({
                                     {visibleColumns.has("pullNo") && <td className="py-3 pr-4">{pullNo}</td>}
                                     {visibleColumns.has("itemName") && (
                                         <td className={`py-3 pr-4 font-medium whitespace-nowrap ${tier?.color ?? 'text-gray-200'}`}>
-                                            {wish.name}
+                                            <div className="flex items-center gap-2">
+                                                <img
+                                                    src={getItemIconPath(gameId, wish.name)}
+                                                    alt=""
+                                                    className="w-6 h-6 rounded-full object-cover bg-white/5 shrink-0"
+                                                    onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                                />
+                                                {wish.name}
+                                            </div>
                                         </td>
                                     )}
                                     {visibleColumns.has("rarity") && (

@@ -98,6 +98,7 @@ export default function WishTrackerPage() {
                         />
 
                         <PullHistoryTable
+                            gameId={game.id}
                             searchQuery={state.searchQuery}
                             onSearchChange={state.setSearchQuery}
                             activeRarities={state.activeRarities}
