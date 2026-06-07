@@ -78,7 +78,7 @@ export default function ImportPage() {
         <div className="w-full max-w-4xl mx-auto">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-white mb-2">{game.importName}</h1>
-                <p className="text-gray-300">Import and save your {game.name} {game.wishName.toLowerCase()} history.</p>
+                <p className="text-gray-200">Import and save your {game.name} {game.wishName.toLowerCase()} history.</p>
             </div>
 
             <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-6 md:p-8 mb-8 shadow-lg">

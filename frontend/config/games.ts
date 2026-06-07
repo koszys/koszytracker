@@ -1,7 +1,14 @@
 export interface BannerConfig {
     id: string;
     name: string;
-    type: 'character' | 'weapon' | 'standard' | 'chronicled' | 'beginner';
+    type: string;
+    cardImage?: string;
+}
+
+export interface RarityTier {
+    value: number;
+    label: string;
+    color: string;
 }
 
 export interface GameConfig {
@@ -17,6 +24,7 @@ export interface GameConfig {
     currencyName: string;
     pullName: string;
     banners: BannerConfig[];
+    rarityTiers: RarityTier[];
     // Dynamic Theme Variables
     themeColor: string;
     themeGradientFrom: string;
@@ -48,6 +56,11 @@ export const GAME_CONFIG: GameConfig[] = [
             { id: 'standard', name: 'Standard', type: 'standard' },
             { id: 'chronicled', name: 'Chronicled Wish', type: 'chronicled' }
         ],
+        rarityTiers: [
+            { value: 5, label: '5\u2726', color: 'text-yellow-400' },
+            { value: 4, label: '4\u2726', color: 'text-purple-400' },
+            { value: 3, label: '3\u2726', color: 'text-gray-300' },
+        ],
         themeColor: '#3b82f6', // blue-500
         themeGradientFrom: '#60a5fa', // blue-400
         themeGradientTo: '#2563eb', // blue-600
@@ -72,7 +85,13 @@ export const GAME_CONFIG: GameConfig[] = [
         banners: [
             { id: 'character', name: 'Featured Resonator', type: 'character' },
             { id: 'weapon', name: 'Featured Weapon', type: 'weapon' },
-            { id: 'standard', name: 'Standard Resonator', type: 'standard' }
+            { id: 'characterpermanent', name: 'Permanent Resonator', type: 'characterpermanent' },
+            { id: 'weaponpermanent', name: 'Permanent Weapon', type: 'weaponpermanent' }
+        ],
+        rarityTiers: [
+            { value: 5, label: '5\u2726', color: 'text-yellow-400' },
+            { value: 4, label: '4\u2726', color: 'text-purple-400' },
+            { value: 3, label: '3\u2726', color: 'text-gray-300' },
         ],
         themeColor: '#eab308', // yellow-500
         themeGradientFrom: '#facc15', // yellow-400
