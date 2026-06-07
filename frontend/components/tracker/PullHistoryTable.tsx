@@ -210,7 +210,7 @@ export default function PullHistoryTable({
                                         </td>
                                     )}
                                     {visibleColumns.has("pity") && <td className="py-3 pr-4">{wish.rarity === lowestRarity ? 'N/A' : wish.pity}</td>}
-                                    {visibleColumns.has("dateReceived") && <td className="py-3 text-gray-400 whitespace-nowrap">{formatWishTime(wish.time)}</td>}
+                                    {visibleColumns.has("dateReceived") && <td className="py-3 text-gray-200 whitespace-nowrap">{formatWishTime(wish.time)}</td>}
                                 </tr>
                             );
                         })}

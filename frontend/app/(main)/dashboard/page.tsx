@@ -11,7 +11,7 @@ export default function HomePage() {
             <h1 className="text-4xl md:text-6xl font-black text-white mb-6 drop-shadow-md tracking-widest">
                 <span>SENTI</span><span className="text-theme">.MOE</span>
             </h1>
-            <p className="text-xl text-gray-300 max-w-2xl mb-12 font-medium">
+            <p className="text-xl text-gray-200 max-w-2xl mb-12 font-medium">
                 A page for tracking and analyzing your {game.name} gacha rolls. 
                 View your stats, track your pity, and manage multiple accounts with ease.
             </p>
