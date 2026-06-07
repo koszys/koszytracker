@@ -286,10 +286,10 @@ function DashboardLayoutContent({
                         ) : (
                             <div
                                 key={game.id}
-                                className="relative block h-28 rounded-md overflow-hidden border border-white/10 opacity-50"
+                                className="relative group block h-28 rounded-md overflow-hidden border border-white/10 opacity-50 cursor-not-allowed"
                             >
                                 <div
-                                    className="absolute inset-0 bg-cover bg-center"
+                                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
                                     style={{ backgroundImage: game.bgUrl ? `url('${game.bgUrl}')` : 'none' }}
                                 ></div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#27272a] via-[#27272a]/50 to-transparent z-10"></div>
