@@ -366,7 +366,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
                     id: `local_${Date.now()}_${idx}`,
                     name: acc.name || 'Imported',
                     server: acc.server || 'America',
-                    ar: parseInt(acc.ar, 10) || 1,
+                    ar: parseInt(String(acc.ar ?? ''), 10) || 1,
                     wl: acc.wl || '0',
                     gender: acc.gender || 'M',
                 }));
@@ -413,7 +413,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
                     id: `local_${Date.now()}_${idx}`,
                     name: acc.name || 'Imported',
                     server: acc.server || 'America',
-                    ar: parseInt(acc.ar, 10) || 1,
+                    ar: parseInt(String(acc.ar ?? ''), 10) || 1,
                     wl: acc.wl || '0',
                     gender: acc.gender || 'M',
                 }));

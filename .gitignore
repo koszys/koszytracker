@@ -56,3 +56,6 @@ htmlcov/
 
 # AI
 .gemini/
+
+# Next.js (auto-generated)
+frontend/next-env.d.ts

@@ -80,11 +80,11 @@ function DashboardLayoutContent({
                 {/* Logo */}
                 <div className="h-16 flex items-center justify-center px-4 border-b border-white/5 flex-shrink-0">
                     {(!isSidebarCollapsed || isMobileNavOpen) ? (
-                        <Link href="/dashboard" className="text-xl font-black text-white tracking-widest overflow-hidden whitespace-nowrap w-full text-left hover:text-theme transition-colors">
+                        <Link href="/" className="text-xl font-black text-white tracking-widest overflow-hidden whitespace-nowrap w-full text-left hover:text-theme transition-colors">
                             SENTI<span className="text-theme">.MOE</span>
                         </Link>
                     ) : (
-                        <Link href="/dashboard" className="text-xl font-black text-white tracking-widest hover:text-theme transition-colors">
+                        <Link href="/" className="text-xl font-black text-white tracking-widest hover:text-theme transition-colors">
                             S<span className="text-theme">.</span>
                         </Link>
                     )}

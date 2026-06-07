@@ -15,7 +15,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const [activeGameId, setActiveGameIdState] = useState<string>(GAME_CONFIG[0].id);
 
     useEffect(() => {
-        const stored = localStorage.getItem('koszy_active_game');
+        const stored = localStorage.getItem('senti_active_game');
         if (stored && GAME_CONFIG.some(g => g.id === stored)) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setActiveGameIdState(stored);
@@ -27,7 +27,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
     const setActiveGameId = useCallback((id: string) => {
         setActiveGameIdState(id);
-        localStorage.setItem('koszy_active_game', id);
+        localStorage.setItem('senti_active_game', id);
     }, []);
 
     const activeGame = GAME_CONFIG.find(g => g.id === activeGameId) || GAME_CONFIG[0];
