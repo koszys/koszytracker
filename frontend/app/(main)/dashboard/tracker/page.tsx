@@ -22,9 +22,9 @@ export default function WishTrackerPage() {
             {/* Header */}
             <div className="w-full flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-white">{game.wishName}</h1>
+                    <h1 className="text-3xl font-bold text-white">{game.trackerName}</h1>
                     <p className="text-gray-200 text-sm mt-2">
-                        View your recent {game.pullName.toLowerCase()} & statistics compared to other {game.name} users.
+                        View your recent {game.pullName.toLowerCase()} and statistics.
                     </p>
                 </div>
 
