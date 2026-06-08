@@ -66,7 +66,7 @@ db-down:
 	docker compose down
 
 run-backend:
-	cd backend && JAVA_HOME=$(JAVA_HOME) ./mvnw spring-boot:run -Dmaven.test.skip=true
+	cd backend && set -a && . ../.env && set +a && JAVA_HOME=$(JAVA_HOME) ./mvnw spring-boot:run -Dmaven.test.skip=true
 
 run-frontend:
 	cd frontend && npm run dev
