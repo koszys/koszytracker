@@ -41,8 +41,3 @@ body {
   scrollbar-width: none;
 }
 
-@media (min-width: 1024px) {
-  main {
-    overflow-y: hidden !important;
-  }
-}
