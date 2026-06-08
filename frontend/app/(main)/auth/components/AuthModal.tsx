@@ -21,10 +21,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     if (!isOpen || !mounted) return null;
 
     const handleGoogleLogin = () => {
+        sessionStorage.setItem("authRedirect", window.location.pathname);
         window.location.href = 'http://localhost:8000/auth/google';
     };
 
     const handleDiscordLogin = () => {
+        sessionStorage.setItem("authRedirect", window.location.pathname);
         window.location.href = 'http://localhost:8000/auth/discord';
     };
 
