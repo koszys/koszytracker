@@ -60,7 +60,7 @@ export default function SearchInput({ value, onChange, placeholder = "Search gam
     return (
         <>
             <div className="fixed inset-0 z-40" onClick={close} />
-            <div className={`relative z-50 mb-6 max-w-md ${className ?? ""}`}>
+            <div className={`relative z-40 mb-6 max-w-md ${className ?? ""}`}>
                 <input
                     ref={inputRef}
                     type="text"
