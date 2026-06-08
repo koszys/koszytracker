@@ -179,8 +179,8 @@ export default function HomePage() {
                     </section>
 
                     <SearchInput value={searchQuery} onChange={setSearchQuery} />
-
-                    {recentGames.length > 0 && (
+                    {/* Remove false && to show the recently chosen list again. Hiding for now since not too many games currently */}
+                    {false && recentGames.length > 0 && (
                         <>
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-lg font-bold text-white uppercase tracking-wider border-l-4 border-blue-500 pl-3">
