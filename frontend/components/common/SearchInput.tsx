@@ -25,20 +25,21 @@ export default function SearchInput({ value, onChange, placeholder = "Search gam
     }, [onChange]);
 
     useEffect(() => {
+        if (!isOpen) {
+            onChange("");
+        }
+    }, [isOpen, onChange]);
+
+    useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if ((e.metaKey || e.ctrlKey) && e.key === "k") {
                 e.preventDefault();
-                setIsOpen(prev => {
-                    if (prev) {
-                        onChange("");
-                    }
-                    return !prev;
-                });
+                setIsOpen(prev => !prev);
             }
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [onChange]);
+    }, []);
 
     if (!isOpen) {
         return (
