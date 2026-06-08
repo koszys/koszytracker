@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { GAME_CONFIG } from "@/config/games";
+import { GAME_CONFIG, type GameConfig } from "@/config/games";
 import { useAuth } from "@/contexts/AuthContext";
+import { useGame } from "@/contexts/GameContext";
 import GameCard from "@/components/common/GameCard";
 import SocialCards from "@/components/common/SocialCards";
 import SocialButton from "@/components/common/SocialButton";
@@ -28,8 +29,32 @@ export default function HomePage() {
     const [scrolled, setScrolled] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const { user, logout } = useAuth();
+    const { recentGameIds } = useGame();
+
+    const sortedGames = useMemo(() => {
+        return [...GAME_CONFIG].sort((a, b) => a.name.localeCompare(b.name));
+    }, []);
+
+    const filteredActiveGames = useMemo(() => {
+        const q = searchQuery.toLowerCase();
+        return sortedGames.filter(game => game.status === 'active' && game.name.toLowerCase().includes(q));
+    }, [searchQuery, sortedGames]);
+
+    const filteredComingSoonGames = useMemo(() => {
+        const q = searchQuery.toLowerCase();
+        return sortedGames.filter(game => game.status === 'comingsoon' && game.name.toLowerCase().includes(q));
+    }, [searchQuery, sortedGames]);
+
+    const recentGames = useMemo(() => {
+        const q = searchQuery.toLowerCase();
+        return recentGameIds
+            .map(id => GAME_CONFIG.find(g => g.id === id))
+            .filter((g): g is GameConfig => g !== undefined)
+            .filter(game => game.name.toLowerCase().includes(q));
+    }, [recentGameIds, searchQuery]);
 
     useEffect(() => {
         const savedBg = localStorage.getItem("senti-last-bg");
@@ -152,25 +177,94 @@ export default function HomePage() {
                         </div>
                     </section>
 
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-white uppercase tracking-wider border-l-4 border-blue-500 pl-3">
-                            Supported Games
-                        </h2>
+                    <div className="relative mb-6">
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                            placeholder="Search games..."
+                            className="w-full px-4 py-3 pl-10 bg-[#1c1d21] border border-[#33343a] rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm"
+                        />
+                        <svg
+                            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
                     </div>
 
-                    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {GAME_CONFIG.map((game) => (
-                            <GameCard
-                                key={game.id}
-                                gameId={game.id}
-                                name={game.name}
-                                status={game.status}
-                                bgUrl={game.bgUrl}
-                                link="/dashboard"
-                                onHover={handleHover}
-                            />
-                        ))}
-                    </section>
+                    {recentGames.length > 0 && (
+                        <>
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-lg font-bold text-white uppercase tracking-wider border-l-4 border-blue-500 pl-3">
+                                    Recently Chosen
+                                </h2>
+                            </div>
+                            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+                                {recentGames.map((game) => (
+                                    <GameCard
+                                        key={game.id}
+                                        gameId={game.id}
+                                        name={game.name}
+                                        status={game.status}
+                                        bgUrl={game.bgUrl}
+                                        link="/dashboard"
+                                        onHover={handleHover}
+                                    />
+                                ))}
+                            </section>
+                        </>
+                    )}
+
+                    {filteredActiveGames.length > 0 && (
+                        <>
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-xl font-bold text-white uppercase tracking-wider border-l-4 border-blue-500 pl-3">
+                                    Supported Games
+                                </h2>
+                            </div>
+                            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                                {filteredActiveGames.map((game) => (
+                                    <GameCard
+                                        key={game.id}
+                                        gameId={game.id}
+                                        name={game.name}
+                                        status={game.status}
+                                        bgUrl={game.bgUrl}
+                                        link="/dashboard"
+                                        onHover={handleHover}
+                                    />
+                                ))}
+                            </section>
+                        </>
+                    )}
+
+                    {filteredComingSoonGames.length > 0 && (
+                        <>
+                            <div className="flex items-center justify-between mt-10 mb-6">
+                                <h2 className="text-xl font-bold text-white uppercase tracking-wider border-l-4 border-blue-500 pl-3">
+                                    Coming Soon
+                                </h2>
+                            </div>
+                            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                                {filteredComingSoonGames.map((game) => (
+                                    <GameCard
+                                        key={game.id}
+                                        gameId={game.id}
+                                        name={game.name}
+                                        status={game.status}
+                                        bgUrl={game.bgUrl}
+                                        link="/dashboard"
+                                        onHover={handleHover}
+                                    />
+                                ))}
+                            </section>
+                        </>
+                    )}
+
+                    {filteredActiveGames.length === 0 && filteredComingSoonGames.length === 0 && (
+                        <p className="text-gray-200 text-sm text-center py-8">No games match your search.</p>
+                    )}
 
                     <SocialCards />
 
