@@ -7,27 +7,44 @@ interface GameContextValue {
     activeGameId: string;
     setActiveGameId: (id: string) => void;
     activeGame: GameConfig;
+    recentGameIds: string[];
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
 
 export function GameProvider({ children }: { children: ReactNode }) {
     const [activeGameId, setActiveGameIdState] = useState<string>(GAME_CONFIG[0].id);
+    const [recentGameIds, setRecentGameIds] = useState<string[]>([]);
 
     useEffect(() => {
-        const stored = localStorage.getItem('koszy_active_game');
+        const stored = localStorage.getItem('senti_active_game');
         if (stored && GAME_CONFIG.some(g => g.id === stored)) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setActiveGameIdState(stored);
-        } else {
-            const defaultGame = GAME_CONFIG.find(g => g.status === 'active') || GAME_CONFIG[0];
-            setActiveGameIdState(defaultGame.id);
+        }
+        const recentStored = localStorage.getItem('senti-recent-games');
+        if (recentStored) {
+            try {
+                const parsed: string[] = JSON.parse(recentStored);
+                const valid = parsed.filter(id => GAME_CONFIG.some(g => g.id === id));
+                if (valid.length > 0) {
+                    // eslint-disable-next-line react-hooks/set-state-in-effect
+                    setRecentGameIds(valid);
+                }
+            } catch {
+                // ignore invalid JSON
+            }
         }
     }, []);
 
     const setActiveGameId = useCallback((id: string) => {
         setActiveGameIdState(id);
-        localStorage.setItem('koszy_active_game', id);
+        localStorage.setItem('senti_active_game', id);
+        setRecentGameIds(prev => {
+            const updated = [id, ...prev.filter(pid => pid !== id)].slice(0, 3);
+            localStorage.setItem('senti-recent-games', JSON.stringify(updated));
+            return updated;
+        });
     }, []);
 
     const activeGame = GAME_CONFIG.find(g => g.id === activeGameId) || GAME_CONFIG[0];
@@ -35,7 +52,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     // Avoid returning early to allow context provider to render
     // with default values before hydration.
     return (
-        <GameContext.Provider value={{ activeGameId, setActiveGameId, activeGame }}>
+        <GameContext.Provider value={{ activeGameId, setActiveGameId, activeGame, recentGameIds }}>
             {children}
         </GameContext.Provider>
     );

@@ -80,11 +80,11 @@ function DashboardLayoutContent({
                 {/* Logo */}
                 <div className="h-16 flex items-center justify-center px-4 border-b border-white/5 flex-shrink-0">
                     {(!isSidebarCollapsed || isMobileNavOpen) ? (
-                        <Link href="/dashboard" className="text-xl font-black text-white tracking-widest overflow-hidden whitespace-nowrap w-full text-left hover:text-theme transition-colors">
+                        <Link href="/" className="text-xl font-black text-white tracking-widest overflow-hidden whitespace-nowrap w-full text-left hover:text-theme transition-colors">
                             SENTI<span className="text-theme">.MOE</span>
                         </Link>
                     ) : (
-                        <Link href="/dashboard" className="text-xl font-black text-white tracking-widest hover:text-theme transition-colors">
+                        <Link href="/" className="text-xl font-black text-white tracking-widest hover:text-theme transition-colors">
                             S<span className="text-theme">.</span>
                         </Link>
                     )}
@@ -286,10 +286,10 @@ function DashboardLayoutContent({
                         ) : (
                             <div
                                 key={game.id}
-                                className="relative block h-28 rounded-md overflow-hidden border border-white/10 opacity-50"
+                                className="relative group block h-28 rounded-md overflow-hidden border border-white/10 opacity-50 cursor-not-allowed"
                             >
                                 <div
-                                    className="absolute inset-0 bg-cover bg-center"
+                                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
                                     style={{ backgroundImage: game.bgUrl ? `url('${game.bgUrl}')` : 'none' }}
                                 ></div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#27272a] via-[#27272a]/50 to-transparent z-10"></div>

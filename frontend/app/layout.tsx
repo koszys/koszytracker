@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wish Tracker",
-  description: "Track your Genshin Impact wishes",
+  title: "senti.moe",
+  description: "Your tracker for dailies, events, and other content for your gacha games.",
 };
 
 export default function RootLayout({

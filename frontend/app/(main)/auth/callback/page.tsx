@@ -9,15 +9,16 @@ export default function AuthCallback() {
   const router = useRouter();
 
   useEffect(() => {
-    // Hash looks like #token=...
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
     const token = params.get("token");
+    const redirectTo = sessionStorage.getItem("authRedirect") || "/";
+    sessionStorage.removeItem("authRedirect");
     if (token) {
       login(token);
-      router.push("/dashboard/settings");
+      router.push(redirectTo);
     } else {
-      router.push("/dashboard/settings");
+      router.push(redirectTo);
     }
   }, [login, router]);
 
