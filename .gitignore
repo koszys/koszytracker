@@ -60,6 +60,5 @@ htmlcov/
 # Next.js (auto-generated)
 frontend/next-env.d.ts
 
-docs/
-gamehome/
-test/
+# Agents
+agents/
