@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     games: Game;
+    events: Event;
     'game-codes': GameCodeCollection;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -81,6 +82,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     games: GamesSelect<false> | GamesSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
     'game-codes': GameCodesSelect<false> | GameCodesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -161,6 +163,23 @@ export interface Game {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: string;
+  gameId: string;
+  name: string;
+  type: 'banner' | 'event';
+  start: string;
+  end: string;
+  image?: string | null;
+  label?: Record<string, unknown> | null;
+  bannerData?: Record<string, unknown> | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "game-codes".
  */
 export interface GameCodeCollection {
@@ -230,6 +249,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'game-codes';
         value: string | GameCodeCollection;
+      } | null)
+    | ({
+        relationTo: 'events';
+        value: string | Event;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -303,6 +326,22 @@ export interface GamesSelect<T extends boolean = true> {
   slug?: T;
   name?: T;
   status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  gameId?: T;
+  name?: T;
+  type?: T;
+  start?: T;
+  end?: T;
+  image?: T;
+  label?: T;
+  bannerData?: T;
   updatedAt?: T;
   createdAt?: T;
 }

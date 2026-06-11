@@ -9,6 +9,7 @@ import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { GameCodes } from "./collections/GameCodes";
 import { Games } from "./collections/Games";
+import { Events } from "./collections/Events";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -20,7 +21,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Games, GameCodes],
+  collections: [Users, Media, Games, GameCodes, Events],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
