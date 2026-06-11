@@ -140,6 +140,7 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+  role: 'admin' | 'user';
   collection: 'users';
 }
 /**

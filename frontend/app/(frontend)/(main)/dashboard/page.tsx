@@ -1,34 +1,41 @@
 "use client";
 
-import Link from "next/link";
 import { useGame } from "@/contexts/GameContext";
+import { TimerProvider } from "@/contexts/TimerContext";
+import GameIntro from "@/components/game/GameIntro";
+import ToggleSection from "@/components/game/ToggleSection";
+import ActiveCodes from "@/components/game/ActiveCodes";
+import EventTimeline from "@/components/game/timeline/EventTimeline";
+import ChangelogSection from "@/components/common/ChangelogSection";
 
 export default function HomePage() {
     const { activeGame: game } = useGame();
 
     return (
-        <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-            <h1 className="text-4xl md:text-6xl font-black text-white mb-6 drop-shadow-md tracking-widest">
-                <span>SENTI</span><span className="text-theme">.MOE</span>
-            </h1>
-            <p className="text-xl text-gray-200 max-w-2xl mb-12 font-medium">
-                A page for tracking and analyzing your {game.name} gacha rolls. 
-                View your stats, track your pity, and manage multiple accounts with ease.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-                <Link
-                    href="/dashboard/tracker"
-                    className="px-8 py-3 bg-theme hover:brightness-110 hover:border-white text-white font-bold rounded-lg transition-all shadow-lg border border-theme/50"
-                >
-                    View Tracker
-                </Link>
-                <Link
-                    href="/dashboard/import"
-                    className="px-8 py-3 bg-[#27272a] border border-[#52525b] hover:bg-[#3f3f46] hover:border-white text-white font-bold rounded-lg transition-all"
-                >
-                    {game.importName}
-                </Link>
-            </div>
+        <div className="w-full max-w-300 mx-auto pb-20">
+            <GameIntro text={`Keep up to date with new banners, events, and updates in ${game.name}.`} />
+
+            <TimerProvider>
+                <ToggleSection title="Active Codes" defaultOpen={true}>
+                    <ActiveCodes game={game.id} redeemUrl={game.redeemUrl} />
+                </ToggleSection>
+
+                <ToggleSection title="Current Events" defaultOpen={true}>
+                    <EventTimeline game={game.id} type="current" />
+                </ToggleSection>
+
+                <ToggleSection title="Upcoming Events" defaultOpen={true}>
+                    <EventTimeline game={game.id} type="upcoming" />
+                </ToggleSection>
+            </TimerProvider>
+
+            {/* Hidden changelog */}
+            <section className="mt-12 hidden">
+                <h2 className="text-xl font-bold text-white uppercase tracking-wider border-l-4 border-theme pl-3 mb-6">
+                    Changelog
+                </h2>
+                <ChangelogSection game={game.id} />
+            </section>
         </div>
     );
 }

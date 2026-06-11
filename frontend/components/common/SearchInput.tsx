@@ -78,7 +78,7 @@ export default function SearchInput({ value, onChange, placeholder = "Search gam
                 value={value}
                 onChange={e => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="w-full px-4 py-3 pl-10 pr-14 bg-[#1c1d21] border border-[#33343a] rounded-md text-white placeholder-gray-300 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm"
+                className="w-full px-4 py-3 pl-10 pr-14 bg-[#1c1d21] border border-[#33343a] rounded-md text-white placeholder-gray-300 focus:outline-none focus:border-theme/50 focus:ring-1 focus:ring-theme/20 transition-all text-sm"
             />
             <svg
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-200"
