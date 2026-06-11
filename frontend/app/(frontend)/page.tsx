@@ -85,7 +85,7 @@ export default function HomePage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#121212] text-gray-300 font-sans selection:bg-blue-500 selection:text-white relative">
+        <div className="min-h-screen bg-[#121212] text-gray-300 font-sans selection:bg-theme selection:text-white relative">
             {currentBg && (
                 <div
                     className={`fixed inset-0 z-0 bg-cover bg-center bg-no-repeat transition-opacity duration-500 ${isBgLoaded ? "opacity-40" : "opacity-0"}`}
@@ -103,12 +103,12 @@ export default function HomePage() {
                         <Link
                             href="/"
                             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                            className="text-2xl font-black text-white hover:text-blue-500 tracking-widest cursor-pointer"
+                            className="text-2xl font-black text-white hover:text-theme tracking-widest cursor-pointer"
                         >
-                            SENTI<span className="text-blue-500">.MOE</span>
+                            SENTI<span className="text-theme">.MOE</span>
                         </Link>
                         <nav className="hidden md:flex space-x-6 text-sm font-semibold">
-                            <a href="#" className="text-white border-b-2 border-blue-500 hover:text-white pb-1">Home</a>
+                            <a href="#" className="text-white border-b-2 border-theme hover:text-white pb-1">Home</a>
                         </nav>
                     </div>
 
@@ -129,12 +129,12 @@ export default function HomePage() {
                                     {user.avatar || user.picture ? (
                                         <img src={user.avatar || user.picture} alt="Profile" className="w-7 h-7 rounded-full object-cover" />
                                     ) : (
-                                        <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white">
+                                        <div className="w-7 h-7 rounded-full bg-theme flex items-center justify-center text-xs font-bold text-white">
                                             {user.name?.charAt(0).toUpperCase() || "U"}
                                         </div>
                                     )}
-                                    <span className="text-sm font-bold text-blue-400">{user.name}</span>
-                                    <svg className={`w-4 h-4 text-blue-400 transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <span className="text-sm font-bold text-theme">{user.name}</span>
+                                    <svg className={`w-4 h-4 text-theme transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
@@ -142,7 +142,7 @@ export default function HomePage() {
                                 {isUserMenuOpen && (
                                     <>
                                         <div className="fixed inset-0 z-40" onClick={() => setIsUserMenuOpen(false)}></div>
-                                        <div className="absolute right-0 mt-2 w-48 bg-[#1c1d21] border border-[#33343a] hover:border-blue-500 rounded-lg shadow-2xl z-50 overflow-hidden flex flex-col">
+                                        <div className="absolute right-0 mt-2 w-48 bg-[#1c1d21] border border-[#33343a] hover:border-theme rounded-lg shadow-2xl z-50 overflow-hidden flex flex-col">
                                             <button
                                                 onClick={() => { setIsUserMenuOpen(false); logout(); }}
                                                 className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-red-400 hover:text-red-300 hover:bg-[#24252a] hover:border-transparent transition-colors text-left w-full cursor-pointer"
@@ -157,7 +157,7 @@ export default function HomePage() {
                         ) : (
                             <button
                                 onClick={() => setIsAuthModalOpen(true)}
-                                className="ml-2 px-5 py-2 bg-blue-500 border border-transparent hover:bg-transparent hover:border-blue-500 text-white rounded text-sm font-bold transition-colors shadow-md cursor-pointer"
+                                className="ml-2 px-5 py-2 bg-theme border border-transparent hover:bg-transparent hover:border-theme text-white rounded text-sm font-bold transition-colors shadow-md cursor-pointer"
                             >
                                 Sign In
                             </button>
@@ -169,7 +169,7 @@ export default function HomePage() {
                     <section className="mb-10">
                         <div className="relative w-full h-32 md:h-40 flex items-center justify-center group cursor-pointer">
                             <div className="relative z-10 text-center px-4">
-                                <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 tracking-wide uppercase">SENTI<span className="text-blue-500">.MOE</span></h1>
+                                <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 tracking-wide uppercase">SENTI<span className="text-theme">.MOE</span></h1>
                                 <p className="text-white text-sm md:text-base">
                                     Your tracker for dailies, events, and other content for your gacha games.
                                     This is currently being maintained solo so I would appreciate any support and feedback!
@@ -183,7 +183,7 @@ export default function HomePage() {
                     {false && recentGames.length > 0 && (
                         <>
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-bold text-white uppercase tracking-wider border-l-4 border-blue-500 pl-3">
+                                <h2 className="text-lg font-bold text-white uppercase tracking-wider border-l-4 border-theme pl-3">
                                     Recently Chosen
                                 </h2>
                             </div>
@@ -206,7 +206,7 @@ export default function HomePage() {
                     {filteredActiveGames.length > 0 && (
                         <>
                             <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-white uppercase tracking-wider border-l-4 border-blue-500 pl-3">
+                                <h2 className="text-xl font-bold text-white uppercase tracking-wider border-l-4 border-theme pl-3">
                                     Supported Games
                                 </h2>
                             </div>
@@ -229,7 +229,7 @@ export default function HomePage() {
                     {filteredComingSoonGames.length > 0 && (
                         <>
                             <div className="flex items-center justify-between mt-10 mb-6">
-                                <h2 className="text-xl font-bold text-white uppercase tracking-wider border-l-4 border-blue-500 pl-3">
+                                <h2 className="text-xl font-bold text-white uppercase tracking-wider border-l-4 border-theme pl-3">
                                     Coming Soon
                                 </h2>
                             </div>

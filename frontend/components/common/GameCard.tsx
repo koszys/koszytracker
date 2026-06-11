@@ -19,7 +19,7 @@ export default function GameCard({ gameId, name, status, bgUrl, link, onHover }:
     const cardContent = (
         <div
             className={`relative group h-36 sm:h-45 rounded-md overflow-hidden border border-[#33343a] transition-all duration-300
-                ${isComingSoon ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:border-blue-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]"}`}
+                ${isComingSoon ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:border-theme/50 hover:shadow-[0_0_20px_var(--theme-glow)]"}`}
             onMouseEnter={() => onHover(bgUrl)}
         >
             <div
