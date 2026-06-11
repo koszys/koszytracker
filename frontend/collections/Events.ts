@@ -42,7 +42,8 @@ export const Events: CollectionConfig = {
     },
     {
       name: "image",
-      type: "text",
+      type: "upload",
+      relationTo: "media",
     },
     {
       name: "label",
