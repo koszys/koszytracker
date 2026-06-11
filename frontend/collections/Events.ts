@@ -34,11 +34,21 @@ export const Events: CollectionConfig = {
       name: "start",
       type: "date",
       required: true,
+      admin: {
+        date: {
+          pickerAppearance: "dayAndTime",
+        },
+      },
     },
     {
       name: "end",
       type: "date",
       required: true,
+      admin: {
+        date: {
+          pickerAppearance: "dayAndTime",
+        },
+      },
     },
     {
       name: "image",
