@@ -36,6 +36,7 @@ export interface GameConfig {
     importIcon: string;
     settingsIcon: string;
     importScript: string;
+    redeemUrl?: string;
 }
 
 export const GAME_CONFIG: GameConfig[] = [
@@ -69,7 +70,8 @@ export const GAME_CONFIG: GameConfig[] = [
         trackerIcon: '/assets/genshin/genshin-wish.png',
         importIcon: '/assets/genshin/genshin-mail.webp',
         settingsIcon: '/assets/genshin/settings-icon.webp',
-        importScript: "iex (irm 'https://placeholder.com/genshin-import.ps1')"
+        importScript: "iex (irm 'https://placeholder.com/genshin-import.ps1')",
+        redeemUrl: 'https://genshin.hoyoverse.com/en/gift'
     },
     {
         id: 'wuwa',
