@@ -9,6 +9,7 @@ import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { GameCodes } from "./collections/GameCodes";
 import { Games } from "./collections/Games";
+import { Changelogs } from "./collections/Changelogs";
 import { Events } from "./collections/Events";
 
 const filename = fileURLToPath(import.meta.url);
@@ -21,7 +22,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Games, GameCodes, Events],
+  collections: [Users, Media, Games, GameCodes, Events, Changelogs],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {

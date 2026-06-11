@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     games: Game;
     events: Event;
+    changelogs: Changelog;
     'game-codes': GameCodeCollection;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -83,6 +84,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     games: GamesSelect<false> | GamesSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
+    changelogs: ChangelogsSelect<false> | ChangelogsSelect<true>;
     'game-codes': GameCodesSelect<false> | GameCodesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -180,6 +182,19 @@ export interface Event {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "changelogs".
+ */
+export interface Changelog {
+  id: string;
+  gameId: string;
+  title: string;
+  content?: Record<string, unknown> | null;
+  date: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "game-codes".
  */
 export interface GameCodeCollection {
@@ -253,6 +268,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'events';
         value: string | Event;
+      } | null)
+    | ({
+        relationTo: 'changelogs';
+        value: string | Changelog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -342,6 +361,18 @@ export interface EventsSelect<T extends boolean = true> {
   image?: T;
   label?: T;
   bannerData?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "changelogs_select".
+ */
+export interface ChangelogsSelect<T extends boolean = true> {
+  gameId?: T;
+  title?: T;
+  content?: T;
+  date?: T;
   updatedAt?: T;
   createdAt?: T;
 }
