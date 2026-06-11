@@ -1,0 +1,151 @@
+import { useState, useEffect, memo, useMemo } from "react";
+import CountdownTimer from "./CountdownTimer";
+import { fetchEvents } from "@/data/fetchEvents";
+import type { GameEvent } from "@/data/types";
+
+interface EventTimelineProps {
+    game: string;
+    type?: "all" | "current" | "upcoming";
+}
+
+const EventCard = memo(function EventCard({ event, isCurrent }: { event: GameEvent; isCurrent: boolean }) {
+    const imageUrl = event.image || event.image_path || null;
+    const hasImage = !!imageUrl;
+    const isBanner = event.type?.toLowerCase() === "banner";
+
+    return (
+        <div className={`relative flex items-center bg-[#1c1d21]/80 border border-[#33343a] rounded-xl p-3 min-h-[6rem] shadow-sm hover:border-[#4b4c53] transition-colors group ${!isCurrent ? "opacity-70 hover:opacity-100 transition-opacity" : ""}`}>
+
+            <div className={`flex-shrink-0 flex items-center justify-center mr-4 overflow-hidden ${
+                isBanner
+                    ? "w-12 h-12 md:w-14 md:h-14 rounded-md"
+                    : "w-24 h-14 md:w-32 md:h-16 rounded-md"
+            }`}>
+                {hasImage && (
+                    <img
+                        src={imageUrl!}
+                        alt={event.name}
+                        className={`w-full h-full drop-shadow-md group-hover:scale-105 transition-transform ${
+                            isBanner ? "object-contain" : "object-cover"
+                        }`}
+                    />
+                )}
+            </div>
+
+            <div className="flex flex-col flex-1 justify-center min-w-0 pr-20">
+                <div className={`flex ${isBanner ? "items-center gap-2 mb-1.5" : "flex-col items-start gap-1.5"}`}>
+                    {event.label && !isBanner && (
+                        <span className={`text-[10px] md:text-xs font-bold px-1.5 py-0.5 rounded w-max ${event.label.bgColor} ${event.label.textColor}`}>
+                            {event.label.text}
+                        </span>
+                    )}
+                    <h3 className="text-white font-bold text-sm md:text-base leading-tight truncate w-full">
+                        {event.name}
+                    </h3>
+                </div>
+
+                {isBanner && event.bannerData && (
+                    <div className="flex items-center gap-1.5 mt-2">
+                        {event.bannerData.featuredChars?.map((char, idx) => (
+                            <div key={`char-${idx}`} className="relative group/tooltip flex-shrink-0">
+                                <img
+                                    src={char.icon}
+                                    alt={char.name}
+                                    className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-orange-400 bg-orange-200/20 object-cover shadow-sm cursor-help"
+                                />
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1 bg-[#121212] border border-[#33343a] text-white text-xs font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl">
+                                    {char.name}
+                                </div>
+                            </div>
+                        ))}
+
+                        {event.bannerData.featuredWeapons?.map((weapon, idx) => (
+                            <div key={`weapon-${idx}`} className="relative group/tooltip flex-shrink-0">
+                                <img
+                                    src={weapon.icon}
+                                    alt={weapon.name}
+                                    className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-orange-400 bg-orange-200/20 object-cover shadow-sm cursor-help"
+                                />
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1 bg-[#121212] border border-[#33343a] text-white text-xs font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl">
+                                    {weapon.name}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            <div className="absolute top-0 right-0 z-10">
+                <CountdownTimer
+                    endDate={isCurrent ? event.end : event.start}
+                    ribbonColor={!isCurrent ? "bg-theme" : undefined}
+                    expiredLabel={!isCurrent ? "LIVE" : "ENDED"}
+                />
+            </div>
+        </div>
+    );
+});
+
+export default function EventTimeline({ game, type = "all" }: EventTimelineProps) {
+    const [rawEvents, setRawEvents] = useState<GameEvent[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [currentEvents, setCurrentEvents] = useState<GameEvent[]>([]);
+    const [upcomingEvents, setUpcomingEvents] = useState<GameEvent[]>([]);
+
+    useEffect(() => {
+        async function loadEvents() {
+            setLoading(true);
+            const data = await fetchEvents(game);
+            setRawEvents(data);
+            setLoading(false);
+        }
+
+        if (game) {
+            loadEvents();
+        } else {
+            console.warn("EventTimeline is missing the 'game' prop!");
+            setLoading(false);
+        }
+    }, [game]);
+
+    useEffect(() => {
+        if (!rawEvents || rawEvents.length === 0) return;
+        const now = new Date();
+        const current: GameEvent[] = [];
+        const upcoming: GameEvent[] = [];
+
+        rawEvents.forEach(event => {
+            const startDate = new Date(event.start);
+            const endDate = new Date(event.end);
+            if (now > startDate && now < endDate) {
+                current.push(event);
+            } else if (now < startDate) {
+                upcoming.push(event);
+            }
+        });
+
+        current.sort((a, b) => new Date(a.end).getTime() - new Date(b.end).getTime());
+        upcoming.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+
+        setCurrentEvents(current);
+        setUpcomingEvents(upcoming);
+    }, [rawEvents]);
+
+    const eventsToShow = useMemo(() => {
+        if (type === "current") return currentEvents;
+        if (type === "upcoming") return upcomingEvents;
+        return currentEvents.concat(upcomingEvents);
+    }, [type, currentEvents, upcomingEvents]);
+
+    if (loading) return <div className="text-gray-400 p-4">Loading timeline...</div>;
+    if (!eventsToShow.length) return null;
+
+    return (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            {eventsToShow.map(event => {
+                const isCurrent = currentEvents.some(e => e.id === event.id);
+                return <EventCard key={event.id} event={event} isCurrent={isCurrent} />;
+            })}
+        </div>
+    );
+}
