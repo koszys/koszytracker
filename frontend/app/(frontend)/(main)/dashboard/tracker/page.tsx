@@ -5,11 +5,11 @@ import { useGame } from "@/contexts/GameContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useWishes } from "@/hooks/useWishes";
 import { useWishTrackerState } from "@/hooks/useWishTrackerState";
-import BannerSidebar from "@/app/(main)/dashboard/components/tracker/BannerSidebar";
-import BannerSummaryCard from "@/app/(main)/dashboard/components/tracker/BannerSummaryCard";
-import LuckRatingCard from "@/app/(main)/dashboard/components/tracker/LuckRatingCard";
-import RecentPullsSection from "@/app/(main)/dashboard/components/tracker/RecentPullsSection";
-import PullHistoryTable from "@/app/(main)/dashboard/components/tracker/PullHistoryTable";
+import BannerSidebar from "@/app/(frontend)/(main)/dashboard/components/tracker/BannerSidebar";
+import BannerSummaryCard from "@/app/(frontend)/(main)/dashboard/components/tracker/BannerSummaryCard";
+import LuckRatingCard from "@/app/(frontend)/(main)/dashboard/components/tracker/LuckRatingCard";
+import RecentPullsSection from "@/app/(frontend)/(main)/dashboard/components/tracker/RecentPullsSection";
+import PullHistoryTable from "@/app/(frontend)/(main)/dashboard/components/tracker/PullHistoryTable";
 
 export default function WishTrackerPage() {
     const { activeGame: game } = useGame();
