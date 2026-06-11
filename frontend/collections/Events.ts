@@ -25,6 +25,11 @@ export const Events: CollectionConfig = {
       required: true,
     },
     {
+      name: "isActive",
+      type: "checkbox",
+      defaultValue: true,
+    },
+    {
       name: "type",
       type: "select",
       options: ["banner", "event"],

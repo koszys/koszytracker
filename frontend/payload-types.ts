@@ -179,12 +179,14 @@ export interface Event {
   id: string;
   gameId: string;
   name: string;
+  isActive?: boolean | null;
   type: 'banner' | 'event';
   start: string;
   end: string;
   image?: string | null;
-  label?: Record<string, unknown> | null;
+  label?: string | null;
   bannerData?: Record<string, unknown> | null;
+  tags?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -455,12 +457,14 @@ export interface GamesSelect<T extends boolean = true> {
 export interface EventsSelect<T extends boolean = true> {
   gameId?: T;
   name?: T;
+  isActive?: T;
   type?: T;
   start?: T;
   end?: T;
   image?: T;
   label?: T;
   bannerData?: T;
+  tags?: T;
   updatedAt?: T;
   createdAt?: T;
 }
