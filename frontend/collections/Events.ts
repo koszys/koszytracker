@@ -43,7 +43,7 @@ export const Events: CollectionConfig = {
     {
       name: "image",
       type: "upload",
-      relationTo: "media",
+      relationTo: ["genshin-media", "wuwa-media", "hsr-media", "zzz-media"],
     },
     {
       name: "label",

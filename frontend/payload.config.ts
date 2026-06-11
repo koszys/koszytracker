@@ -12,9 +12,18 @@ import { GameCodes } from "./collections/GameCodes";
 import { Games } from "./collections/Games";
 import { Changelogs } from "./collections/Changelogs";
 import { Events } from "./collections/Events";
+import { GenshinMedia } from "./collections/GenshinMedia";
+import { WuwaMedia } from "./collections/WuwaMedia";
+import { HSRMedia } from "./collections/HSRMedia";
+import { ZZZMedia } from "./collections/ZZZMedia";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
+
+const r2GenerateFileURL = ({ filename, prefix }: { filename: string; prefix?: string | null }) => {
+  const key = prefix ? `${prefix}/${filename}` : filename;
+  return `${process.env.R2_PUBLIC_URL}/${key}`;
+};
 
 export default buildConfig({
   admin: {
@@ -23,7 +32,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Games, GameCodes, Events, Changelogs],
+  collections: [Users, Media, Games, GameCodes, Events, Changelogs, GenshinMedia, WuwaMedia, HSRMedia, ZZZMedia],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
@@ -42,10 +51,28 @@ export default buildConfig({
       collections: {
         media: {
           disablePayloadAccessControl: true,
-          generateFileURL: ({ filename, prefix }) => {
-            const key = prefix ? `${prefix}/${filename}` : filename;
-            return `${process.env.R2_PUBLIC_URL}/${key}`;
-          },
+          prefix: "general",
+          generateFileURL: r2GenerateFileURL,
+        },
+        "genshin-media": {
+          disablePayloadAccessControl: true,
+          prefix: "genshin",
+          generateFileURL: r2GenerateFileURL,
+        },
+        "wuwa-media": {
+          disablePayloadAccessControl: true,
+          prefix: "wuwa",
+          generateFileURL: r2GenerateFileURL,
+        },
+        "hsr-media": {
+          disablePayloadAccessControl: true,
+          prefix: "hsr",
+          generateFileURL: r2GenerateFileURL,
+        },
+        "zzz-media": {
+          disablePayloadAccessControl: true,
+          prefix: "zzz",
+          generateFileURL: r2GenerateFileURL,
         },
       },
       bucket: process.env.R2_BUCKET || "",

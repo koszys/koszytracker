@@ -73,6 +73,10 @@ export interface Config {
     events: Event;
     changelogs: Changelog;
     'game-codes': GameCodeCollection;
+    'genshin-media': GenshinMedia;
+    'wuwa-media': WuwaMedia;
+    'hsr-media': HsrMedia;
+    'zzz-media': ZzzMedia;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -86,6 +90,10 @@ export interface Config {
     events: EventsSelect<false> | EventsSelect<true>;
     changelogs: ChangelogsSelect<false> | ChangelogsSelect<true>;
     'game-codes': GameCodesSelect<false> | GameCodesSelect<true>;
+    'genshin-media': GenshinMediaSelect<false> | GenshinMediaSelect<true>;
+    'wuwa-media': WuwaMediaSelect<false> | WuwaMediaSelect<true>;
+    'hsr-media': HsrMediaSelect<false> | HsrMediaSelect<true>;
+    'zzz-media': ZzzMediaSelect<false> | ZzzMediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -227,6 +235,82 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "genshin-media".
+ */
+export interface GenshinMedia {
+  id: string;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "wuwa-media".
+ */
+export interface WuwaMedia {
+  id: string;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hsr-media".
+ */
+export interface HsrMedia {
+  id: string;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "zzz-media".
+ */
+export interface ZzzMedia {
+  id: string;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -272,6 +356,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'changelogs';
         value: string | Changelog;
+      } | null)
+    | ({
+        relationTo: 'genshin-media';
+        value: string | GenshinMedia;
+      } | null)
+    | ({
+        relationTo: 'wuwa-media';
+        value: string | WuwaMedia;
+      } | null)
+    | ({
+        relationTo: 'hsr-media';
+        value: string | HsrMedia;
+      } | null)
+    | ({
+        relationTo: 'zzz-media';
+        value: string | ZzzMedia;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -393,6 +493,78 @@ export interface GameCodesSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "genshin-media_select".
+ */
+export interface GenshinMediaSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "wuwa-media_select".
+ */
+export interface WuwaMediaSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hsr-media_select".
+ */
+export interface HsrMediaSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "zzz-media_select".
+ */
+export interface ZzzMediaSelect<T extends boolean = true> {
   alt?: T;
   updatedAt?: T;
   createdAt?: T;
