@@ -37,7 +37,7 @@ export interface GameConfig {
     settingsIcon: string;
     importScript: string;
     redeemUrl?: string;
-    features: ("tracker" | "import")[];
+    features: ("tracker")[];
 }
 
 export const GAME_CONFIG: GameConfig[] = [
@@ -73,7 +73,7 @@ export const GAME_CONFIG: GameConfig[] = [
         settingsIcon: '/assets/genshin/settings-icon.webp',
         importScript: "iex (irm 'https://placeholder.com/genshin-import.ps1')",
         redeemUrl: 'https://genshin.hoyoverse.com/en/gift',
-        features: ['tracker', 'import']
+        features: ['tracker']
     },
     {
         id: 'wuwa',
@@ -106,7 +106,7 @@ export const GAME_CONFIG: GameConfig[] = [
         importIcon: '/assets/wuwa/wuwa-mail.webp',
         settingsIcon: '/assets/wuwa/wuwa-settings.webp',
         importScript: "iex (irm 'https://placeholder.com/wuwa-import.ps1')",
-        features: ['tracker', 'import']
+        features: ['tracker']
     },
     {
         id: 'hsr',

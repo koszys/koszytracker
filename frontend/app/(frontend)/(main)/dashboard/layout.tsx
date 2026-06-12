@@ -19,10 +19,10 @@ function DashboardLayoutContent({
 
     const navLinks = [
         ...(currentGame.features.includes("tracker")
-            ? [{ name: "Wish Tracker", path: "/dashboard/tracker", icon: currentGame.trackerIcon, dynamicName: currentGame.trackerName }]
-            : []),
-        ...(currentGame.features.includes("import")
-            ? [{ name: "Import Wishes", path: "/dashboard/import", icon: currentGame.importIcon, dynamicName: currentGame.importName }]
+            ? [
+                { name: "Wish Tracker", path: "/dashboard/tracker", icon: currentGame.trackerIcon, dynamicName: currentGame.trackerName },
+                { name: "Import Wishes", path: "/dashboard/import", icon: currentGame.importIcon, dynamicName: currentGame.importName },
+              ]
             : []),
         { name: "Settings", path: "/dashboard/settings", icon: currentGame.settingsIcon },
     ];
