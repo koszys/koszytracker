@@ -62,11 +62,18 @@ export const Events: CollectionConfig = {
     },
     {
       name: "label",
-      type: "json",
+      type: "text",
+    },
+    {
+      name: "tags",
+      type: "text",
     },
     {
       name: "bannerData",
       type: "json",
+      admin: {
+        condition: (_, siblingData) => siblingData?.type === "banner",
+      },
     },
   ],
 };
