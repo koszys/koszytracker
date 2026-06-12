@@ -6,6 +6,13 @@ export interface GameCode {
   createdAt: string;
 }
 
+export interface PolymorphicUpload {
+  relationTo: string;
+  value: {
+    url: string;
+  };
+}
+
 export interface FeaturedItem {
   name: string;
   icon: string;
@@ -22,7 +29,7 @@ export interface GameEvent {
   type: "banner" | "event";
   start: string;
   end: string;
-  image?: string | { url: string } | null;
+  image?: string | PolymorphicUpload | null;
   label?: string | null;
   tags?: string | null;
   bannerData?: BannerData;

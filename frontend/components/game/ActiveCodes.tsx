@@ -99,7 +99,7 @@ export default function ActiveCodes({ game, redeemUrl }: ActiveCodesProps) {
                                 type="button"
                                 onClick={() => copyCode(item.code)}
                                 title="Copy code"
-                                className="absolute bottom-0 right-0 inline-flex items-center justify-center bg-white/10 p-2 sm:p-2.5 text-gray-300 transition-colors hover:bg-white/20 hover:border-theme hover:text-white rounded-tl-lg"
+                                className="cursor-pointer absolute bottom-0 right-0 inline-flex items-center justify-center bg-white/10 p-2 sm:p-2.5 text-gray-300 transition-colors hover:bg-white/20 hover:border-theme hover:text-white rounded-tl-lg"
                             >
                                 {copiedCode === item.code ? (
                                     <Check className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-400" strokeWidth={3} />

@@ -10,15 +10,20 @@ interface EventTimelineProps {
 }
 
 const EventCard = memo(function EventCard({ event, isCurrent, game }: { event: GameEvent; isCurrent: boolean; game: string }) {
-    const imageUrl = typeof event.image === "object" ? event.image?.url : event.image;
+    const imageUrl =
+        typeof event.image === "object" && event.image?.value
+        ? event.image.value.url
+        : null;
     const hasImage = !!imageUrl;
     const isBanner = event.type?.toLowerCase() === "banner";
-    const resolvedLabel = event.label ? event_labels[game]?.[event.label] : undefined;
+    const resolvedLabel = event.label
+        ? event_labels[game]?.[event.label.toUpperCase()]
+        : undefined;
 
     return (
         <div className={`relative flex items-center bg-[#1c1d21]/80 border border-[#33343a] rounded-xl p-3 min-h-[6rem] shadow-sm hover:border-[#4b4c53] transition-colors group ${!isCurrent ? "opacity-70 hover:opacity-100 transition-opacity" : ""}`}>
 
-            <div className={`flex-shrink-0 flex items-center justify-center mr-4 overflow-hidden ${
+            <div className={`shrink-0 flex items-center justify-center mr-4 overflow-hidden ${
                 isBanner
                     ? "w-12 h-12 md:w-14 md:h-14 rounded-md"
                     : "w-24 h-14 md:w-32 md:h-16 rounded-md"
