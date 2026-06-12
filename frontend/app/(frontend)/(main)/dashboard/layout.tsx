@@ -89,7 +89,7 @@ function DashboardLayoutContent({
                         </Link>
                     )}
 
-                    <button onClick={() => setIsMobileNavOpen(false)} className={`md:hidden ml-auto ${iconButtonClass}`}>
+                    <button onClick={() => setIsMobileNavOpen(false)} className={`cursor-pointer md:hidden ml-auto ${iconButtonClass}`}>
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -100,6 +100,7 @@ function DashboardLayoutContent({
                 <nav className="p-3 flex flex-col gap-2 overflow-y-auto">
                     <Link
                         href="/dashboard"
+                        onClick={() => setIsMobileNavOpen(false)}
                         className={`
                             flex items-center rounded-md font-bold text-sm transition-all whitespace-nowrap overflow-hidden
                             ${isSidebarCollapsed && !isMobileNavOpen ? 'justify-center p-3' : 'px-4 py-3 gap-3'}
@@ -186,7 +187,7 @@ function DashboardLayoutContent({
 
                     <div className="flex items-center gap-2 md:gap-4">
                         <button
-                            className={`md:hidden ${iconButtonClass}`}
+                            className={`cursor-pointer md:hidden ${iconButtonClass}`}
                             onClick={() => setIsMobileNavOpen(true)}
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -16,6 +16,7 @@ export type DashboardSection = "codes" | "events" | "info";
 export interface ServerOption {
     id: string;
     name: string;
+    offset: number;
 }
 
 export interface GameConfig {
@@ -89,9 +90,9 @@ export const GAME_CONFIG: GameConfig[] = [
         features: ['tracker'],
         dashboardSections: ['codes', 'events'],
         servers: [
-            { id: 'America', name: 'America' },
-            { id: 'Europe', name: 'Europe' },
-            { id: 'Asia', name: 'Asia' },
+            { id: 'America', name: 'America', offset: -5 },
+            { id: 'Europe', name: 'Europe', offset: 1 },
+            { id: 'Asia', name: 'Asia', offset: 8 },
         ]
     },
     {
@@ -128,9 +129,9 @@ export const GAME_CONFIG: GameConfig[] = [
         features: ['tracker'],
         dashboardSections: ['codes', 'events'],
         servers: [
-            { id: 'America', name: 'America' },
-            { id: 'Europe', name: 'Europe' },
-            { id: 'Asia', name: 'Asia' },
+            { id: 'America', name: 'America', offset: -5 },
+            { id: 'Europe', name: 'Europe', offset: 1 },
+            { id: 'Asia', name: 'Asia', offset: 8 },
         ]
     },
     {
@@ -163,9 +164,9 @@ export const GAME_CONFIG: GameConfig[] = [
         dashboardSections: ['info'],
         aboutText: "Stay tuned for Honkai: Star Rail info and updates coming soon.",
         servers: [
-            { id: 'America', name: 'America' },
-            { id: 'Europe', name: 'Europe' },
-            { id: 'Asia', name: 'Asia' },
+            { id: 'America', name: 'America', offset: -5 },
+            { id: 'Europe', name: 'Europe', offset: 1 },
+            { id: 'Asia', name: 'Asia', offset: 8 },
         ]
     },
     {
@@ -198,9 +199,9 @@ export const GAME_CONFIG: GameConfig[] = [
         dashboardSections: ['info'],
         aboutText: "Stay tuned for Zenless Zone Zero info and updates coming soon.",
         servers: [
-            { id: 'America', name: 'America' },
-            { id: 'Europe', name: 'Europe' },
-            { id: 'Asia', name: 'Asia' },
+            { id: 'America', name: 'America', offset: -5 },
+            { id: 'Europe', name: 'Europe', offset: 1 },
+            { id: 'Asia', name: 'Asia', offset: 8 },
         ]
     }
 ];
