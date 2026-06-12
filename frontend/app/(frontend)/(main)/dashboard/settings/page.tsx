@@ -141,10 +141,12 @@ export default function SettingsPage() {
 
                 <AccountSettingsSection terms={terms} />
 
-                <BackupSection
-                    setImportModalData={setImportModalData}
-                    setToast={setToast}
-                />
+                {game.features.includes("tracker") && (
+                    <BackupSection
+                        setImportModalData={setImportModalData}
+                        setToast={setToast}
+                    />
+                )}
 
                 <Toast toast={toast} />
 
