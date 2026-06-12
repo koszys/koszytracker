@@ -6,10 +6,11 @@ export interface GameCode {
   createdAt: string;
 }
 
-export interface EventLabel {
-  text: string;
-  bgColor: string;
-  textColor: string;
+export interface PolymorphicUpload {
+  relationTo: string;
+  value: {
+    url: string;
+  };
 }
 
 export interface FeaturedItem {
@@ -28,8 +29,8 @@ export interface GameEvent {
   type: "banner" | "event";
   start: string;
   end: string;
-  image?: string;
-  image_path?: string;
-  label?: EventLabel;
+  image?: string | PolymorphicUpload | null;
+  label?: string | null;
+  tags?: string | null;
   bannerData?: BannerData;
 }

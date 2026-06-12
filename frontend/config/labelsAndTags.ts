@@ -1,4 +1,18 @@
-export const event_labels = {
+export interface LabelDisplay {
+    text: string;
+    bgColor: string;
+    textColor: string;
+}
+
+export interface TagDisplay {
+    id: string;
+    text: string;
+    bgColor: string;
+    textColor: string;
+    parentId?: string;
+}
+
+export const event_labels: Record<string, Record<string, LabelDisplay>> = {
     genshin: {
         VERSION: { text: "New Version", bgColor: "bg-teal-900/40", textColor: "text-teal-300" },
         WEB: { text: "Web Event", bgColor: "bg-emerald-900/40", textColor: "text-emerald-300" },
@@ -12,7 +26,7 @@ export const event_labels = {
     wuwa: {}
 };
 
-export const game_tags = {
+export const game_tags: Record<string, Record<string, TagDisplay>> = {
     genshin: {
         PERMANENT: { id: "permanent", text: "Permanent", bgColor: "bg-orange-900/40", textColor: "text-orange-400" },
         DAILY: { id: "daily", text: "Daily", bgColor: "bg-purple-900/40", textColor: "text-purple-300" },
