@@ -37,6 +37,7 @@ export interface GameConfig {
     settingsIcon: string;
     importScript: string;
     redeemUrl?: string;
+    features: ("tracker" | "import")[];
 }
 
 export const GAME_CONFIG: GameConfig[] = [
@@ -71,7 +72,8 @@ export const GAME_CONFIG: GameConfig[] = [
         importIcon: '/assets/genshin/genshin-mail.webp',
         settingsIcon: '/assets/genshin/settings-icon.webp',
         importScript: "iex (irm 'https://placeholder.com/genshin-import.ps1')",
-        redeemUrl: 'https://genshin.hoyoverse.com/en/gift'
+        redeemUrl: 'https://genshin.hoyoverse.com/en/gift',
+        features: ['tracker', 'import']
     },
     {
         id: 'wuwa',
@@ -103,7 +105,8 @@ export const GAME_CONFIG: GameConfig[] = [
         trackerIcon: '/assets/wuwa/wuwa-convene.webp',
         importIcon: '/assets/wuwa/wuwa-mail.webp',
         settingsIcon: '/assets/wuwa/wuwa-settings.webp',
-        importScript: "iex (irm 'https://placeholder.com/wuwa-import.ps1')"
+        importScript: "iex (irm 'https://placeholder.com/wuwa-import.ps1')",
+        features: ['tracker', 'import']
     },
     {
         id: 'hsr',
@@ -130,7 +133,8 @@ export const GAME_CONFIG: GameConfig[] = [
         trackerIcon: '/assets/hsr/hsr-warp.webp',
         importIcon: '/assets/hsr/hsr-import.webp',
         settingsIcon: '/assets/genshin/settings-icon.webp',
-        importScript: ''
+        importScript: '',
+        features: []
     },
     {
         id: 'zzz',
@@ -157,6 +161,7 @@ export const GAME_CONFIG: GameConfig[] = [
         trackerIcon: '/assets/zzz/zzz-signals.webp',
         importIcon: '/assets/zzz/zzz-import.webp',
         settingsIcon: '/assets/zzz/zzz-settings.webp',
-        importScript: ''
+        importScript: '',
+        features: []
     }
 ];
