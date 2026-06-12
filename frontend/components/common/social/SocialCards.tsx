@@ -1,4 +1,4 @@
-import { SOCIAL_LINKS } from "../../config/socials";
+import { SOCIAL_LINKS } from "../../../config/socials";
 import SocialButton from "./SocialButton";
 
 export default function SocialCards() {

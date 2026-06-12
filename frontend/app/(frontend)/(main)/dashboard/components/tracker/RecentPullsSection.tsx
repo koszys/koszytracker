@@ -3,7 +3,7 @@
 import { RarityTier } from "@/config/games";
 import { WishData } from "@/hooks/useWishes";
 import { getItemIconPath } from "@/utils/assets";
-import PaginationFooter from "@/components/common/PaginationFooter";
+import PaginationFooter from "@/components/common/ui/PaginationFooter";
 
 interface RecentPullsSectionProps {
     gameId: string;

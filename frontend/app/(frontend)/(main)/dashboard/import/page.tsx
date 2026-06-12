@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useGame } from "@/contexts/GameContext";
-import { CheckIcon, CopyIcon, AlertTriangleIcon } from "@/components/common/Icons";
+import { CheckIcon, CopyIcon, AlertTriangleIcon } from "@/components/common/ui/Icons";
 
 interface WishData {
     id: string;

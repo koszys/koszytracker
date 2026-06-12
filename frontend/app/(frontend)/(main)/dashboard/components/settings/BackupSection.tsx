@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useGame } from "@/contexts/GameContext";
-import { DownloadIcon, UploadIcon } from "@/components/common/Icons";
+import { DownloadIcon, UploadIcon } from "@/components/common/ui/Icons";
 import { useImport } from "@/hooks/useImport";
 
 interface BackupSectionProps {

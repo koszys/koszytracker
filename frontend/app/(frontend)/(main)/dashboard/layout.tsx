@@ -5,10 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { GAME_CONFIG } from "@/config/games";
+import { FEATURE_NAV_LINKS } from "@/config/navLinks";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { GameProvider, useGame } from "@/contexts/GameContext";
-import SocialButton from "@/components/common/SocialButton";
-import Footer from "@/components/common/Footer";
+import SocialButton from "@/components/common/social/SocialButton";
+import Footer from "@/components/common/ui/Footer";
 
 function DashboardLayoutContent({
     children,
@@ -18,8 +19,7 @@ function DashboardLayoutContent({
     const { activeGame: currentGame, setActiveGameId } = useGame();
 
     const navLinks = [
-        { name: "Wish Tracker", path: "/dashboard/tracker", icon: currentGame.trackerIcon, dynamicName: currentGame.trackerName },
-        { name: "Import Wishes", path: "/dashboard/import", icon: currentGame.importIcon, dynamicName: currentGame.importName },
+        ...currentGame.features.flatMap((f) => FEATURE_NAV_LINKS[f]?.(currentGame) ?? []),
         { name: "Settings", path: "/dashboard/settings", icon: currentGame.settingsIcon },
     ];
     const pathname = usePathname();
