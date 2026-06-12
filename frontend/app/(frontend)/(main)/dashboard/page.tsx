@@ -1,6 +1,7 @@
 "use client";
 
 import { useGame } from "@/contexts/GameContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { TimerProvider } from "@/contexts/TimerContext";
 import GameIntro from "@/components/game/GameIntro";
 import ToggleSection from "@/components/game/ToggleSection";
@@ -11,13 +12,14 @@ import type { DashboardSection } from "@/config/games";
 
 export default function HomePage() {
     const { activeGame: game } = useGame();
+    const { activeAccount } = useSettings();
 
     return (
         <div className="w-full max-w-300 mx-auto pb-20">
             <GameIntro text={`Keep up to date with new banners, events, and updates in ${game.name}.`} />
 
             <TimerProvider>
-                {renderSections(game.dashboardSections, game)}
+                {renderSections(game.dashboardSections, game, activeAccount?.server)}
             </TimerProvider>
 
             {game.dashboardSections.some((s) => s === "codes" || s === "events") && (
@@ -27,7 +29,7 @@ export default function HomePage() {
     );
 }
 
-function renderSections(sections: DashboardSection[], game: ReturnType<typeof useGame>["activeGame"]) {
+function renderSections(sections: DashboardSection[], game: ReturnType<typeof useGame>["activeGame"], activeServer?: string) {
     return sections.map((section) => {
         switch (section) {
             case "codes":
@@ -40,10 +42,10 @@ function renderSections(sections: DashboardSection[], game: ReturnType<typeof us
                 return (
                     <div key="events">
                         <ToggleSection title="Current Events" defaultOpen={true}>
-                            <EventTimeline game={game.id} type="current" />
+                            <EventTimeline game={game.id} type="current" activeServer={activeServer} servers={game.servers} />
                         </ToggleSection>
                         <ToggleSection title="Upcoming Events" defaultOpen={true}>
-                            <EventTimeline game={game.id} type="upcoming" />
+                            <EventTimeline game={game.id} type="upcoming" activeServer={activeServer} servers={game.servers} />
                         </ToggleSection>
                     </div>
                 );

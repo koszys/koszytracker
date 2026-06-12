@@ -3,10 +3,14 @@ import CountdownTimer from "./CountdownTimer";
 import { fetchEvents } from "@/data/fetchEvents";
 import type { GameEvent } from "@/data/types";
 import { event_labels } from "@/config/labelsAndTags";
+import { getServerOffset, adjustEventsForServer } from "@/utils/serverTime";
+import type { ServerOption } from "@/config/games";
 
 interface EventTimelineProps {
     game: string;
     type?: "all" | "current" | "upcoming";
+    activeServer?: string;
+    servers?: ServerOption[];
 }
 
 const EventCard = memo(function EventCard({ event, isCurrent, game }: { event: GameEvent; isCurrent: boolean; game: string }) {
@@ -93,17 +97,22 @@ const EventCard = memo(function EventCard({ event, isCurrent, game }: { event: G
     );
 });
 
-export default function EventTimeline({ game, type = "all" }: EventTimelineProps) {
-    const [rawEvents, setRawEvents] = useState<GameEvent[]>([]);
+export default function EventTimeline({ game, type = "all", activeServer, servers }: EventTimelineProps) {
+    const [fetchedEvents, setFetchedEvents] = useState<GameEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentEvents, setCurrentEvents] = useState<GameEvent[]>([]);
     const [upcomingEvents, setUpcomingEvents] = useState<GameEvent[]>([]);
+
+    const rawEvents = useMemo(
+        () => adjustEventsForServer(fetchedEvents, activeServer, servers),
+        [fetchedEvents, activeServer, servers]
+    );
 
     useEffect(() => {
         async function loadEvents() {
             setLoading(true);
             const data = await fetchEvents(game);
-            setRawEvents(data);
+            setFetchedEvents(data);
             setLoading(false);
         }
 
@@ -147,12 +156,26 @@ export default function EventTimeline({ game, type = "all" }: EventTimelineProps
     if (loading) return <div className="text-gray-400 p-4">Loading timeline...</div>;
     if (!eventsToShow.length) return null;
 
+    const serverOffset = activeServer && servers ? getServerOffset(activeServer, servers) : null;
+
     return (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-            {eventsToShow.map(event => {
-                const isCurrent = currentEvents.some(e => e.id === event.id);
-                return <EventCard key={event.id} event={event} isCurrent={isCurrent} game={game} />;
-            })}
+        <div className="space-y-3">
+            {serverOffset !== null && (
+                <div className="flex items-center gap-2 text-xs text-gray-200">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-white/5 border border-white/10 font-medium">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {activeServer} ({serverOffset >= 0 ? "+" : ""}{serverOffset} UTC)
+                    </span>
+                </div>
+            )}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                {eventsToShow.map(event => {
+                    const isCurrent = currentEvents.some(e => e.id === event.id);
+                    return <EventCard key={event.id} event={event} isCurrent={isCurrent} game={game} />;
+                })}
+            </div>
         </div>
     );
 }
