@@ -6,11 +6,11 @@ import { GAME_CONFIG, type GameConfig } from "@/config/games";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGame } from "@/contexts/GameContext";
 import GameCard from "@/components/common/GameCard";
-import SearchInput from "@/components/common/SearchInput";
-import SocialCards from "@/components/common/SocialCards";
-import SocialButton from "@/components/common/SocialButton";
-import Footer from "@/components/common/Footer";
-import ChangelogSection from "@/components/common/ChangelogSection";
+import SearchInput from "@/components/common/ui/SearchInput";
+import SocialCards from "@/components/common/social/SocialCards";
+import SocialButton from "@/components/common/social/SocialButton";
+import Footer from "@/components/common/ui/Footer";
+import ChangelogSection from "@/components/common/changelog/ChangelogSection";
 import AuthModal from "./(main)/auth/components/AuthModal";
 
 const BACKGROUNDS = GAME_CONFIG.map(game => game.bgUrl);

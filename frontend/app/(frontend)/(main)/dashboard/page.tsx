@@ -6,7 +6,7 @@ import GameIntro from "@/components/game/GameIntro";
 import ToggleSection from "@/components/game/ToggleSection";
 import ActiveCodes from "@/components/game/ActiveCodes";
 import EventTimeline from "@/components/game/timeline/EventTimeline";
-import ChangelogSection from "@/components/common/ChangelogSection";
+import ChangelogSection from "@/components/common/changelog/ChangelogSection";
 import type { DashboardSection } from "@/config/games";
 
 export default function HomePage() {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import SectionHeader from "@/components/common/SectionHeader";
+import SectionHeader from "@/components/common/ui/SectionHeader";
 import ConflictModal, { downloadBothConflictFiles } from "@/components/common/ConflictModal";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";

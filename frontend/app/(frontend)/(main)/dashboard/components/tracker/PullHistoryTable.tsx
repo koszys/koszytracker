@@ -5,7 +5,7 @@ import { RarityTier } from "@/config/games";
 import { WishData } from "@/hooks/useWishes";
 import { formatWishTime } from "@/utils/formatters";
 import { getItemIconPath } from "@/utils/assets";
-import PaginationFooter from "@/components/common/PaginationFooter";
+import PaginationFooter from "@/components/common/ui/PaginationFooter";
 
 interface PullHistoryTableProps {
     gameId: string;

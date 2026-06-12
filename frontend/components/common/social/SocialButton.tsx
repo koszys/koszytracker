@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { SOCIAL_LINKS } from '../../config/socials';
+import { SOCIAL_LINKS } from '../../../config/socials';
 
 interface SocialButtonProps {
     type: 'discord' | 'kofi';

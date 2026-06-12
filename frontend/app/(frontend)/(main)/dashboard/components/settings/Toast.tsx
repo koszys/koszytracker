@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckIcon, XIcon } from "@/components/common/Icons";
+import { CheckIcon, XIcon } from "@/components/common/ui/Icons";
 
 interface ToastProps {
     toast: { type: 'success' | 'error'; message: string } | null;

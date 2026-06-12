@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { AlertTriangleIcon, UploadIcon } from "@/components/common/Icons";
+import { AlertTriangleIcon, UploadIcon } from "@/components/common/ui/Icons";
 
 interface ImportModalProps {
     isOpen: boolean;

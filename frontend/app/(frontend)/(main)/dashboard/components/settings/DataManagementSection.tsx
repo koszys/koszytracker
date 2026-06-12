@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { CloudIcon, UploadIcon } from "@/components/common/Icons";
+import { CloudIcon, UploadIcon } from "@/components/common/ui/Icons";
 
 interface DataManagementSectionProps {
     setToast: (toast: { type: 'success' | 'error'; message: string } | null) => void;
