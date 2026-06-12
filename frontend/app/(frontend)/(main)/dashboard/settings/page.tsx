@@ -7,7 +7,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import AuthModal from "@/app/(frontend)/(main)/auth/components/AuthModal";
 import LogoutModal from "@/app/(frontend)/(main)/auth/components/LogoutModal";
-import { getGameTerms } from "@/config/gameTerms";
+import { getGameTerms, type GameTerms } from "@/config/gameTerms";
 import { useGame } from "@/contexts/GameContext";
 import AuthSection from "../components/settings/AuthSection";
 import DataManagementSection from "../components/settings/DataManagementSection";
@@ -139,7 +139,7 @@ export default function SettingsPage() {
                     setToast={setToast}
                 />
 
-                <AccountSettingsSection terms={terms} />
+                <AccountSettingsSection terms={terms} servers={game.servers} />
 
                 {game.features.includes("tracker") && (
                     <BackupSection

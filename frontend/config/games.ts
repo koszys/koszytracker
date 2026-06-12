@@ -11,6 +11,13 @@ export interface RarityTier {
     color: string;
 }
 
+export type DashboardSection = "codes" | "events" | "info";
+
+export interface ServerOption {
+    id: string;
+    name: string;
+}
+
 export interface GameConfig {
     id: string;
     name: string;
@@ -25,19 +32,25 @@ export interface GameConfig {
     pullName: string;
     banners: BannerConfig[];
     rarityTiers: RarityTier[];
+
     // Dynamic Theme Variables
     themeColor: string;
     themeGradientFrom: string;
     themeGradientTo: string;
     themeGlow: string;
+
     // Sidebar Icons
     homeIcon: string;
     trackerIcon: string;
     importIcon: string;
     settingsIcon: string;
+
     importScript: string;
     redeemUrl?: string;
     features: ("tracker")[];
+    dashboardSections: DashboardSection[];
+    aboutText?: string;
+    servers: ServerOption[];
 }
 
 export const GAME_CONFIG: GameConfig[] = [
@@ -73,7 +86,13 @@ export const GAME_CONFIG: GameConfig[] = [
         settingsIcon: '/assets/genshin/settings-icon.webp',
         importScript: "iex (irm 'https://placeholder.com/genshin-import.ps1')",
         redeemUrl: 'https://genshin.hoyoverse.com/en/gift',
-        features: ['tracker']
+        features: ['tracker'],
+        dashboardSections: ['codes', 'events'],
+        servers: [
+            { id: 'America', name: 'America' },
+            { id: 'Europe', name: 'Europe' },
+            { id: 'Asia', name: 'Asia' },
+        ]
     },
     {
         id: 'wuwa',
@@ -106,7 +125,13 @@ export const GAME_CONFIG: GameConfig[] = [
         importIcon: '/assets/wuwa/wuwa-mail.webp',
         settingsIcon: '/assets/wuwa/wuwa-settings.webp',
         importScript: "iex (irm 'https://placeholder.com/wuwa-import.ps1')",
-        features: ['tracker']
+        features: ['tracker'],
+        dashboardSections: ['codes', 'events'],
+        servers: [
+            { id: 'America', name: 'America' },
+            { id: 'Europe', name: 'Europe' },
+            { id: 'Asia', name: 'Asia' },
+        ]
     },
     {
         id: 'hsr',
@@ -134,7 +159,14 @@ export const GAME_CONFIG: GameConfig[] = [
         importIcon: '/assets/hsr/hsr-import.webp',
         settingsIcon: '/assets/genshin/settings-icon.webp',
         importScript: '',
-        features: []
+        features: [],
+        dashboardSections: ['info'],
+        aboutText: "Stay tuned for Honkai: Star Rail info and updates coming soon.",
+        servers: [
+            { id: 'America', name: 'America' },
+            { id: 'Europe', name: 'Europe' },
+            { id: 'Asia', name: 'Asia' },
+        ]
     },
     {
         id: 'zzz',
@@ -162,6 +194,13 @@ export const GAME_CONFIG: GameConfig[] = [
         importIcon: '/assets/zzz/zzz-import.webp',
         settingsIcon: '/assets/zzz/zzz-settings.webp',
         importScript: '',
-        features: []
+        features: [],
+        dashboardSections: ['info'],
+        aboutText: "Stay tuned for Zenless Zone Zero info and updates coming soon.",
+        servers: [
+            { id: 'America', name: 'America' },
+            { id: 'Europe', name: 'Europe' },
+            { id: 'Asia', name: 'Asia' },
+        ]
     }
 ];
