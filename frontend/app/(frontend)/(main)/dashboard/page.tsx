@@ -29,13 +29,7 @@ export default function HomePage() {
                 </ToggleSection>
             </TimerProvider>
 
-            {/* Hidden changelog */}
-            <section className="mt-12 hidden">
-                <h2 className="text-xl font-bold text-white uppercase tracking-wider border-l-4 border-theme pl-3 mb-6">
-                    Changelog
-                </h2>
-                <ChangelogSection game={game.id} />
-            </section>
+            <ChangelogSection game={game.id} />
         </div>
     );
 }
