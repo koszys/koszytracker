@@ -25,6 +25,11 @@ export const Events: CollectionConfig = {
       required: true,
     },
     {
+      name: "isActive",
+      type: "checkbox",
+      defaultValue: true,
+    },
+    {
       name: "type",
       type: "select",
       options: ["banner", "event"],
@@ -34,15 +39,26 @@ export const Events: CollectionConfig = {
       name: "start",
       type: "date",
       required: true,
+      admin: {
+        date: {
+          pickerAppearance: "dayAndTime",
+        },
+      },
     },
     {
       name: "end",
       type: "date",
       required: true,
+      admin: {
+        date: {
+          pickerAppearance: "dayAndTime",
+        },
+      },
     },
     {
       name: "image",
-      type: "text",
+      type: "upload",
+      relationTo: ["genshin-media", "wuwa-media", "hsr-media", "zzz-media"],
     },
     {
       name: "label",
