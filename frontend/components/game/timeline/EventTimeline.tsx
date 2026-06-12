@@ -2,16 +2,18 @@ import { useState, useEffect, memo, useMemo } from "react";
 import CountdownTimer from "./CountdownTimer";
 import { fetchEvents } from "@/data/fetchEvents";
 import type { GameEvent } from "@/data/types";
+import { event_labels } from "@/config/labelsAndTags";
 
 interface EventTimelineProps {
     game: string;
     type?: "all" | "current" | "upcoming";
 }
 
-const EventCard = memo(function EventCard({ event, isCurrent }: { event: GameEvent; isCurrent: boolean }) {
-    const imageUrl = event.image || event.image_path || null;
+const EventCard = memo(function EventCard({ event, isCurrent, game }: { event: GameEvent; isCurrent: boolean; game: string }) {
+    const imageUrl = typeof event.image === "object" ? event.image?.url : event.image;
     const hasImage = !!imageUrl;
     const isBanner = event.type?.toLowerCase() === "banner";
+    const resolvedLabel = event.label ? event_labels[game]?.[event.label] : undefined;
 
     return (
         <div className={`relative flex items-center bg-[#1c1d21]/80 border border-[#33343a] rounded-xl p-3 min-h-[6rem] shadow-sm hover:border-[#4b4c53] transition-colors group ${!isCurrent ? "opacity-70 hover:opacity-100 transition-opacity" : ""}`}>
@@ -34,9 +36,9 @@ const EventCard = memo(function EventCard({ event, isCurrent }: { event: GameEve
 
             <div className="flex flex-col flex-1 justify-center min-w-0 pr-20">
                 <div className={`flex ${isBanner ? "items-center gap-2 mb-1.5" : "flex-col items-start gap-1.5"}`}>
-                    {event.label && !isBanner && (
-                        <span className={`text-[10px] md:text-xs font-bold px-1.5 py-0.5 rounded w-max ${event.label.bgColor} ${event.label.textColor}`}>
-                            {event.label.text}
+                    {resolvedLabel && !isBanner && (
+                        <span className={`text-[10px] md:text-xs font-bold px-1.5 py-0.5 rounded w-max ${resolvedLabel.bgColor} ${resolvedLabel.textColor}`}>
+                            {resolvedLabel.text}
                         </span>
                     )}
                     <h3 className="text-white font-bold text-sm md:text-base leading-tight truncate w-full">
@@ -144,7 +146,7 @@ export default function EventTimeline({ game, type = "all" }: EventTimelineProps
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
             {eventsToShow.map(event => {
                 const isCurrent = currentEvents.some(e => e.id === event.id);
-                return <EventCard key={event.id} event={event} isCurrent={isCurrent} />;
+                return <EventCard key={event.id} event={event} isCurrent={isCurrent} game={game} />;
             })}
         </div>
     );
