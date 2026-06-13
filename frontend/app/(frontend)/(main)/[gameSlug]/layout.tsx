@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useParams } from "next/navigation";
+import { usePathname, useParams, useRouter } from "next/navigation";
 import { GAME_CONFIG } from "@/config/games";
 import { FEATURE_NAV_LINKS } from "@/config/navLinks";
 import { SettingsProvider } from "@/contexts/SettingsContext";
@@ -19,12 +19,25 @@ function DashboardLayoutContent({
     const { activeGame: currentGame, setActiveGameId } = useGame();
     const params = useParams();
     const gameSlug = params?.gameSlug as string;
+    const router = useRouter();
+
+    const gameFromSlug = GAME_CONFIG.find(g => g.id === gameSlug);
+
+    useEffect(() => {
+        if (!gameFromSlug || gameFromSlug.status === 'comingsoon') {
+            router.replace('/');
+        }
+    }, [gameFromSlug, router]);
 
     useEffect(() => {
         if (gameSlug && gameSlug !== currentGame.id) {
             setActiveGameId(gameSlug);
         }
     }, [gameSlug, currentGame.id, setActiveGameId]);
+
+    if (!gameFromSlug || gameFromSlug.status === 'comingsoon') {
+        return null;
+    }
 
     const navLinks = [
         ...currentGame.features.flatMap((f) => FEATURE_NAV_LINKS[f]?.(currentGame) ?? []),
