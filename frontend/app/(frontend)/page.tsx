@@ -195,7 +195,7 @@ export default function HomePage() {
                                         name={game.name}
                                         status={game.status}
                                         bgUrl={game.bgUrl}
-                                        link="/dashboard"
+                                        link={`/${game.id}`}
                                         onHover={handleHover}
                                     />
                                 ))}
@@ -218,7 +218,7 @@ export default function HomePage() {
                                         name={game.name}
                                         status={game.status}
                                         bgUrl={game.bgUrl}
-                                        link="/dashboard"
+                                        link={`/${game.id}`}
                                         onHover={handleHover}
                                     />
                                 ))}
@@ -241,7 +241,7 @@ export default function HomePage() {
                                         name={game.name}
                                         status={game.status}
                                         bgUrl={game.bgUrl}
-                                        link="/dashboard"
+                                        link={`/${game.id}`}
                                         onHover={handleHover}
                                     />
                                 ))}
