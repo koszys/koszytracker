@@ -14,7 +14,7 @@ export default function Senti404() {
                 </p>
                 <Link
                     href="/"
-                    className="px-6 py-3 bg-theme text-white font-bold rounded-lg hover:opacity-90 transition-opacity"
+                    className="px-6 py-3  bg-red-500 text-white font-bold rounded-lg hover:opacity-80 transition-opacity"
                 >
                     Back to Home
                 </Link>
