@@ -10,7 +10,7 @@ export default function Senti404() {
             <div className="relative z-10">
                 <h1 className="text-6xl font-black text-white tracking-widest mb-4">404</h1>
                 <p className="text-gray-200 text-lg mb-8">
-                    You went somewhere that doesn&apos;t exist! Senti will help send you back to the home page.
+                    You went somewhere that doesn't exist! Senti will help send you back to the home page.
                 </p>
                 <Link
                     href="/"
