@@ -52,7 +52,7 @@ export function UserNav() {
                     <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
                     <div className="absolute right-0 mt-2 w-48 bg-[#1c1d21] border border-[#33343a] hover:border-theme rounded-lg shadow-2xl z-50 overflow-hidden flex flex-col">
                         <Link
-                            href="/account"
+                            href="/account/settings"
                             onClick={() => setIsOpen(false)}
                             className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-gray-200 hover:text-white hover:bg-[#24252a] transition-colors"
                         >

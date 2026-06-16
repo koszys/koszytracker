@@ -5,12 +5,12 @@ import Header from "@/components/common/Header";
 export default function AccountPage() {
 
     const handleGoogleLogin = () => {
-        sessionStorage.setItem("authRedirect", window.location.pathname);
+        sessionStorage.setItem("authRedirect", "/account/settings");
         window.location.href = 'http://localhost:8000/auth/google';
     };
 
     const handleDiscordLogin = () => {
-        sessionStorage.setItem("authRedirect", window.location.pathname);
+        sessionStorage.setItem("authRedirect", "/account/settings");
         window.location.href = 'http://localhost:8000/auth/discord';
     };
 
@@ -26,8 +26,8 @@ export default function AccountPage() {
                     navLinks={[{ name: "Home", href: "/" }]}
                 />
 
-                <main className="max-w-[1200px] mx-auto p-4 md:p-6 mt-6 flex flex-col items-center justify-center min-h-[80vh]">
-                    <div className="bg-[#1c1d21] border border-[#52525b] p-8 md:p-10 rounded-2xl max-w-sm w-full shadow-2xl flex flex-col items-center">
+                <main className="max-w-300 mx-auto p-4 md:p-6 mt-6 flex flex-col items-center justify-center min-h-[80vh]">
+                    <div className="bg-[#1c1d21]/60 border border-[#52525b] p-8 md:p-10 rounded-2xl max-w-sm w-full shadow-2xl flex flex-col items-center">
                         <h2 className="text-2xl font-bold text-white mb-2">Sign in to SENTI<span className="text-theme">.MOE</span></h2>
                         <p className="text-sm text-gray-300 mb-8 text-center">Connect with your preferred account</p>
 
