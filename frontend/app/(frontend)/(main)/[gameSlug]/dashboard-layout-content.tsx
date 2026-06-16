@@ -3,24 +3,32 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { GAME_CONFIG } from "@/config/games";
+import { usePathname, useParams } from "next/navigation";
 import { FEATURE_NAV_LINKS } from "@/config/navLinks";
+import { GAME_CONFIG } from "@/config/games";
+import { useGame } from "@/contexts/GameContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
-import { GameProvider, useGame } from "@/contexts/GameContext";
 import SocialButton from "@/components/common/social/SocialButton";
 import Footer from "@/components/common/ui/Footer";
 
-function DashboardLayoutContent({
+export default function DashboardLayoutContent({
     children,
 }: {
     children: React.ReactNode;
 }) {
     const { activeGame: currentGame, setActiveGameId } = useGame();
+    const params = useParams();
+    const gameSlug = params?.gameSlug as string;
+
+    useEffect(() => {
+        if (gameSlug && gameSlug !== currentGame.id) {
+            setActiveGameId(gameSlug);
+        }
+    }, [gameSlug, currentGame.id, setActiveGameId]);
 
     const navLinks = [
         ...currentGame.features.flatMap((f) => FEATURE_NAV_LINKS[f]?.(currentGame) ?? []),
-        { name: "Settings", path: "/dashboard/settings", icon: currentGame.settingsIcon },
+        { name: "Settings", path: `${currentGame.path}/settings`, icon: currentGame.settingsIcon },
     ];
     const pathname = usePathname();
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -45,7 +53,7 @@ function DashboardLayoutContent({
     }, [currentGame]);
 
     return (
-        <div 
+        <div
             className="relative flex h-screen w-full bg-black text-gray-300 font-sans selection:bg-theme/50 selection:text-white overflow-hidden"
             style={{
                 '--theme-color': currentGame.themeColor,
@@ -99,12 +107,12 @@ function DashboardLayoutContent({
                 {/* Home Link - Simple style like nav links */}
                 <nav className="p-3 flex flex-col gap-2 overflow-y-auto">
                     <Link
-                        href="/dashboard"
+                        href={currentGame.path}
                         onClick={() => setIsMobileNavOpen(false)}
                         className={`
                             flex items-center rounded-md font-bold text-sm transition-all whitespace-nowrap overflow-hidden
                             ${isSidebarCollapsed && !isMobileNavOpen ? 'justify-center p-3' : 'px-4 py-3 gap-3'}
-                            ${pathname === '/dashboard'
+                            ${pathname === currentGame.path
                                 ? 'bg-white/10 text-white border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.05)]'
                                 : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent'}
                         `}
@@ -223,7 +231,7 @@ function DashboardLayoutContent({
                 </header>
 
                 {/* Page Content */}
-                <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 flex flex-col z-10 relative">
+                <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 flex flex-col relative">
                     <SettingsProvider>
                         {children}
                     </SettingsProvider>
@@ -259,14 +267,10 @@ function DashboardLayoutContent({
 
                 <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
                     {GAME_CONFIG.map((game) => {
-                        // Check if current page is valid for switching
-                        const isCurrentPageValid = navLinks.some(link => link.path === pathname) || pathname === '/dashboard';
-                        const targetHref = isCurrentPageValid ? pathname : '/dashboard';
-
                         return game.status === 'active' ? (
                             <Link
                                 key={game.id}
-                                href={targetHref}
+                                href={game.path}
                                 onClick={() => {
                                     setActiveGameId(game.id);
                                     setIsGameSwitcherOpen(false);
@@ -306,13 +310,5 @@ function DashboardLayoutContent({
                 </div>
             </div>
         </div>
-    );
-}
-
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-    return (
-        <GameProvider>
-            <DashboardLayoutContent>{children}</DashboardLayoutContent>
-        </GameProvider>
     );
 }

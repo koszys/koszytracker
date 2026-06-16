@@ -58,7 +58,7 @@ export const GAME_CONFIG: GameConfig[] = [
     {
         id: 'genshin',
         name: 'Genshin Impact',
-        path: '/dashboard/tracker',
+        path: '/genshin',
         bgUrl: '/assets/gamebackground/genshinv1-1.jpg',
         status: 'active',
         wishName: 'Wishes',
@@ -98,7 +98,7 @@ export const GAME_CONFIG: GameConfig[] = [
     {
         id: 'wuwa',
         name: 'Wuthering Waves',
-        path: '/dashboard/tracker',
+        path: '/wuwa',
         bgUrl: '/assets/gamebackground/wuwa_background.jpg',
         status: 'active',
         wishName: 'Convenes',
@@ -137,7 +137,7 @@ export const GAME_CONFIG: GameConfig[] = [
     {
         id: 'hsr',
         name: 'Honkai: Star Rail',
-        path: '/dashboard',
+        path: '/hsr',
         bgUrl: '/assets/gamebackground/hsr_background.png',
         status: 'comingsoon',
         wishName: 'Warps',
@@ -172,7 +172,7 @@ export const GAME_CONFIG: GameConfig[] = [
     {
         id: 'zzz',
         name: 'Zenless Zone Zero',
-        path: '/dashboard',
+        path: '/zzz',
         bgUrl: '/assets/gamebackground/zzz_background.jpg',
         status: 'comingsoon',
         wishName: 'Signals',

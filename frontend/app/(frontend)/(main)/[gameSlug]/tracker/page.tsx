@@ -5,11 +5,11 @@ import { useGame } from "@/contexts/GameContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useWishes } from "@/hooks/useWishes";
 import { useWishTrackerState } from "@/hooks/useWishTrackerState";
-import BannerSidebar from "@/app/(frontend)/(main)/dashboard/components/tracker/BannerSidebar";
-import BannerSummaryCard from "@/app/(frontend)/(main)/dashboard/components/tracker/BannerSummaryCard";
-import LuckRatingCard from "@/app/(frontend)/(main)/dashboard/components/tracker/LuckRatingCard";
-import RecentPullsSection from "@/app/(frontend)/(main)/dashboard/components/tracker/RecentPullsSection";
-import PullHistoryTable from "@/app/(frontend)/(main)/dashboard/components/tracker/PullHistoryTable";
+import BannerSidebar from "@/app/(frontend)/(main)/[gameSlug]/components/tracker/BannerSidebar";
+import BannerSummaryCard from "@/app/(frontend)/(main)/[gameSlug]/components/tracker/BannerSummaryCard";
+import LuckRatingCard from "@/app/(frontend)/(main)/[gameSlug]/components/tracker/LuckRatingCard";
+import RecentPullsSection from "@/app/(frontend)/(main)/[gameSlug]/components/tracker/RecentPullsSection";
+import PullHistoryTable from "@/app/(frontend)/(main)/[gameSlug]/components/tracker/PullHistoryTable";
 
 export default function WishTrackerPage() {
     const { activeGame: game } = useGame();
@@ -36,7 +36,7 @@ export default function WishTrackerPage() {
                         Recover {game.pullName}
                     </button>
                     <Link
-                        href="/dashboard/import"
+                        href={`${game.path}/import`}
                         className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-[#1c1d21] hover:bg-[#2a2b30] border border-[#52525b] text-gray-200 rounded-md transition-colors text-sm font-medium"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -53,7 +53,7 @@ export default function WishTrackerPage() {
             {error && <div className="w-full bg-red-900/50 border border-red-700 rounded-lg p-4 text-red-300">Failed to load: {error}</div>}
             {!loading && !error && wishes.length === 0 && (
                 <div className="w-full text-center py-10 text-white">
-                    No pulls recorded. <Link href="/dashboard/import" className="text-blue-400 underline">Import your {game.pullName.toLowerCase()}</Link> to get started.
+                    No pulls recorded. <Link href={`${game.path}/import`} className="text-blue-400 underline">Import your {game.pullName.toLowerCase()}</Link> to get started.
                 </div>
             )}
 
