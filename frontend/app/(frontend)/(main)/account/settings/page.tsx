@@ -17,8 +17,8 @@ export default function AccountSettingsPage() {
                 />
                 <div className="relative z-10">
                 <Header navLinks={[{ name: "Home", href: "/" }]} />
-                <main className="max-w-150 mx-auto p-4 md:p-6 mt-12 text-center">
-                    <div className="bg-[#1c1d21]/60 border border-[#52525b] p-8 rounded-2xl">
+                <main className="max-w-100 mx-auto p-4 md:p-6 min-h-[80vh] flex items-center justify-center">
+                    <div className="bg-[#1c1d21]/60 border border-[#52525b] p-8 rounded-2xl w-full text-center">
                         <h2 className="text-xl font-bold text-white mb-4">Not signed in</h2>
                         <p className="text-sm text-gray-300 mb-6">Sign in to view your account settings.</p>
                         <Link
