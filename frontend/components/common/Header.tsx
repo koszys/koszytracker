@@ -35,7 +35,7 @@ export function UserNav() {
                 className="flex items-center gap-2 bg-[#1c1d21]/80 hover:bg-[#24252a] border border-[#33343a] hover:border-gray-500 rounded-full py-1 pr-3 pl-1 transition-all cursor-pointer"
             >
                 {user.avatar || user.picture ? (
-                    <img src={user.avatar || user.picture} alt="Profile" className="w-7 h-7 rounded-full object-cover" />
+                    <img src={user.avatar || user.picture} alt="Profile" referrerPolicy="no-referrer" className="w-7 h-7 rounded-full object-cover" />
                 ) : (
                     <div className="w-7 h-7 rounded-full bg-theme flex items-center justify-center text-xs font-bold text-white">
                         {user.name?.charAt(0).toUpperCase() || "U"}

@@ -53,6 +53,7 @@ export default function AccountSettingsPage() {
                             <img
                                 src={user.avatar || user.picture}
                                 alt="Profile"
+                                referrerPolicy="no-referrer"
                                 className="w-14 h-14 rounded-full object-cover border border-[#52525b]"
                             />
                         ) : (
