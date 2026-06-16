@@ -5,7 +5,6 @@ import SectionHeader from "@/components/common/ui/SectionHeader";
 import ConflictModal, { downloadBothConflictFiles } from "@/components/common/ConflictModal";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
-import AuthModal from "@/app/(frontend)/(main)/auth/components/AuthModal";
 import LogoutModal from "@/app/(frontend)/(main)/auth/components/LogoutModal";
 import { getGameTerms, type GameTerms } from "@/config/gameTerms";
 import { useGame } from "@/contexts/GameContext";
@@ -41,7 +40,6 @@ export default function SettingsPage() {
         conflictData, setConflictData, resolveConflict
     } = useSettings();
 
-    const [showAuthModal, setShowAuthModal] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const [importModalData, setImportModalData] = useState<{ data: ImportData; isFullBackup: boolean } | null>(null);
@@ -95,7 +93,6 @@ export default function SettingsPage() {
             <SectionHeader title="Settings" />
 
             {/* Modals */}
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
             <LogoutModal isOpen={showLogoutModal} onCancel={() => setShowLogoutModal(false)} onConfirm={confirmLogout} />
 
             <ConflictModal
@@ -127,7 +124,6 @@ export default function SettingsPage() {
             <div className="space-y-4">
 
                 <AuthSection
-                    setShowAuthModal={setShowAuthModal}
                     setShowLogoutModal={setShowLogoutModal}
                 />
 

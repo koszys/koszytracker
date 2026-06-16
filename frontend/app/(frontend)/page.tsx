@@ -1,17 +1,14 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import Link from "next/link";
 import { GAME_CONFIG, type GameConfig } from "@/config/games";
-import { useAuth } from "@/contexts/AuthContext";
 import { useGame } from "@/contexts/GameContext";
 import GameCard from "@/components/common/GameCard";
 import SearchInput from "@/components/common/ui/SearchInput";
 import SocialCards from "@/components/common/social/SocialCards";
-import SocialButton from "@/components/common/social/SocialButton";
 import Footer from "@/components/common/ui/Footer";
 import ChangelogSection from "@/components/common/changelog/ChangelogSection";
-import AuthModal from "./(main)/auth/components/AuthModal";
+import Header from "@/components/common/Header";
 
 const BACKGROUNDS = GAME_CONFIG.map(game => game.bgUrl);
 
@@ -28,11 +25,8 @@ export default function HomePage() {
     const [currentBg, setCurrentBg] = useState<string | null>(null);
     const [isBgLoaded, setIsBgLoaded] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
-    const { user, logout } = useAuth();
     const { recentGameIds } = useGame();
 
     const sortedGames = useMemo(() => {
@@ -94,76 +88,10 @@ export default function HomePage() {
             )}
 
             <div className="relative z-10">
-                <header className={`sticky top-0 z-50 flex items-center justify-between px-5 py-3 transition-all duration-700 border-b ${
-                    scrolled
-                        ? "bg-[#1c1d21]/90 border-[#33343a] shadow-md"
-                        : "bg-transparent border-transparent"
-                }`}>
-                    <div className="flex items-center gap-8">
-                        <Link
-                            href="/"
-                            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                            className="text-2xl font-black text-white hover:text-theme tracking-widest cursor-pointer"
-                        >
-                            SENTI<span className="text-theme">.MOE</span>
-                        </Link>
-                        <nav className="hidden md:flex space-x-6 text-sm font-semibold">
-                            <a href="#" className="text-white border-b-2 border-theme hover:text-white pb-1">Home</a>
-                        </nav>
-                    </div>
-
-                    <div className="flex items-center space-x-4">
-                        <div className="hidden sm:flex">
-                            <SocialButton type="discord" variant="full" />
-                        </div>
-                        <div className="hidden sm:flex">
-                            <SocialButton type="kofi" variant="full" />
-                        </div>
-
-                        {user ? (
-                            <div className="relative z-50 ml-2">
-                                <button
-                                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                                    className="flex items-center gap-2 bg-[#1c1d21]/80 hover:bg-[#24252a] border border-[#33343a] hover:border-gray-500 rounded-full py-1 pr-3 pl-1 transition-all cursor-pointer"
-                                >
-                                    {user.avatar || user.picture ? (
-                                        <img src={user.avatar || user.picture} alt="Profile" className="w-7 h-7 rounded-full object-cover" />
-                                    ) : (
-                                        <div className="w-7 h-7 rounded-full bg-theme flex items-center justify-center text-xs font-bold text-white">
-                                            {user.name?.charAt(0).toUpperCase() || "U"}
-                                        </div>
-                                    )}
-                                    <span className="text-sm font-bold text-theme">{user.name}</span>
-                                    <svg className={`w-4 h-4 text-theme transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </button>
-
-                                {isUserMenuOpen && (
-                                    <>
-                                        <div className="fixed inset-0 z-40" onClick={() => setIsUserMenuOpen(false)}></div>
-                                        <div className="absolute right-0 mt-2 w-48 bg-[#1c1d21] border border-[#33343a] hover:border-theme rounded-lg shadow-2xl z-50 overflow-hidden flex flex-col">
-                                            <button
-                                                onClick={() => { setIsUserMenuOpen(false); logout(); }}
-                                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-red-400 hover:text-red-300 hover:bg-[#24252a] hover:border-transparent transition-colors text-left w-full cursor-pointer"
-                                            >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                                                Sign out
-                                            </button>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        ) : (
-                            <button
-                                onClick={() => setIsAuthModalOpen(true)}
-                                className="ml-2 px-5 py-2 bg-theme border border-transparent hover:bg-transparent hover:border-theme text-white rounded text-sm font-bold transition-colors shadow-md cursor-pointer"
-                            >
-                                Sign In
-                            </button>
-                        )}
-                    </div>
-                </header>
+                <Header
+                    navLinks={[{ name: "Home", href: "#", isActive: true }]}
+                    scrolled={scrolled}
+                />
 
                 <main className="max-w-[1200px] mx-auto p-4 md:p-6 mt-6">
                     <section className="mb-10">
@@ -261,7 +189,6 @@ export default function HomePage() {
                 </main>
             </div>
 
-            <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
         </div>
     );
 }

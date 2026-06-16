@@ -1,15 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface AuthSectionProps {
-    setShowAuthModal: (show: boolean) => void;
     setShowLogoutModal: (show: boolean) => void;
 }
 
 export default function AuthSection({
-    setShowAuthModal,
     setShowLogoutModal,
 }: AuthSectionProps) {
     const { user } = useAuth();
@@ -77,9 +76,9 @@ export default function AuthSection({
                         <p className="text-sm font-bold text-white mb-1">You are not signed in.</p>
                         <p className="text-xs text-gray-300">Sign in to automatically save and sync your data.</p>
                     </div>
-                    <button onClick={() => setShowAuthModal(true)} className="px-6 py-2 bg-theme hover:brightness-110 border border-transparent hover:border-white text-white rounded-lg text-sm font-bold transition-all w-full sm:w-auto cursor-pointer">
+                    <Link href="/account" className="px-6 py-2 bg-theme hover:brightness-110 border border-transparent hover:border-white text-white rounded-lg text-sm font-bold transition-all w-full sm:w-auto cursor-pointer inline-block text-center">
                         Sign In
-                    </button>
+                    </Link>
                 </div>
             )}
         </div>
