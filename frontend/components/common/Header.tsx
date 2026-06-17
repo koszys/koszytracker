@@ -20,8 +20,11 @@ export function UserNav() {
     if (!user) {
         return (
             <button
-                onClick={() => router.push("/account")}
-                className="ml-2 px-5 py-2 bg-theme border border-transparent hover:bg-transparent hover:border-theme text-white rounded text-sm font-bold transition-colors shadow-md cursor-pointer"
+                onClick={() => {
+                    sessionStorage.setItem("authRedirect", window.location.pathname);
+                    router.push("/account");
+                }}
+                className="ml-2 px-5 py-2 bg-[#3b82f6] border border-transparent hover:bg-transparent hover:border-[#3b82f6] text-white rounded text-sm font-bold transition-colors shadow-md cursor-pointer"
             >
                 Sign In
             </button>

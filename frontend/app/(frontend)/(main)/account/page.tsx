@@ -1,16 +1,21 @@
 "use client";
 
+import { useEffect } from "react";
 import Header from "@/components/common/Header";
 
 export default function AccountPage() {
 
+    useEffect(() => {
+        if (!sessionStorage.getItem("authRedirect")) {
+            sessionStorage.setItem("authRedirect", "/account/settings");
+        }
+    }, []);
+
     const handleGoogleLogin = () => {
-        sessionStorage.setItem("authRedirect", "/account/settings");
         window.location.href = 'http://localhost:8000/auth/google';
     };
 
     const handleDiscordLogin = () => {
-        sessionStorage.setItem("authRedirect", "/account/settings");
         window.location.href = 'http://localhost:8000/auth/discord';
     };
 
