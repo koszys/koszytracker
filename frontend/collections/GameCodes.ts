@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { emitPublishEvent } from "@/utils/eventBus";
 
 export const GameCodes: CollectionConfig = {
   slug: "game-codes",
@@ -29,6 +30,28 @@ export const GameCodes: CollectionConfig = {
     create: ({ req }) => req.user?.role === "admin",
     update: ({ req }) => req.user?.role === "admin",
     delete: ({ req }) => req.user?.role === "admin",
+  },
+  hooks: {
+    afterChange: [
+      async ({ doc, operation }) => {
+        emitPublishEvent({
+          collection: "game-codes",
+          gameId: doc.gameId as string,
+          docId: doc.id,
+          operation: operation as "create" | "update",
+        });
+      },
+    ],
+    afterDelete: [
+      async ({ doc }) => {
+        emitPublishEvent({
+          collection: "game-codes",
+          gameId: doc.gameId as string,
+          docId: doc.id,
+          operation: "delete",
+        });
+      },
+    ],
   },
   fields: [
     {
