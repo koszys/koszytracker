@@ -2,6 +2,7 @@
 
 import { createPortal } from "react-dom";
 import { AlertTriangleIcon, UploadIcon } from "@/components/common/ui/Icons";
+import type { GameTerms } from "@/config/gameTerms";
 
 interface ImportModalProps {
     isOpen: boolean;
@@ -22,10 +23,7 @@ interface ImportModalProps {
         isFullBackup: boolean;
     } | null;
     gameId: string;
-    terms: {
-        ar: string;
-        wl: string;
-    };
+    terms: GameTerms;
     onConfirm: () => void;
     onCancel: () => void;
 }
@@ -122,7 +120,7 @@ export default function ImportModal({ isOpen, importData, gameId, terms, onConfi
                             <p className="text-sm text-white font-bold">{data.accounts?.[0]?.name}</p>
                             <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                                 <div>
-                                    <p className="text-gray-500">{terms.ar} / {terms.wl}</p>
+                                    <p className="text-gray-500">{terms.ar || 'AR'} / {terms.wl || 'WL'}</p>
                                     <p className="text-white">{data.accounts?.[0]?.ar} / {data.accounts?.[0]?.wl}</p>
                                 </div>
                                 <div>
