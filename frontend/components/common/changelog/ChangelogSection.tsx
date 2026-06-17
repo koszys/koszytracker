@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ChangelogItem from "./ChangelogItem";
 import { fetchChangelogs } from "@/data/fetchChangelogs";
 import type { ChangelogEntry } from "@/data/fetchChangelogs";
@@ -15,15 +15,29 @@ export default function ChangelogSection({ game }: ChangelogSectionProps) {
     const [loading, setLoading] = useState(true);
     const [showChangelog, setShowChangelog] = useState(false);
     const [visibleCount, setVisibleCount] = useState(4);
+    const [refreshKey, setRefreshKey] = useState(0);
+    const isRealtimeUpdateRef = useRef(false);
+
+    useEffect(() => {
+        const handleRefresh = () => {
+            isRealtimeUpdateRef.current = true;
+            setRefreshKey((k) => k + 1);
+        };
+        window.addEventListener("senti-refresh-active-game", handleRefresh);
+        return () => {
+            window.removeEventListener("senti-refresh-active-game", handleRefresh);
+        };
+    }, []);
 
     useEffect(() => {
         async function loadChangelogs() {
-            const data = await fetchChangelogs(game, isDraftMode);
+            const data = await fetchChangelogs(game, isDraftMode, isRealtimeUpdateRef.current);
             setChangelogData(data);
             setLoading(false);
+            isRealtimeUpdateRef.current = false;
         }
         loadChangelogs();
-    }, [game, isDraftMode]);
+    }, [game, isDraftMode, refreshKey]);
 
     if (loading) return null;
     if (!changelogData || changelogData.length === 0) return null;

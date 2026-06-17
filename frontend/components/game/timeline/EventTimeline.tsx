@@ -1,4 +1,4 @@
-import { useState, useEffect, memo, useMemo } from "react";
+import { useState, useEffect, memo, useMemo, useRef } from "react";
 import CountdownTimer from "./CountdownTimer";
 import { fetchEvents } from "@/data/fetchEvents";
 import type { GameEvent } from "@/data/types";
@@ -105,6 +105,19 @@ export default function EventTimeline({ game, type = "all", activeServer, server
     const [loading, setLoading] = useState(true);
     const [currentEvents, setCurrentEvents] = useState<GameEvent[]>([]);
     const [upcomingEvents, setUpcomingEvents] = useState<GameEvent[]>([]);
+    const [refreshKey, setRefreshKey] = useState(0);
+    const isRealtimeUpdateRef = useRef(false);
+
+    useEffect(() => {
+        const handleRefresh = () => {
+            isRealtimeUpdateRef.current = true;
+            setRefreshKey((k) => k + 1);
+        };
+        window.addEventListener("senti-refresh-active-game", handleRefresh);
+        return () => {
+            window.removeEventListener("senti-refresh-active-game", handleRefresh);
+        };
+    }, []);
 
     const rawEvents = useMemo(
         () => adjustEventsForServer(fetchedEvents, activeServer, servers),
@@ -114,9 +127,10 @@ export default function EventTimeline({ game, type = "all", activeServer, server
     useEffect(() => {
         async function loadEvents() {
             setLoading(true);
-            const data = await fetchEvents(game, isDraftMode);
+            const data = await fetchEvents(game, isDraftMode, isRealtimeUpdateRef.current);
             setFetchedEvents(data);
             setLoading(false);
+            isRealtimeUpdateRef.current = false;
         }
 
         if (game) {
@@ -125,10 +139,14 @@ export default function EventTimeline({ game, type = "all", activeServer, server
             console.warn("EventTimeline is missing the 'game' prop!");
             setLoading(false);
         }
-    }, [game, isDraftMode]);
+    }, [game, isDraftMode, refreshKey]);
 
     useEffect(() => {
-        if (!rawEvents || rawEvents.length === 0) return;
+        if (!rawEvents || rawEvents.length === 0) {
+            setCurrentEvents([]);
+            setUpcomingEvents([]);
+            return;
+        }
         const now = new Date();
         const current: GameEvent[] = [];
         const upcoming: GameEvent[] = [];
