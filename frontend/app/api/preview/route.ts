@@ -23,10 +23,11 @@ export async function GET(req: Request) {
   const payload = await getPayload({ config: configPromise });
   let user = null;
   try {
-    user = await payload.auth({
+    const authResult = await payload.auth({
       req: req as unknown as PayloadRequest,
       headers: req.headers,
     });
+    user = authResult.user;
   } catch (error) {
     payload.logger.error({ err: error }, "Error verifying token for preview");
     return new Response("Failed to verify user", { status: 403 });
