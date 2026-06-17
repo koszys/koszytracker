@@ -3,10 +3,10 @@
 import { AuthProvider } from "@/contexts/AuthContext";
 import { GameProvider } from "@/contexts/GameContext";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({ children, isDraftMode = false }: { children: React.ReactNode; isDraftMode?: boolean }) {
   return (
     <AuthProvider>
-      <GameProvider>
+      <GameProvider isDraftMode={isDraftMode}>
         {children}
       </GameProvider>
     </AuthProvider>

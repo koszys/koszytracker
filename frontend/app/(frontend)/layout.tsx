@@ -18,18 +18,23 @@ export const metadata: Metadata = {
   description: "Your tracker for dailies, events, and other content for your gacha games.",
 };
 
-export default function RootLayout({
+import { draftMode } from "next/headers";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const draft = await draftMode();
+  const isDraftMode = draft.isEnabled;
+
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Providers>{children}</Providers>
+        <Providers isDraftMode={isDraftMode}>{children}</Providers>
       </body>
     </html>
   );
