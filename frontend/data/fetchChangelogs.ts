@@ -6,26 +6,34 @@ export interface ChangelogEntry {
   changes: string[];
 }
 
-export async function fetchChangelogs(gameId: string): Promise<ChangelogEntry[]> {
+import { createCacheFetcher } from "@/utils/cache";
+
+async function fetchChangelogsRaw(gameId: string, isDraftMode: boolean): Promise<ChangelogEntry[]> {
+  const url = `${PAYLOAD_API_URL}/changelogs?where[gameId][equals]=${encodeURIComponent(gameId)}&sort=-date&depth=2&limit=50${
+    isDraftMode ? "&draft=true" : ""
+  }`;
+  const res = await fetch(url, { credentials: "include" });
+  if (!res.ok) {
+    throw new Error(`fetchChangelogs failed: ${res.status} ${res.statusText}`);
+  }
+  const json = await res.json();
+  const docs = json.docs ?? [];
+  return docs.map((doc: Record<string, unknown>) => {
+    const content = doc.content;
+    const changes = extractRichTextChanges(content);
+    return {
+      version: (doc.title as string) ?? "Unknown",
+      date: formatDate(doc.date as string),
+      changes: changes.length > 0 ? changes : ["See details in admin panel"],
+    };
+  });
+}
+
+const cachedFetchChangelogs = createCacheFetcher(fetchChangelogsRaw);
+
+export async function fetchChangelogs(gameId: string, isDraftMode: boolean = false): Promise<ChangelogEntry[]> {
   try {
-    const res = await fetch(
-      `${PAYLOAD_API_URL}/changelogs?where[gameId][equals]=${encodeURIComponent(gameId)}&sort=-date&depth=2&limit=50`
-    );
-    if (!res.ok) {
-      console.warn(`fetchChangelogs failed: ${res.status} ${res.statusText}`);
-      return [];
-    }
-    const json = await res.json();
-    const docs = json.docs ?? [];
-    return docs.map((doc: Record<string, unknown>) => {
-      const content = doc.content;
-      const changes = extractRichTextChanges(content);
-      return {
-        version: (doc.title as string) ?? "Unknown",
-        date: formatDate(doc.date as string),
-        changes: changes.length > 0 ? changes : ["See details in admin panel"],
-      };
-    });
+    return await cachedFetchChangelogs(isDraftMode, gameId, isDraftMode);
   } catch (err) {
     console.warn("fetchChangelogs error:", err);
     return [];

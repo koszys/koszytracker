@@ -97,7 +97,10 @@ const EventCard = memo(function EventCard({ event, isCurrent, game }: { event: G
     );
 });
 
+import { useGame } from "@/contexts/GameContext";
+
 export default function EventTimeline({ game, type = "all", activeServer, servers }: EventTimelineProps) {
+    const { isDraftMode } = useGame();
     const [fetchedEvents, setFetchedEvents] = useState<GameEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentEvents, setCurrentEvents] = useState<GameEvent[]>([]);
@@ -111,7 +114,7 @@ export default function EventTimeline({ game, type = "all", activeServer, server
     useEffect(() => {
         async function loadEvents() {
             setLoading(true);
-            const data = await fetchEvents(game);
+            const data = await fetchEvents(game, isDraftMode);
             setFetchedEvents(data);
             setLoading(false);
         }
@@ -122,7 +125,7 @@ export default function EventTimeline({ game, type = "all", activeServer, server
             console.warn("EventTimeline is missing the 'game' prop!");
             setLoading(false);
         }
-    }, [game]);
+    }, [game, isDraftMode]);
 
     useEffect(() => {
         if (!rawEvents || rawEvents.length === 0) return;

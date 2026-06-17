@@ -3,12 +3,15 @@ import { fetchCodes } from "@/data/fetchCodes";
 import type { GameCode } from "@/data/types";
 import { Copy, Check } from "lucide-react";
 
+import { useGame } from "@/contexts/GameContext";
+
 interface ActiveCodesProps {
     game: string;
     redeemUrl?: string;
 }
 
 export default function ActiveCodes({ game, redeemUrl }: ActiveCodesProps) {
+    const { isDraftMode } = useGame();
     const [codes, setCodes] = useState<GameCode[]>([]);
     const [loading, setLoading] = useState(true);
     const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -19,13 +22,13 @@ export default function ActiveCodes({ game, redeemUrl }: ActiveCodesProps) {
         if (game) {
             async function loadCodes() {
                 setLoading(true);
-                const data = await fetchCodes(game);
+                const data = await fetchCodes(game, isDraftMode);
                 setCodes(data);
                 setLoading(false);
             }
             loadCodes();
         }
-    }, [game]);
+    }, [game, isDraftMode]);
 
     const copyCode = async (code: string) => {
         try {

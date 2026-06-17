@@ -7,7 +7,10 @@ interface ChangelogSectionProps {
     game: string;
 }
 
+import { useGame } from "@/contexts/GameContext";
+
 export default function ChangelogSection({ game }: ChangelogSectionProps) {
+    const { isDraftMode } = useGame();
     const [changelogData, setChangelogData] = useState<ChangelogEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [showChangelog, setShowChangelog] = useState(false);
@@ -15,12 +18,12 @@ export default function ChangelogSection({ game }: ChangelogSectionProps) {
 
     useEffect(() => {
         async function loadChangelogs() {
-            const data = await fetchChangelogs(game);
+            const data = await fetchChangelogs(game, isDraftMode);
             setChangelogData(data);
             setLoading(false);
         }
         loadChangelogs();
-    }, [game]);
+    }, [game, isDraftMode]);
 
     if (loading) return null;
     if (!changelogData || changelogData.length === 0) return null;
