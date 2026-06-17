@@ -34,9 +34,9 @@ async function fetchChangelogsRaw(gameId: string, isDraftMode: boolean): Promise
 
 const cachedFetchChangelogs = createCacheFetcher(fetchChangelogsRaw);
 
-export async function fetchChangelogs(gameId: string, isDraftMode: boolean = false): Promise<ChangelogEntry[]> {
+export async function fetchChangelogs(gameId: string, isDraftMode: boolean = false, force: boolean = false): Promise<ChangelogEntry[]> {
   try {
-    return await cachedFetchChangelogs(isDraftMode, gameId, isDraftMode);
+    return await cachedFetchChangelogs({ isDraftMode, force }, gameId, isDraftMode);
   } catch (err) {
     console.warn("fetchChangelogs error:", err);
     return [];

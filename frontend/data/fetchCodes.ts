@@ -19,9 +19,9 @@ async function fetchCodesRaw(gameId: string, isDraftMode: boolean): Promise<Game
 
 const cachedFetchCodes = createCacheFetcher(fetchCodesRaw);
 
-export async function fetchCodes(gameId: string, isDraftMode: boolean = false): Promise<GameCode[]> {
+export async function fetchCodes(gameId: string, isDraftMode: boolean = false, force: boolean = false): Promise<GameCode[]> {
   try {
-    return await cachedFetchCodes(isDraftMode, gameId, isDraftMode);
+    return await cachedFetchCodes({ isDraftMode, force }, gameId, isDraftMode);
   } catch (err) {
     console.warn("fetchCodes error:", err);
     return [];

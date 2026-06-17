@@ -3,12 +3,22 @@ export function createCacheFetcher<Args extends any[], T>(
 ) {
   const cache: Record<string, Promise<T>> = {};
 
-  return async (isDraftMode: boolean, ...args: Args): Promise<T> => {
+  return async (
+    options: boolean | { isDraftMode?: boolean; force?: boolean },
+    ...args: Args
+  ): Promise<T> => {
+    const isDraftMode = typeof options === "boolean" ? options : !!options.isDraftMode;
+    const force = typeof options === "boolean" ? false : !!options.force;
+
     if (typeof window === "undefined" || isDraftMode) {
       return fetchFn(...args);
     }
 
     const key = JSON.stringify(args);
+    if (force) {
+      delete cache[key];
+    }
+
     if (key in cache) {
       return cache[key];
     }
@@ -22,3 +32,4 @@ export function createCacheFetcher<Args extends any[], T>(
     return promise;
   };
 }
+
