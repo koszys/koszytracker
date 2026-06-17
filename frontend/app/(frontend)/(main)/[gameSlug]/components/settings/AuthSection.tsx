@@ -1,18 +1,18 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface AuthSectionProps {
-    setShowAuthModal: (show: boolean) => void;
     setShowLogoutModal: (show: boolean) => void;
 }
 
 export default function AuthSection({
-    setShowAuthModal,
     setShowLogoutModal,
 }: AuthSectionProps) {
     const { user } = useAuth();
+    const router = useRouter();
 
     return (
         <div className="bg-[#1c1d21] border border-[#52525b] rounded-xl p-4 md:p-6 shadow-lg mb-8">
@@ -77,7 +77,10 @@ export default function AuthSection({
                         <p className="text-sm font-bold text-white mb-1">You are not signed in.</p>
                         <p className="text-xs text-gray-300">Sign in to automatically save and sync your data.</p>
                     </div>
-                    <button onClick={() => setShowAuthModal(true)} className="px-6 py-2 bg-theme hover:brightness-110 border border-transparent hover:border-white text-white rounded-lg text-sm font-bold transition-all w-full sm:w-auto cursor-pointer">
+                    <button onClick={() => {
+                        sessionStorage.setItem("authRedirect", window.location.pathname);
+                        router.push("/account");
+                    }} className="px-6 py-2 bg-theme hover:brightness-110 border border-transparent hover:border-white text-white rounded-lg text-sm font-bold transition-all w-full sm:w-auto cursor-pointer">
                         Sign In
                     </button>
                 </div>

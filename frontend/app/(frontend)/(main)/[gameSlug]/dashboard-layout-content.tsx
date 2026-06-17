@@ -9,6 +9,7 @@ import { GAME_CONFIG } from "@/config/games";
 import { useGame } from "@/contexts/GameContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import SocialButton from "@/components/common/social/SocialButton";
+import { UserNav } from "@/components/common/Header";
 import Footer from "@/components/common/ui/Footer";
 
 export default function DashboardLayoutContent({
@@ -225,8 +226,11 @@ export default function DashboardLayoutContent({
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <SocialButton type="discord" variant="icon" />
-                        <SocialButton type="kofi" variant="icon" />
+                        <div className="hidden sm:flex items-center gap-4">
+                            <SocialButton type="discord" variant="icon" />
+                            <SocialButton type="kofi" variant="icon" />
+                        </div>
+                        <UserNav />
                     </div>
                 </header>
 
