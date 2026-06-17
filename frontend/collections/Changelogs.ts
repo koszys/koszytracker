@@ -17,7 +17,9 @@ export const Changelogs: CollectionConfig = {
   },
   access: {
     read: ({ req }) => {
-      if (req.user?.role === "admin") return true;
+      if (req.user?.role === "admin") {
+        return true;
+      }
       return {
         _status: {
           equals: "published",

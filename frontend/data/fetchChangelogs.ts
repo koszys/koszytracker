@@ -10,9 +10,12 @@ import { createCacheFetcher } from "@/utils/cache";
 
 async function fetchChangelogsRaw(gameId: string, isDraftMode: boolean): Promise<ChangelogEntry[]> {
   const url = `${PAYLOAD_API_URL}/changelogs?where[gameId][equals]=${encodeURIComponent(gameId)}&sort=-date&depth=2&limit=50${
-    isDraftMode ? "&draft=true" : ""
+    isDraftMode ? "&draft=true" : "&where[_status][equals]=published"
   }`;
-  const res = await fetch(url, { credentials: "include" });
+  const res = await fetch(url, {
+    credentials: "include",
+    cache: "no-store",
+  });
   if (!res.ok) {
     throw new Error(`fetchChangelogs failed: ${res.status} ${res.statusText}`);
   }

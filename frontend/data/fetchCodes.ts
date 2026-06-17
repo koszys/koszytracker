@@ -4,9 +4,12 @@ import { createCacheFetcher } from "@/utils/cache";
 
 async function fetchCodesRaw(gameId: string, isDraftMode: boolean): Promise<GameCode[]> {
   const url = `${PAYLOAD_API_URL}/game-codes?where[gameId][equals]=${encodeURIComponent(gameId)}&sort=-createdAt${
-    isDraftMode ? "&draft=true" : ""
+    isDraftMode ? "&draft=true" : "&where[_status][equals]=published"
   }`;
-  const res = await fetch(url, { credentials: "include" });
+  const res = await fetch(url, {
+    credentials: "include",
+    cache: "no-store",
+  });
   if (!res.ok) {
     throw new Error(`fetchCodes failed: ${res.status} ${res.statusText}`);
   }
