@@ -49,7 +49,7 @@ export default function ChangelogSection({ game }: ChangelogSectionProps) {
                     setShowChangelog(!showChangelog);
                     if (!showChangelog) setVisibleCount(4);
                 }}
-                className="cursor-pointer flex items-center gap-2 text-white hover:text-white hover:border-blue-500 transition-colors text-sm font-bold uppercase tracking-widest bg-[#1c1d21]/70 border border-[#33343a] px-4 py-2 rounded mb-6"
+                className="cursor-pointer flex items-center gap-2 text-white hover:text-white hover:border-theme transition-colors text-sm font-bold uppercase tracking-widest bg-[#1c1d21]/70 border border-theme/20 px-4 py-2 rounded mb-6"
             >
                 {showChangelog ? "\u2212 Hide Changelog" : "+ View Changelog"}
             </button>
@@ -71,7 +71,7 @@ export default function ChangelogSection({ game }: ChangelogSectionProps) {
                             {visibleCount < changelogData.length && (
                                 <button
                                     onClick={() => setVisibleCount(prev => prev + 4)}
-                                    className="cursor-pointer flex items-center gap-2 text-white hover:text-white hover:border-blue-500 transition-colors text-sm font-bold uppercase tracking-widest bg-[#1c1d21]/60 border border-[#33343a] px-4 py-2 rounded"
+                                    className="cursor-pointer flex items-center gap-2 text-white hover:text-white hover:border-theme transition-colors text-sm font-bold uppercase tracking-widest bg-[#1c1d21]/60 border border-theme/20 px-4 py-2 rounded"
                                 >
                                     {"\u2193"} Show more
                                 </button>
@@ -80,7 +80,7 @@ export default function ChangelogSection({ game }: ChangelogSectionProps) {
                             {visibleCount > 4 && (
                                 <button
                                     onClick={() => setVisibleCount(prev => Math.max(4, prev - 4))}
-                                    className="cursor-pointer flex items-center gap-2 text-white hover:text-white hover:border-blue-500 transition-colors text-sm font-bold uppercase tracking-widest bg-[#1c1d21]/60 border border-[#33343a] px-4 py-2 rounded"
+                                    className="cursor-pointer flex items-center gap-2 text-white hover:text-white hover:border-theme transition-colors text-sm font-bold uppercase tracking-widest bg-[#1c1d21]/60 border border-theme/20 px-4 py-2 rounded"
                                 >
                                     {"\u2191"} Show less
                                 </button>
@@ -91,7 +91,7 @@ export default function ChangelogSection({ game }: ChangelogSectionProps) {
                                     setShowChangelog(false);
                                     setVisibleCount(4);
                                 }}
-                                className="cursor-pointer flex items-center gap-2 text-white hover:text-white hover:border-blue-500 transition-colors text-sm font-bold uppercase tracking-widest bg-[#1c1d21]/60 border border-[#33343a] px-4 py-2 rounded"
+                                className="cursor-pointer flex items-center gap-2 text-white hover:text-white hover:border-theme transition-colors text-sm font-bold uppercase tracking-widest bg-[#1c1d21]/60 border border-theme/20 px-4 py-2 rounded"
                             >
                                 {"\u00d7"} Hide Changelog
                             </button>
