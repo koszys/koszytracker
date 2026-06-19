@@ -3,7 +3,7 @@
 import { AuthProvider } from "@/contexts/AuthContext";
 import { GameProvider } from "@/contexts/GameContext";
 import { ToastProvider } from "@/contexts/ToastContext";
-import GlobalRealtimeListener from "@/components/common/GlobalRealtimeListener";
+import GlobalRealtimeListener from "@/contexts/GlobalRealtimeListener";
 
 export function Providers({ children, isDraftMode = false }: { children: React.ReactNode; isDraftMode?: boolean }) {
   return (
