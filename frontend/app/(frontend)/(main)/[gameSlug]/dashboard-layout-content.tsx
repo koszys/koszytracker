@@ -34,7 +34,16 @@ export default function DashboardLayoutContent({
     const pathname = usePathname();
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
     const [isGameSwitcherOpen, setIsGameSwitcherOpen] = useState(false);
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('senti-sidebar-collapsed') === 'true';
+        }
+        return false;
+    });
+
+    useEffect(() => {
+        localStorage.setItem('senti-sidebar-collapsed', String(isSidebarCollapsed));
+    }, [isSidebarCollapsed]);
 
     const iconButtonClass = "p-1.5 text-white bg-white/5 hover:bg-white/10 border border-transparent hover:border-theme/50 rounded-md transition-all flex items-center justify-center";
 
