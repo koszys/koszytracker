@@ -263,8 +263,8 @@ export default function DashboardLayoutContent({
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
-                    {GAME_CONFIG.map((game) => {
-                        return game.status === 'active' ? (
+                    {GAME_CONFIG.filter(game => game.status === 'active').map((game) => {
+                        return (
                             <Link
                                 key={game.id}
                                 href={game.path}
@@ -285,23 +285,6 @@ export default function DashboardLayoutContent({
                                     </h3>
                                 </div>
                             </Link>
-                        ) : (
-                            <div
-                                key={game.id}
-                                className="relative group block h-28 rounded-md overflow-hidden border border-white/10 opacity-50 cursor-not-allowed"
-                            >
-                                <div
-                                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                                    style={{ backgroundImage: game.bgUrl ? `url('${game.bgUrl}')` : 'none' }}
-                                ></div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#27272a] via-[#27272a]/50 to-transparent z-10"></div>
-                                <div className="absolute bottom-0 left-0 w-full p-3 z-20">
-                                    <h3 className="font-bold text-white transition-colors drop-shadow-lg">
-                                        {game.name}
-                                    </h3>
-                                    <span className="text-xs text-gray-400">Coming Soon</span>
-                                </div>
-                            </div>
                         )
                     })}
                 </div>
