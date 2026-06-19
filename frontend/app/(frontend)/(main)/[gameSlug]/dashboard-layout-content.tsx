@@ -38,30 +38,9 @@ export default function DashboardLayoutContent({
 
     const iconButtonClass = "p-1.5 text-white bg-white/5 hover:bg-white/10 border border-transparent hover:border-theme/50 rounded-md transition-all flex items-center justify-center";
 
-    // Sync theme CSS vars to document.body so portaled content (modals) inherits them
-    useEffect(() => {
-        document.body.style.setProperty('--theme-color', currentGame.themeColor);
-        document.body.style.setProperty('--theme-gradient-from', currentGame.themeGradientFrom);
-        document.body.style.setProperty('--theme-gradient-to', currentGame.themeGradientTo);
-        document.body.style.setProperty('--theme-glow', currentGame.themeGlow);
-
-        return () => {
-            document.body.style.removeProperty('--theme-color');
-            document.body.style.removeProperty('--theme-gradient-from');
-            document.body.style.removeProperty('--theme-gradient-to');
-            document.body.style.removeProperty('--theme-glow');
-        };
-    }, [currentGame]);
-
     return (
         <div
             className="relative flex h-screen w-full bg-black text-gray-300 font-sans selection:bg-theme/50 selection:text-white overflow-hidden"
-            style={{
-                '--theme-color': currentGame.themeColor,
-                '--theme-gradient-from': currentGame.themeGradientFrom,
-                '--theme-gradient-to': currentGame.themeGradientTo,
-                '--theme-glow': currentGame.themeGlow,
-            } as React.CSSProperties}
         >
 
             {/* Background */}
