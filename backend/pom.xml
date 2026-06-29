@@ -11,9 +11,9 @@
     </parent>
 
     <groupId>moe.senti</groupId>
-    <artifactId>senti-tracker</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>senti-tracker</name>
+    <artifactId>sentimoe</artifactId>
+
+    <name>sentimoe</name>
     <description>Wish tracker backend</description>
 
     <properties>
