@@ -4,9 +4,9 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-<h3 align="center">koszytracker</h3>
+<h3 align="center">senti.moe</h3>
   <p align="center">
-    A simple wish tracker for supported gacha games. May not be updated regularly. Check the changelogs for updates.
+    A website for gacha games that I like. Figuring out the purpose of this website will be but I do have ideas for features that I would like to implement.
   </p>
 </div>
 
@@ -36,7 +36,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-A tracking application for various gacha games, featuring OAuth authentication and wish history management.
+Just something to work on. Found that there were not too many websites that cover a lot of games where someone could find useful websites/links that could help them out. I also have issues with keeping up to date with many of these games especially with codes, videos, events, and other things. So I have some features I would like to add that could help with that.
 
 Currently a solo project for now. Will update as much as I can. 
 
@@ -99,9 +99,7 @@ You will need Node.js (v18+), Python (3.10+), and Docker installed on your machi
 
 <!-- ROADMAP -->
 ## Roadmap
-- [ ] Basic OAuth Authentication (Google, Discord)
-- [ ] Wish history tracking
-- [ ] Analytics and statistics
+- [ ] Placeholder
 
 See the [open issues](https://github.com/koszys/koszytracker/issues) for a full list of proposed features (and known issues).
 

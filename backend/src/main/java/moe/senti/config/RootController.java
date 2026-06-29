@@ -12,7 +12,7 @@ public class RootController {
 
     @GetMapping("/")
     public Map<String, String> root() {
-        return Map.of("message", "Wish Tracker API");
+        return Map.of("message", "Sentimoe API");
     }
 
     @GetMapping("/favicon.ico")

@@ -1,6 +1,6 @@
-# Wish Tracker API — Java Backend
+# Sentimoe Backend
 
-Spring Boot 3.x REST API for wish tracking in supported gacha games. OAuth2 authentication via Google/Discord, JWT tokens, PostgreSQL.
+Spring Boot 3.x REST API — OAuth2 authentication via Google/Discord, JWT tokens, PostgreSQL, website for gacha games.
 
 ## Prerequisites
 
