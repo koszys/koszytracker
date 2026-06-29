@@ -1,4 +1,4 @@
-.PHONY: help install kill-port stop run-backend run-frontend \
+.PHONY: help install kill-port stop run rebuild run-backend run-frontend \
         db-up db-up-all db-down lint-backend lint-frontend test \
         test-auth test-account test-wish test-core test-controllers test-file clean
 
@@ -18,6 +18,7 @@ help:
 	@echo ""
 	@echo "  Standard workflows:"
 	@echo "    make run            Everything in Docker (DB + backend + frontend)"
+	@echo "    make rebuild        Rebuild images then start everything in Docker"
 	@echo "    make dev            DB in Docker, backend (Maven) + frontend locally"
 	@echo "    make stop           Stop all containers + kill local processes"
 	@echo ""
@@ -42,6 +43,9 @@ help:
 	@echo ""
 
 run: kill-port
+	docker compose up -d
+
+rebuild: kill-port
 	docker compose up -d --build
 
 dev: kill-port

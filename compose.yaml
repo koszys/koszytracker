@@ -52,6 +52,7 @@ services:
     env_file: .env
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/sentimoe
+      WATCHPACK_POLLING: "true"
     volumes:
       - ./frontend:/usr/src/app
       - /usr/src/app/node_modules
