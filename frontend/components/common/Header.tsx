@@ -52,23 +52,26 @@ export function UserNav() {
 
             {isOpen && (
                 <>
-                    <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-                    <div className="absolute right-0 mt-2 w-48 bg-[#1c1d21] border border-[#33343a] hover:border-theme rounded-lg shadow-2xl z-50 overflow-hidden flex flex-col">
-                        <Link
-                            href="/account/settings"
-                            onClick={() => setIsOpen(false)}
-                            className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-gray-200 hover:text-white hover:bg-[#24252a] transition-colors"
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                            Site Account
-                        </Link>
-                        <button
-                            onClick={() => { setIsOpen(false); logout(); }}
-                            className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-red-400 hover:text-red-300 hover:bg-[#24252a] transition-colors text-left w-full cursor-pointer"
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                            Sign out
-                        </button>
+                    <div className="fixed cursor-pointer inset-0 z-40" onClick={() => setIsOpen(false)} />
+                    <div className="absolute right-0 mt-2 w-48 bg-[#1c1d21] ring-1 ring-white/[0.06] rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col">
+                        <div className="p-1.5">
+                            <Link
+                                href="/account/settings"
+                                onClick={() => setIsOpen(false)}
+                                className="flex items-center gap-2.5 px-3 py-2.5 text-sm font-bold text-gray-200 hover:text-white hover:bg-white/[0.06] rounded-lg transition-colors"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                Site Account
+                            </Link>
+                            <div className="h-px bg-white/[0.06] mx-3 my-0.5" />
+                            <button
+                                onClick={() => { setIsOpen(false); logout(); }}
+                                className="flex w-full items-center gap-2.5 px-3 py-2.5 text-sm font-bold text-red-400 hover:text-red-300 hover:bg-white/[0.06] rounded-lg transition-colors text-left cursor-pointer"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                Sign out
+                            </button>
+                        </div>
                     </div>
                 </>
             )}

@@ -8,11 +8,12 @@ interface GameContextValue {
     setActiveGameId: (id: string) => void;
     activeGame: GameConfig;
     recentGameIds: string[];
+    isDraftMode: boolean;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
 
-export function GameProvider({ children }: { children: ReactNode }) {
+export function GameProvider({ children, isDraftMode = false }: { children: ReactNode; isDraftMode?: boolean }) {
     const [activeGameId, setActiveGameIdState] = useState<string>(GAME_CONFIG[0].id);
     const [recentGameIds, setRecentGameIds] = useState<string[]>([]);
 
@@ -52,7 +53,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     // Avoid returning early to allow context provider to render
     // with default values before hydration.
     return (
-        <GameContext.Provider value={{ activeGameId, setActiveGameId, activeGame, recentGameIds }}>
+        <GameContext.Provider value={{ activeGameId, setActiveGameId, activeGame, recentGameIds, isDraftMode }}>
             {children}
         </GameContext.Provider>
     );

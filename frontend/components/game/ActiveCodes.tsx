@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { fetchCodes } from "@/data/fetchCodes";
 import type { GameCode } from "@/data/types";
 import { Copy, Check } from "lucide-react";
+
+import { useGame } from "@/contexts/GameContext";
 
 interface ActiveCodesProps {
     game: string;
@@ -9,23 +11,38 @@ interface ActiveCodesProps {
 }
 
 export default function ActiveCodes({ game, redeemUrl }: ActiveCodesProps) {
+    const { isDraftMode } = useGame();
     const [codes, setCodes] = useState<GameCode[]>([]);
     const [loading, setLoading] = useState(true);
     const [copiedCode, setCopiedCode] = useState<string | null>(null);
+    const [refreshKey, setRefreshKey] = useState(0);
+    const isRealtimeUpdateRef = useRef(false);
 
     const hasRedeemLink = typeof redeemUrl === "string" && redeemUrl.trim().length > 0;
+
+    useEffect(() => {
+        const handleRefresh = () => {
+            isRealtimeUpdateRef.current = true;
+            setRefreshKey((k) => k + 1);
+        };
+        window.addEventListener("senti-refresh-active-game", handleRefresh);
+        return () => {
+            window.removeEventListener("senti-refresh-active-game", handleRefresh);
+        };
+    }, []);
 
     useEffect(() => {
         if (game) {
             async function loadCodes() {
                 setLoading(true);
-                const data = await fetchCodes(game);
+                const data = await fetchCodes(game, isDraftMode, isRealtimeUpdateRef.current);
                 setCodes(data);
                 setLoading(false);
+                isRealtimeUpdateRef.current = false;
             }
             loadCodes();
         }
-    }, [game]);
+    }, [game, isDraftMode, refreshKey]);
 
     const copyCode = async (code: string) => {
         try {

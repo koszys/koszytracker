@@ -17,7 +17,7 @@ export default function DashboardLayoutContent({
 }: {
     children: React.ReactNode;
 }) {
-    const { activeGame: currentGame, setActiveGameId } = useGame();
+    const { activeGame: currentGame, setActiveGameId, isDraftMode } = useGame();
     const params = useParams();
     const gameSlug = params?.gameSlug as string;
 
@@ -34,34 +34,22 @@ export default function DashboardLayoutContent({
     const pathname = usePathname();
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
     const [isGameSwitcherOpen, setIsGameSwitcherOpen] = useState(false);
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('senti-sidebar-collapsed') === 'true';
+        }
+        return false;
+    });
+
+    useEffect(() => {
+        localStorage.setItem('senti-sidebar-collapsed', String(isSidebarCollapsed));
+    }, [isSidebarCollapsed]);
 
     const iconButtonClass = "p-1.5 text-white bg-white/5 hover:bg-white/10 border border-transparent hover:border-theme/50 rounded-md transition-all flex items-center justify-center";
-
-    // Sync theme CSS vars to document.body so portaled content (modals) inherits them
-    useEffect(() => {
-        document.body.style.setProperty('--theme-color', currentGame.themeColor);
-        document.body.style.setProperty('--theme-gradient-from', currentGame.themeGradientFrom);
-        document.body.style.setProperty('--theme-gradient-to', currentGame.themeGradientTo);
-        document.body.style.setProperty('--theme-glow', currentGame.themeGlow);
-
-        return () => {
-            document.body.style.removeProperty('--theme-color');
-            document.body.style.removeProperty('--theme-gradient-from');
-            document.body.style.removeProperty('--theme-gradient-to');
-            document.body.style.removeProperty('--theme-glow');
-        };
-    }, [currentGame]);
 
     return (
         <div
             className="relative flex h-screen w-full bg-black text-gray-300 font-sans selection:bg-theme/50 selection:text-white overflow-hidden"
-            style={{
-                '--theme-color': currentGame.themeColor,
-                '--theme-gradient-from': currentGame.themeGradientFrom,
-                '--theme-gradient-to': currentGame.themeGradientTo,
-                '--theme-glow': currentGame.themeGlow,
-            } as React.CSSProperties}
         >
 
             {/* Background */}
@@ -188,8 +176,22 @@ export default function DashboardLayoutContent({
                 </nav>
             </aside>
 
-            {/* Main Content Area */}
+             {/* Main Content Area */}
             <div className="flex-1 flex flex-col min-w-0 relative">
+                {isDraftMode && (
+                    <div className="bg-amber-950/90 border-b border-amber-800 text-amber-200 px-4 py-2 text-xs font-semibold flex items-center justify-between z-50">
+                        <span className="flex items-center gap-1.5 font-bold">
+                            <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+                            Draft Preview Mode (Viewing unpublished drafts)
+                        </span>
+                        <a
+                            href={`/api/preview/disable?redirect=${encodeURIComponent(pathname)}`}
+                            className="underline hover:text-amber-100 transition-colors"
+                        >
+                            Exit Preview Mode
+                        </a>
+                    </div>
+                )}
 
                 {/* Header */}
                 <header className="h-16 flex-shrink-0 bg-[#18181b] border-b border-white/5 flex items-center justify-between px-4 z-30">
@@ -270,8 +272,8 @@ export default function DashboardLayoutContent({
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
-                    {GAME_CONFIG.map((game) => {
-                        return game.status === 'active' ? (
+                    {GAME_CONFIG.filter(game => game.status === 'active').map((game) => {
+                        return (
                             <Link
                                 key={game.id}
                                 href={game.path}
@@ -292,23 +294,6 @@ export default function DashboardLayoutContent({
                                     </h3>
                                 </div>
                             </Link>
-                        ) : (
-                            <div
-                                key={game.id}
-                                className="relative group block h-28 rounded-md overflow-hidden border border-white/10 opacity-50 cursor-not-allowed"
-                            >
-                                <div
-                                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                                    style={{ backgroundImage: game.bgUrl ? `url('${game.bgUrl}')` : 'none' }}
-                                ></div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#27272a] via-[#27272a]/50 to-transparent z-10"></div>
-                                <div className="absolute bottom-0 left-0 w-full p-3 z-20">
-                                    <h3 className="font-bold text-white transition-colors drop-shadow-lg">
-                                        {game.name}
-                                    </h3>
-                                    <span className="text-xs text-gray-400">Coming Soon</span>
-                                </div>
-                            </div>
                         )
                     })}
                 </div>

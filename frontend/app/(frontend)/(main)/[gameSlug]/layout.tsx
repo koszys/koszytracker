@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { draftMode } from "next/headers";
 import { GAME_CONFIG } from "@/config/games";
 import { GameProvider } from "@/contexts/GameContext";
 import DashboardLayoutContent from "./dashboard-layout-content";
@@ -16,8 +17,11 @@ export default async function DashboardLayout({
         notFound();
     }
 
+    const draft = await draftMode();
+    const isDraftMode = draft.isEnabled;
+
     return (
-        <GameProvider>
+        <GameProvider isDraftMode={isDraftMode}>
             <DashboardLayoutContent>{children}</DashboardLayoutContent>
         </GameProvider>
     );
