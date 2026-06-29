@@ -99,8 +99,7 @@ export default function HomePage() {
                             <div className="relative z-10 text-center px-4">
                                 <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 tracking-wide uppercase">SENTI<span className="text-theme">.MOE</span></h1>
                                 <p className="text-white text-sm md:text-base">
-                                    Your tracker for dailies, events, and other content for your gacha games.
-                                    This is currently being maintained solo so I would appreciate any support and feedback!
+                                    A kind of hub for certain gacha games that I play (doing it for experience as well lol). I'll try to add as many games as I can but this site is currently being maintained solo so I appreciate any support and feedback!
                                 </p>
                             </div>
                         </div>
