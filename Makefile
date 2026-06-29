@@ -17,9 +17,9 @@ stop:
 help:
 	@echo ""
 	@echo "  Standard workflows:"
-	@echo "    make run            DB + backend (Docker) + frontend"
-	@echo "    make dev            DB (Docker) + backend (Maven) + frontend"
-	@echo "    make stop           Stop all containers + local backend"
+	@echo "    make run            Everything in Docker (DB + backend + frontend)"
+	@echo "    make dev            DB in Docker, backend (Maven) + frontend locally"
+	@echo "    make stop           Stop all containers + kill local processes"
 	@echo ""
 	@echo "  Commands:"
 	@echo "    make install        Install all dependencies"
@@ -42,8 +42,7 @@ help:
 	@echo ""
 
 run: kill-port
-	docker compose up -d
-	$(MAKE) run-frontend
+	docker compose up -d --build
 
 dev: kill-port
 	docker compose up -d db
