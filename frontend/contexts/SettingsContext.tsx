@@ -1,7 +1,26 @@
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect */
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { useAuth } from "./AuthContext";
+import { useGame } from "./GameContext";
+
+interface ApiAccount {
+    id: number;
+    name: string;
+    server: string;
+    ar: number;
+    wl: string;
+    mc_option?: string;
+    last_synced_at?: string;
+}
+
+interface ImportedAccount {
+    name?: string;
+    server?: string;
+    ar?: number | string;
+    wl?: string;
+    gender?: string;
+}
 
 export interface GameAccount {
     id: string;
@@ -12,6 +31,16 @@ export interface GameAccount {
     gender: string;
 }
 
+interface ConflictData {
+    type: "accounts" | "wishes";
+    localCount: number;
+    cloudCount: number;
+    localModifiedAt: Date | null;
+    cloudModifiedAt: Date | null;
+    localData: unknown[];
+    cloudData: unknown[];
+}
+
 interface SettingsContextValue {
     accounts: GameAccount[];
     activeAccountId: string;
@@ -20,8 +49,15 @@ interface SettingsContextValue {
     addAccount: () => void;
     updateActiveAccount: (key: keyof GameAccount, value: string | number) => void;
     deleteActiveAccount: () => void;
-    exportAccount: () => string | null;
-    importAccount: (jsonData: string) => boolean;
+    exportData: () => string | null;
+    importData: (jsonData: string) => Promise<boolean>;
+    importFullBackup: (jsonData: string) => Promise<boolean>;
+    importLocalAccounts: () => void;
+    lastSyncedAt: Date | null;
+    syncAccounts: () => Promise<boolean>;
+    conflictData: ConflictData | null;
+    setConflictData: (data: ConflictData | null) => void;
+    resolveConflict: (resolution: "local" | "cloud" | "merge") => Promise<void>;
 }
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
@@ -29,12 +65,21 @@ const SettingsContext = createContext<SettingsContextValue | null>(null);
 const STORAGE_KEYS = {
     accounts: 'wish-tracker-accounts',
     activeAccount: 'wish-tracker-active-account',
+    localBackup: 'wish-tracker-local-backup',
 };
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 export function SettingsProvider({ children }: { children: ReactNode }) {
+    const { user, getToken } = useAuth();
+    const { activeGame } = useGame();
+
     const [accounts, setAccounts] = useState<GameAccount[]>([]);
     const [activeAccountId, setActiveAccountId] = useState('account_1');
     const [loaded, setLoaded] = useState(false);
+    const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
+    const [conflictData, setConflictData] = useState<ConflictData | null>(null);
+    const [isResolving, setIsResolving] = useState(false);
 
     const createDefaultAccount = (): GameAccount => ({
         id: 'account_1',
@@ -45,41 +90,220 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         gender: 'M',
     });
 
-    useEffect(() => {
-        const storedAccounts = localStorage.getItem(STORAGE_KEYS.accounts);
+    const loadFromLocalStorage = useCallback((gameId: string) => {
+        const storageKey = `${STORAGE_KEYS.accounts}_${gameId}`;
+        const storedAccounts = localStorage.getItem(storageKey);
         if (storedAccounts) {
             try {
-                const parsed = JSON.parse(storedAccounts);
-                setAccounts(parsed);
+                return JSON.parse(storedAccounts);
             } catch {
-                setAccounts([createDefaultAccount()]);
+                return [createDefaultAccount()];
             }
-        } else {
-            setAccounts([createDefaultAccount()]);
         }
-
-        const storedActiveId = localStorage.getItem(STORAGE_KEYS.activeAccount);
-        if (storedActiveId) {
-            setActiveAccountId(storedActiveId);
-        }
-        setLoaded(true);
+        return [createDefaultAccount()];
     }, []);
+
+    const saveToLocalStorage = useCallback((gameId: string, accs: GameAccount[]) => {
+        const storageKey = `${STORAGE_KEYS.accounts}_${gameId}`;
+        localStorage.setItem(storageKey, JSON.stringify(accs));
+    }, []);
+
+    const fetchFromApi = useCallback(async (gameId: string) => {
+        const token = getToken();
+        if (!token) return { accounts: null, lastSyncedAt: null };
+
+        try {
+            const res = await fetch(`${API_BASE}/api/accounts?game_id=${gameId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json() as ApiAccount[];
+                const accounts = data.map((acc) => ({
+                    id: `db_${acc.id}`,
+                    name: acc.name,
+                    server: acc.server,
+                    ar: acc.ar,
+                    wl: acc.wl,
+                    gender: acc.mc_option || 'M',
+                }));
+
+                let lastSynced: Date | null = null;
+                if (data.length > 0) {
+                    const timestamps = data
+                        .filter((acc) => acc.last_synced_at)
+                        .map((acc) => new Date(acc.last_synced_at!).getTime());
+                    if (timestamps.length > 0) {
+                        lastSynced = new Date(Math.max(...timestamps));
+                    }
+                }
+
+                return { accounts, lastSyncedAt: lastSynced };
+            }
+        } catch (err) {
+            console.error('Failed to fetch accounts:', err);
+        }
+        return { accounts: null, lastSyncedAt: null };
+    }, [getToken]);
+
+    const syncToApi = useCallback(async (gameId: string, accs: GameAccount[]) => {
+        const token = getToken();
+        if (!token) return false;
+
+        try {
+            const accountsData = accs.map(acc => ({
+                game_id: gameId,
+                uid: acc.id.startsWith('db_') ? acc.id.replace('db_', '') : null,
+                name: acc.name,
+                server: acc.server,
+                ar: acc.ar,
+                wl: acc.wl,
+                mc_option: acc.gender,
+            }));
+
+            const res = await fetch(`${API_BASE}/api/accounts/sync`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ game_id: gameId, accounts: accountsData })
+            });
+            return res.ok;
+        } catch (err) {
+            console.error('Failed to sync accounts:', err);
+            return false;
+        }
+    }, [getToken]);
+
+    const resolveConflict = useCallback(async (resolution: "local" | "cloud" | "merge") => {
+        if (!conflictData || isResolving) return;
+        setIsResolving(true);
+
+        try {
+            const token = getToken();
+            if (!token || conflictData.type !== "accounts") {
+                setIsResolving(false);
+                return;
+            }
+
+            const localData = (conflictData.localData as GameAccount[]).map((acc) => ({
+                game_id: activeGame.id,
+                uid: acc.id.startsWith('db_') ? acc.id.replace('db_', '') : null,
+                name: acc.name,
+                server: acc.server,
+                ar: acc.ar,
+                wl: acc.wl,
+                mc_option: acc.gender,
+            }));
+
+            const res = await fetch(`${API_BASE}/api/accounts/resolve-conflict`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    game_id: activeGame.id,
+                    resolution: resolution,
+                    local_accounts: localData,
+                    cloud_accounts: conflictData.cloudData
+                })
+            });
+
+            if (!res.ok) {
+                setIsResolving(false);
+                return;
+            }
+
+            const data = await res.json() as { accounts: ApiAccount[] };
+            const updatedAccounts = data.accounts.map((acc) => ({
+                id: `db_${acc.id}`,
+                name: acc.name,
+                server: acc.server,
+                ar: acc.ar,
+                wl: acc.wl,
+                gender: acc.mc_option || 'M',
+            }));
+            setAccounts(updatedAccounts);
+            saveToLocalStorage(activeGame.id, updatedAccounts);
+            setLastSyncedAt(new Date());
+            setConflictData(null);
+        } catch (err) {
+            console.error('Failed to resolve conflict:', err);
+        } finally {
+            setIsResolving(false);
+        }
+    }, [conflictData, isResolving, getToken, activeGame.id, saveToLocalStorage]);
+
+    useEffect(() => {
+        const loadAccounts = async () => {
+            const localAccounts = loadFromLocalStorage(activeGame.id);
+            let currentAccounts: GameAccount[] = [];
+
+            if (user) {
+                const { accounts: apiAccounts, lastSyncedAt } = await fetchFromApi(activeGame.id);
+                if (apiAccounts && apiAccounts.length > 0) {
+                    if (localAccounts.length > 0) {
+                        localStorage.setItem(
+                            `${STORAGE_KEYS.localBackup}_${activeGame.id}`,
+                            JSON.stringify(localAccounts)
+                        );
+                    }
+                    currentAccounts = apiAccounts;
+                    setLastSyncedAt(lastSyncedAt);
+                } else {
+                    currentAccounts = localAccounts;
+                    setLastSyncedAt(null);
+                }
+                setConflictData(null);
+            } else {
+                const backup = localStorage.getItem(`${STORAGE_KEYS.localBackup}_${activeGame.id}`);
+                if (backup) {
+                    localStorage.removeItem(`${STORAGE_KEYS.localBackup}_${activeGame.id}`);
+                }
+                currentAccounts = localAccounts;
+                setLastSyncedAt(null);
+                setConflictData(null);
+            }
+
+            setAccounts(currentAccounts);
+            saveToLocalStorage(activeGame.id, currentAccounts);
+
+            const activeKey = `${STORAGE_KEYS.activeAccount}_${activeGame.id}`;
+            const storedActiveId = localStorage.getItem(activeKey);
+            if (storedActiveId) {
+                const exists = currentAccounts.some((a: GameAccount) => a.id === storedActiveId);
+                setActiveAccountId(exists ? storedActiveId : currentAccounts[0]?.id || 'account_1');
+            } else {
+                setActiveAccountId(currentAccounts[0]?.id || 'account_1');
+            }
+
+            setLoaded(true);
+        };
+
+        loadAccounts();
+    }, [activeGame.id, user, loadFromLocalStorage, saveToLocalStorage, fetchFromApi]);
 
     const changeActiveAccount = useCallback((newId: string) => {
         setActiveAccountId(newId);
-        localStorage.setItem(STORAGE_KEYS.activeAccount, newId);
-    }, []);
+        const activeKey = `${STORAGE_KEYS.activeAccount}_${activeGame.id}`;
+        localStorage.setItem(activeKey, newId);
+    }, [activeGame.id]);
 
     const updateActiveAccount = useCallback((key: keyof GameAccount, value: string | number) => {
+        const currentAccount = accounts.find(acc => acc.id === activeAccountId);
+        if (!currentAccount) return;
+
         const updatedAccounts = accounts.map(acc =>
             acc.id === activeAccountId ? { ...acc, [key]: value } : acc
         );
         setAccounts(updatedAccounts);
-        localStorage.setItem(STORAGE_KEYS.accounts, JSON.stringify(updatedAccounts));
-    }, [accounts, activeAccountId]);
+        saveToLocalStorage(activeGame.id, updatedAccounts);
+        setLastSyncedAt(null);
+    }, [accounts, activeAccountId, activeGame.id, saveToLocalStorage]);
 
     const addAccount = useCallback(() => {
-        const newId = `account_${Date.now()}`;
+        const newId = `local_${Date.now()}`;
         const newAcc: GameAccount = {
             id: newId,
             name: `Alt ${accounts.length + 1}`,
@@ -90,64 +314,167 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         };
         const newAccounts = [...accounts, newAcc];
         setAccounts(newAccounts);
-        localStorage.setItem(STORAGE_KEYS.accounts, JSON.stringify(newAccounts));
+        saveToLocalStorage(activeGame.id, newAccounts);
         changeActiveAccount(newId);
-    }, [accounts, changeActiveAccount]);
+        setLastSyncedAt(null);
+    }, [accounts, activeGame.id, saveToLocalStorage, changeActiveAccount]);
 
     const deleteActiveAccount = useCallback(() => {
         if (accounts.length <= 1) return;
+
         const newAccounts = accounts.filter(acc => acc.id !== activeAccountId);
         const nextId = newAccounts[0].id;
 
         setAccounts(newAccounts);
         changeActiveAccount(nextId);
-        localStorage.setItem(STORAGE_KEYS.accounts, JSON.stringify(newAccounts));
-    }, [accounts, activeAccountId, changeActiveAccount]);
+        saveToLocalStorage(activeGame.id, newAccounts);
+        setLastSyncedAt(null);
+    }, [accounts, activeAccountId, activeGame.id, saveToLocalStorage, changeActiveAccount]);
 
-    const exportAccount = useCallback((): string | null => {
-        const account = accounts.find(acc => acc.id === activeAccountId);
-        if (!account) return null;
+    const exportData = useCallback((): string | null => {
+        const localWishesKey = `wishes-${activeGame.id}`;
+        const localWishes = localStorage.getItem(localWishesKey);
+        const wishes = localWishes ? JSON.parse(localWishes) : [];
 
-        const exportData = {
+        const exportPayload = {
             version: '1.0.0',
             exportedAt: new Date().toISOString(),
-            account: {
-                name: account.name,
-                server: account.server,
-                ar: account.ar,
-                wl: account.wl,
-                gender: account.gender,
-            },
+            source: 'local',
+            gameId: activeGame.id,
+            accounts: accounts.map(acc => ({
+                name: acc.name,
+                server: acc.server,
+                ar: acc.ar,
+                wl: acc.wl,
+                gender: acc.gender,
+            })),
+            wishes: wishes,
         };
 
-        return JSON.stringify(exportData, null, 2);
-    }, [accounts, activeAccountId]);
+        return JSON.stringify(exportPayload, null, 2);
+    }, [accounts, activeGame.id]);
 
-    const importAccount = useCallback((jsonData: string): boolean => {
+    const importData = useCallback(async (jsonData: string): Promise<boolean> => {
         try {
             const data = JSON.parse(jsonData);
-            if (!data.account || !data.version) {
+            if (!data.version || (!data.accounts && !data.wishes)) {
                 return false;
             }
 
-            const importedAccount: GameAccount = {
-                id: `account_${Date.now()}`,
-                name: data.account.name || 'Imported',
-                server: data.account.server || 'America',
-                ar: parseInt(data.account.ar, 10) || 1,
-                wl: data.account.wl || '0',
-                gender: data.account.gender || 'M',
-            };
+            if (data.accounts && Array.isArray(data.accounts)) {
+                const newAccounts = (data.accounts as ImportedAccount[]).map((acc, idx) => ({
+                    id: `local_${Date.now()}_${idx}`,
+                    name: acc.name || 'Imported',
+                    server: acc.server || 'America',
+                    ar: parseInt(String(acc.ar ?? ''), 10) || 1,
+                    wl: acc.wl || '0',
+                    gender: acc.gender || 'M',
+                }));
+                const combinedAccounts = [...accounts, ...newAccounts];
+                setAccounts(combinedAccounts);
+                saveToLocalStorage(activeGame.id, combinedAccounts);
+                if (newAccounts.length > 0) {
+                    changeActiveAccount(newAccounts[0].id);
+                }
 
-            const newAccounts = [...accounts, importedAccount];
-            setAccounts(newAccounts);
-            localStorage.setItem(STORAGE_KEYS.accounts, JSON.stringify(newAccounts));
-            changeActiveAccount(importedAccount.id);
+                const token = getToken();
+                if (token) {
+                    const success = await syncToApi(activeGame.id, combinedAccounts);
+                    if (success) {
+                        setLastSyncedAt(new Date());
+                    }
+                }
+            }
+
+            if (data.wishes && Array.isArray(data.wishes)) {
+                const existingWishesKey = `wishes-${activeGame.id}`;
+                const existingWishes = localStorage.getItem(existingWishesKey);
+                const existingWishesArray = existingWishes ? JSON.parse(existingWishes) : [];
+                const combinedWishes = [...existingWishesArray, ...data.wishes];
+                localStorage.setItem(existingWishesKey, JSON.stringify(combinedWishes));
+            }
+
+            setLastSyncedAt(null);
             return true;
         } catch {
             return false;
         }
-    }, [accounts, changeActiveAccount]);
+    }, [accounts, activeGame.id, saveToLocalStorage, changeActiveAccount, getToken, syncToApi]);
+
+    const importFullBackup = useCallback(async (jsonData: string): Promise<boolean> => {
+        try {
+            const data = JSON.parse(jsonData);
+            if (!data.version || (!data.accounts && !data.wishes)) {
+                return false;
+            }
+
+            if (data.accounts && Array.isArray(data.accounts)) {
+                const newAccounts = (data.accounts as ImportedAccount[]).map((acc, idx) => ({
+                    id: `local_${Date.now()}_${idx}`,
+                    name: acc.name || 'Imported',
+                    server: acc.server || 'America',
+                    ar: parseInt(String(acc.ar ?? ''), 10) || 1,
+                    wl: acc.wl || '0',
+                    gender: acc.gender || 'M',
+                }));
+                setAccounts(newAccounts);
+                saveToLocalStorage(activeGame.id, newAccounts);
+                if (newAccounts.length > 0) {
+                    changeActiveAccount(newAccounts[0].id);
+                }
+            }
+
+            if (data.wishes && Array.isArray(data.wishes)) {
+                localStorage.setItem(`wishes-${activeGame.id}`, JSON.stringify(data.wishes));
+            }
+
+            setLastSyncedAt(null);
+            return true;
+        } catch {
+            return false;
+        }
+    }, [activeGame.id, saveToLocalStorage, changeActiveAccount]);
+
+    const importLocalAccounts = useCallback(() => {
+        const backupKey = `${STORAGE_KEYS.localBackup}_${activeGame.id}`;
+        const backupData = localStorage.getItem(backupKey);
+        if (!backupData) return;
+
+        let localAccounts: GameAccount[];
+        try {
+            localAccounts = JSON.parse(backupData);
+        } catch {
+            return;
+        }
+
+        if (!Array.isArray(localAccounts) || localAccounts.length === 0) return;
+
+        const newAccounts = localAccounts.map((acc: GameAccount, idx: number) => ({
+            id: `local_import_${Date.now()}_${idx}`,
+            name: acc.name,
+            server: acc.server,
+            ar: acc.ar,
+            wl: acc.wl,
+            gender: acc.gender,
+        }));
+
+        const combined = [...accounts, ...newAccounts];
+        setAccounts(combined);
+        saveToLocalStorage(activeGame.id, combined);
+        setLastSyncedAt(null);
+
+        if (newAccounts.length > 0) {
+            changeActiveAccount(newAccounts[0].id);
+        }
+    }, [accounts, activeGame.id, saveToLocalStorage, changeActiveAccount]);
+
+    const syncAccounts = useCallback(async () => {
+        const success = await syncToApi(activeGame.id, accounts);
+        if (success) {
+            setLastSyncedAt(new Date());
+        }
+        return success;
+    }, [activeGame.id, accounts, syncToApi]);
 
     const activeAccount = accounts.find(acc => acc.id === activeAccountId) || accounts[0];
 
@@ -164,8 +491,15 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
             addAccount,
             updateActiveAccount,
             deleteActiveAccount,
-            exportAccount,
-            importAccount,
+            exportData,
+            importData,
+            importFullBackup,
+            importLocalAccounts,
+            lastSyncedAt,
+            syncAccounts,
+            conflictData,
+            setConflictData,
+            resolveConflict,
         }}>
             {children}
         </SettingsContext.Provider>

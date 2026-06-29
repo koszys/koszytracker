@@ -25,6 +25,16 @@ out/
 .env
 .env.local
 .env.*.local
+!.env.example
+
+# Java
+target/
+*.class
+*.jar
+*.war
+*.nar
+hs_err_pid*
+replay_pid*
 
 # IDE
 .idea/
@@ -46,3 +56,9 @@ htmlcov/
 
 # AI
 .gemini/
+
+# Next.js (auto-generated)
+frontend/next-env.d.ts
+
+# Agents
+agents/

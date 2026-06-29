@@ -1,7 +1,22 @@
 export interface BannerConfig {
     id: string;
     name: string;
-    type: 'character' | 'weapon' | 'standard' | 'chronicled' | 'beginner';
+    type: string;
+    cardImage?: string;
+}
+
+export interface RarityTier {
+    value: number;
+    label: string;
+    color: string;
+}
+
+export type DashboardSection = "codes" | "events" | "info";
+
+export interface ServerOption {
+    id: string;
+    name: string;
+    offset: number;
 }
 
 export interface GameConfig {
@@ -17,24 +32,27 @@ export interface GameConfig {
     currencyName: string;
     pullName: string;
     banners: BannerConfig[];
-    // Dynamic Theme Variables
-    themeColor: string;
-    themeGradientFrom: string;
-    themeGradientTo: string;
-    themeGlow: string;
+    rarityTiers: RarityTier[];
+
     // Sidebar Icons
     homeIcon: string;
     trackerIcon: string;
     importIcon: string;
     settingsIcon: string;
+
     importScript: string;
+    redeemUrl?: string;
+    features: ("tracker")[];
+    dashboardSections: DashboardSection[];
+    aboutText?: string;
+    servers: ServerOption[];
 }
 
 export const GAME_CONFIG: GameConfig[] = [
     {
         id: 'genshin',
         name: 'Genshin Impact',
-        path: '/dashboard/tracker',
+        path: '/genshin',
         bgUrl: '/assets/gamebackground/genshinv1-1.jpg',
         status: 'active',
         wishName: 'Wishes',
@@ -48,20 +66,29 @@ export const GAME_CONFIG: GameConfig[] = [
             { id: 'standard', name: 'Standard', type: 'standard' },
             { id: 'chronicled', name: 'Chronicled Wish', type: 'chronicled' }
         ],
-        themeColor: '#3b82f6', // blue-500
-        themeGradientFrom: '#60a5fa', // blue-400
-        themeGradientTo: '#2563eb', // blue-600
-        themeGlow: 'rgba(59, 130, 246, 0.5)', // blue-500/50
+        rarityTiers: [
+            { value: 5, label: '5\u2726', color: 'text-yellow-400' },
+            { value: 4, label: '4\u2726', color: 'text-purple-400' },
+            { value: 3, label: '3\u2726', color: 'text-gray-300' },
+        ],
         homeIcon: '/assets/genshin/genshin-logo.webp',
         trackerIcon: '/assets/genshin/genshin-wish.png',
         importIcon: '/assets/genshin/genshin-mail.webp',
         settingsIcon: '/assets/genshin/settings-icon.webp',
-        importScript: "iex (irm 'https://placeholder.com/genshin-import.ps1')"
+        importScript: "iex (irm 'https://placeholder.com/genshin-import.ps1')",
+        redeemUrl: 'https://genshin.hoyoverse.com/en/gift',
+        features: ['tracker'],
+        dashboardSections: ['codes', 'events'],
+        servers: [
+            { id: 'America', name: 'America', offset: -5 },
+            { id: 'Europe', name: 'Europe', offset: 1 },
+            { id: 'Asia', name: 'Asia', offset: 8 },
+        ]
     },
     {
         id: 'wuwa',
         name: 'Wuthering Waves',
-        path: '/dashboard/tracker',
+        path: '/wuwa',
         bgUrl: '/assets/gamebackground/wuwa_background.jpg',
         status: 'active',
         wishName: 'Convenes',
@@ -72,16 +99,87 @@ export const GAME_CONFIG: GameConfig[] = [
         banners: [
             { id: 'character', name: 'Featured Resonator', type: 'character' },
             { id: 'weapon', name: 'Featured Weapon', type: 'weapon' },
-            { id: 'standard', name: 'Standard Resonator', type: 'standard' }
+            { id: 'characterpermanent', name: 'Permanent Resonator', type: 'characterpermanent' },
+            { id: 'weaponpermanent', name: 'Permanent Weapon', type: 'weaponpermanent' }
         ],
-        themeColor: '#eab308', // yellow-500
-        themeGradientFrom: '#facc15', // yellow-400
-        themeGradientTo: '#ca8a04', // yellow-600
-        themeGlow: 'rgba(234, 179, 8, 0.5)', // yellow-500/50
+        rarityTiers: [
+            { value: 5, label: '5\u2726', color: 'text-yellow-400' },
+            { value: 4, label: '4\u2726', color: 'text-purple-400' },
+            { value: 3, label: '3\u2726', color: 'text-gray-300' },
+        ],
         homeIcon: '/assets/wuwa/wuwa-logo.jpg',
         trackerIcon: '/assets/wuwa/wuwa-convene.webp',
         importIcon: '/assets/wuwa/wuwa-mail.webp',
         settingsIcon: '/assets/wuwa/wuwa-settings.webp',
-        importScript: "iex (irm 'https://placeholder.com/wuwa-import.ps1')"
+        importScript: "iex (irm 'https://placeholder.com/wuwa-import.ps1')",
+        features: ['tracker'],
+        dashboardSections: ['codes', 'events'],
+        servers: [
+            { id: 'America', name: 'America', offset: -5 },
+            { id: 'Europe', name: 'Europe', offset: 1 },
+            { id: 'Asia', name: 'Asia', offset: 8 },
+        ]
+    },
+    {
+        id: 'hsr',
+        name: 'Honkai: Star Rail',
+        path: '/hsr',
+        bgUrl: '/assets/gamebackground/hsr_background.png',
+        status: 'comingsoon',
+        wishName: 'Warps',
+        trackerName: 'Warp Tracker',
+        importName: 'Import Warps',
+        currencyName: 'Stellar Jade',
+        pullName: 'Warps',
+        banners: [],
+        rarityTiers: [
+            { value: 5, label: '5\u2726', color: 'text-yellow-400' },
+            { value: 4, label: '4\u2726', color: 'text-purple-400' },
+            { value: 3, label: '3\u2726', color: 'text-gray-300' },
+        ],
+        homeIcon: '/assets/hsr/hsr-logo.png',
+        trackerIcon: '/assets/hsr/hsr-warp.webp',
+        importIcon: '/assets/hsr/hsr-import.webp',
+        settingsIcon: '/assets/genshin/settings-icon.webp',
+        importScript: '',
+        features: [],
+        dashboardSections: ['info'],
+        aboutText: "Stay tuned for Honkai: Star Rail info and updates coming soon.",
+        servers: [
+            { id: 'America', name: 'America', offset: -5 },
+            { id: 'Europe', name: 'Europe', offset: 1 },
+            { id: 'Asia', name: 'Asia', offset: 8 },
+        ]
+    },
+    {
+        id: 'zzz',
+        name: 'Zenless Zone Zero',
+        path: '/zzz',
+        bgUrl: '/assets/gamebackground/zzz_background.jpg',
+        status: 'comingsoon',
+        wishName: 'Signals',
+        trackerName: 'Signal Tracker',
+        importName: 'Import Signals',
+        currencyName: 'Polychromes',
+        pullName: 'Signals',
+        banners: [],
+        rarityTiers: [
+            { value: 5, label: '5\u2726', color: 'text-yellow-400' },
+            { value: 4, label: '4\u2726', color: 'text-purple-400' },
+            { value: 3, label: '3\u2726', color: 'text-gray-300' },
+        ],
+        homeIcon: '/assets/zzz/zzz-logo.png',
+        trackerIcon: '/assets/zzz/zzz-signals.webp',
+        importIcon: '/assets/zzz/zzz-import.webp',
+        settingsIcon: '/assets/zzz/zzz-settings.webp',
+        importScript: '',
+        features: [],
+        dashboardSections: ['info'],
+        aboutText: "Stay tuned for Zenless Zone Zero info and updates coming soon.",
+        servers: [
+            { id: 'America', name: 'America', offset: -5 },
+            { id: 'Europe', name: 'Europe', offset: 1 },
+            { id: 'Asia', name: 'Asia', offset: 8 },
+        ]
     }
 ];

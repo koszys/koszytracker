@@ -1,4 +1,16 @@
-export const gameTerms = {
+export interface GameTerms {
+    ar?: string;
+    arFull?: string;
+    maxAr?: number;
+    wl?: string;
+    wlFull?: string;
+    wlOptions?: string[];
+    mcTitle?: string;
+    mcMale?: string;
+    mcFemale?: string;
+}
+
+export const gameTerms: Record<string, GameTerms> = {
     genshin: {
         ar: "AR",
         arFull: "Adventure Rank",
@@ -42,20 +54,9 @@ export const gameTerms = {
         mcTitle: "Proxy",
         mcMale: "Wise",
         mcFemale: "Belle"
-    },
-    default: {
-        ar: "Level",
-        arFull: "Level",
-        maxAr: 60,
-        wl: "World Level",
-        wlFull: "World Level",
-        wlOptions: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
-        mcTitle: "Gender",
-        mcMale: "Male",
-        mcFemale: "Female"
     }
 };
 
-export function getGameTerms(gameId: string) {
-    return gameTerms[gameId as keyof typeof gameTerms] || gameTerms.genshin;
+export function getGameTerms(gameId: string): GameTerms {
+    return gameTerms[gameId as keyof typeof gameTerms] ?? {};
 }
