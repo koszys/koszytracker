@@ -20,9 +20,22 @@ import { ZZZMedia } from "./collections/ZZZMedia";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
-const r2GenerateFileURL = ({ filename, prefix }: { filename: string; prefix?: string | null }) => {
-  const key = prefix ? `${prefix}/${filename}` : filename;
-  return `${process.env.R2_PUBLIC_URL}/${key}`;
+const collectionPrefixes: Record<string, string> = {
+  "genshin-media": "genshin",
+  "wuwa-media": "wuwa",
+  "hsr-media": "hsr",
+  "zzz-media": "zzz",
+  media: "general",
+};
+
+const r2GenerateFileURL = ({ collection, filename, prefix }: {
+  collection: { slug: string };
+  filename: string;
+  prefix?: string | null;
+}) => {
+  const collectionPrefix = collectionPrefixes[collection.slug] || "";
+  const path = [collectionPrefix, prefix, filename].filter(Boolean).join("/");
+  return `${process.env.R2_PUBLIC_URL}/${path}`;
 };
 
 export default buildConfig({
@@ -35,6 +48,9 @@ export default buildConfig({
   collections: [Users, Media, Games, GameCodes, Events, Changelogs, GenshinMedia, WuwaMedia, HSRMedia, ZZZMedia],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
+  folders: {
+    browseByFolder: true,
+  },
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },
@@ -48,6 +64,7 @@ export default buildConfig({
   plugins: [
     s3Storage({
       enabled: Boolean(process.env.R2_BUCKET),
+      useCompositePrefixes: true,
       collections: {
         media: {
           disablePayloadAccessControl: true,
