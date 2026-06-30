@@ -1,7 +1,16 @@
+const caches = new Set<Record<string, unknown>>();
+
+export function clearAllCaches() {
+  for (const cache of caches) {
+    Object.keys(cache).forEach((key) => delete cache[key]);
+  }
+}
+
 export function createCacheFetcher<Args extends any[], T>(
   fetchFn: (...args: Args) => Promise<T>,
 ) {
   const cache: Record<string, Promise<T>> = {};
+  caches.add(cache as Record<string, unknown>);
 
   return async (
     options: boolean | { isDraftMode?: boolean; force?: boolean },

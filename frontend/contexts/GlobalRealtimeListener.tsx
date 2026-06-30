@@ -5,6 +5,7 @@ import { usePublishEvents } from "@/hooks/usePublishEvents";
 import { useToast } from "@/contexts/ToastContext";
 import { usePathname } from "next/navigation";
 import { GAME_CONFIG } from "@/config/games";
+import { clearAllCaches } from "@/utils/cache";
 import type { PublishEvent } from "@/utils/eventBus";
 
 export default function GlobalRealtimeListener() {
@@ -40,6 +41,7 @@ export default function GlobalRealtimeListener() {
         label: "Refresh Page",
         onClick: () => {
           unappliedEvent.current = null;
+          clearAllCaches();
           window.dispatchEvent(new Event("senti-refresh-active-game"));
         },
       },
