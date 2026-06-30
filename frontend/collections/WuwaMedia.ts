@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { prependCategoryToFilename } from "./hooks/prependCategoryToFilename";
 
 export const WuwaMedia: CollectionConfig = {
   slug: "wuwa-media",
@@ -17,6 +18,23 @@ export const WuwaMedia: CollectionConfig = {
       type: "text",
       required: true,
     },
+    {
+      name: "category",
+      type: "select",
+      defaultValue: "characters",
+      options: [
+        { label: "Characters", value: "characters" },
+        { label: "Events", value: "events" },
+        { label: "Banners", value: "banners" },
+        { label: "Weapons", value: "weapons" },
+      ],
+    },
   ],
-  upload: true,
+  upload: {
+    adminThumbnail: ({ doc }) => doc.url as string,
+  },
+  hooks: {
+    beforeChange: [prependCategoryToFilename],
+  },
+  folders: true,
 };
